@@ -1,0 +1,42 @@
+import { NextRequest } from "next/server";
+import { verifyAccessToken, type JwtPayload } from "@/lib/auth";
+import { unauthorizedResponse, forbiddenResponse } from "@/lib/api-response";
+import type { UserRole } from "@prisma/client";
+
+/**
+ * Extract and verify the JWT from the Authorization header.
+ * Returns the payload or null if invalid.
+ */
+export function getAuthPayload(request: NextRequest): JwtPayload | null {
+  const authHeader = request.headers.get("authorization");
+  if (!authHeader?.startsWith("Bearer ")) return null;
+
+  try {
+    const token = authHeader.slice(7);
+    return verifyAccessToken(token);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Higher-order function to protect API routes.
+ * Optionally restrict to specific roles.
+ */
+export function withAuth(
+  handler: (request: NextRequest, payload: JwtPayload) => Promise<Response>,
+  allowedRoles?: UserRole[],
+) {
+  return async (request: NextRequest) => {
+    const payload = getAuthPayload(request);
+    if (!payload) {
+      return unauthorizedResponse("Invalid or expired token");
+    }
+
+    if (allowedRoles && !allowedRoles.includes(payload.role)) {
+      return forbiddenResponse("You do not have permission to access this resource");
+    }
+
+    return handler(request, payload);
+  };
+}
