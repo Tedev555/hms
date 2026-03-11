@@ -100,7 +100,7 @@ The system is deployed as Docker containers on a Linux server (Ubuntu 22.04 LTS 
 **Container Layout:**
 
 - `nginx` — Reverse proxy & SSL termination (port 443/80)
-- `hms-app` — Next.js application (SSR + API Routes) (port 3000)
+- `hms-app` — Next.js application (SSR + API Routes) (port 5000)
 - `hms-db` — PostgreSQL primary database (port 5433)
 - `hms-redis` — Redis cache & pub/sub (port 6379)
 - `hms-minio` — Object storage for files/images (port 9000)
@@ -445,12 +445,6 @@ The analytics module provides management dashboards and exportable reports for o
 
 | Category | Requirement | Target Metric |
 |----------|-------------|---------------|
-| Performance | API response time (p95) | < 300ms |
-| Performance | Page load time | < 2 seconds |
-| Availability | System uptime | >= 99.5% |
-| Scalability | Concurrent users | 500+ simultaneous |
-| Backup | Recovery Point Objective (RPO) | < 1 hour |
-| Backup | Recovery Time Objective (RTO) | < 4 hours |
 | Storage | Document retention | 7 years minimum |
 | Localization | Language support | English + local language |
 | Browser support | Modern browsers | Chrome, Firefox, Edge, Safari |
