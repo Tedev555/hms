@@ -11,7 +11,7 @@ services:
       POSTGRES_PASSWORD: hms_password
       POSTGRES_DB: hms_db
     ports:
-      - "5433:5432"
+      - "54320:5432"
     volumes:
       - hms_pgdata:/var/lib/postgresql/data
     healthcheck:
