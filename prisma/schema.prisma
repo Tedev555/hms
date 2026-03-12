@@ -127,9 +127,11 @@ model User {
   departmentId String?
   department   Department? @relation(fields: [departmentId], references: [id])
   phone        String?    @db.VarChar(20)
-  isActive     Boolean    @default(true)
-  lastLoginAt  DateTime?
-  createdById  String?
+  isActive            Boolean    @default(true)
+  lastLoginAt         DateTime?
+  failedLoginAttempts Int        @default(0)
+  lockedUntil         DateTime?
+  createdById         String?
   createdBy    User?      @relation("UserCreatedBy", fields: [createdById], references: [id])
   createdUsers User[]     @relation("UserCreatedBy")
   createdAt    DateTime   @default(now())
