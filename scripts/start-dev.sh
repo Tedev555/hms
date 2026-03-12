@@ -333,7 +333,7 @@ check_port() {
 
 check_port 3000 "Next.js dev server" || true
 check_port 54320 "PostgreSQL" || true
-check_port 6379 "Redis" || true
+check_port 63790 "Redis" || true
 check_port 9000 "MinIO API" || true
 
 # ── 8. TypeScript Check ──────────────────────────────────────
