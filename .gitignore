@@ -35,6 +35,10 @@ Thumbs.db
 
 # Testing
 coverage/
+playwright-report/
+test-results/
+blob-report/
+e2e/.auth/
 
 # Prisma
 prisma/migrations/dev/
