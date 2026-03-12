@@ -24,10 +24,10 @@ export function getAuthPayload(request: NextRequest): JwtPayload | null {
  * Optionally restrict to specific roles.
  */
 export function withAuth(
-  handler: (request: NextRequest, payload: JwtPayload) => Promise<Response>,
+  handler: (request: NextRequest, payload: JwtPayload, ...args: never[]) => Promise<Response>,
   allowedRoles?: UserRole[],
 ) {
-  return async (request: NextRequest) => {
+  return async (request: NextRequest, ...args: never[]) => {
     const payload = getAuthPayload(request);
     if (!payload) {
       return unauthorizedResponse("Invalid or expired token");
@@ -37,6 +37,6 @@ export function withAuth(
       return forbiddenResponse("You do not have permission to access this resource");
     }
 
-    return handler(request, payload);
+    return handler(request, payload, ...args);
   };
 }

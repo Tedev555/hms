@@ -8,6 +8,7 @@ import {
 } from "@/lib/api-response";
 import { createPatientSchema } from "@/lib/validations";
 import { parsePagination, generateCode } from "@/lib/utils";
+import { createAuditLog } from "@/lib/audit";
 import type { JwtPayload } from "@/lib/auth";
 
 // GET /api/v1/patients — List patients with pagination
@@ -60,6 +61,16 @@ export const POST = withAuth(async (request: NextRequest, payload: JwtPayload) =
       ? parseInt(lastPatient.patientCode.split("-")[1], 10) + 1
       : 1;
 
+    // Check for duplicate nationalId
+    if (parsed.data.nationalId) {
+      const duplicate = await prisma.patient.findUnique({
+        where: { nationalId: parsed.data.nationalId },
+      });
+      if (duplicate) {
+        return errorResponse("National ID already exists", 409);
+      }
+    }
+
     const patient = await prisma.patient.create({
       data: {
         ...parsed.data,
@@ -67,6 +78,14 @@ export const POST = withAuth(async (request: NextRequest, payload: JwtPayload) =
         patientCode: generateCode("PAT", sequence),
         createdById: payload.userId,
       },
+    });
+
+    await createAuditLog({
+      userId: payload.userId,
+      action: "CREATE",
+      entity: "Patient",
+      entityId: patient.id,
+      newData: patient,
     });
 
     return successResponse(patient, 201);

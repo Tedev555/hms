@@ -4,6 +4,13 @@ import {
   passwordSchema,
   createUserSchema,
   createPatientSchema,
+  updatePatientSchema,
+  searchPatientSchema,
+  createEmergencyContactSchema,
+  updateEmergencyContactSchema,
+  createMedicalHistorySchema,
+  updateMedicalHistorySchema,
+  createPatientDocumentSchema,
   createAppointmentSchema,
   paginationSchema,
 } from "@/lib/validations";
@@ -189,6 +196,176 @@ describe("validations", () => {
     it("should reject missing required phone", () => {
       const { phone, ...noPhone } = validPatient;
       const result = createPatientSchema.safeParse(noPhone);
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe("updatePatientSchema", () => {
+    it("should accept partial updates", () => {
+      const result = updatePatientSchema.safeParse({ firstName: "Updated" });
+      expect(result.success).toBe(true);
+    });
+
+    it("should accept empty object (no changes)", () => {
+      const result = updatePatientSchema.safeParse({});
+      expect(result.success).toBe(true);
+    });
+
+    it("should accept nullable fields", () => {
+      const result = updatePatientSchema.safeParse({
+        email: null,
+        nationalId: null,
+        address: null,
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it("should reject invalid email", () => {
+      const result = updatePatientSchema.safeParse({ email: "not-email" });
+      expect(result.success).toBe(false);
+    });
+
+    it("should reject invalid gender", () => {
+      const result = updatePatientSchema.safeParse({ gender: "invalid" });
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe("searchPatientSchema", () => {
+    it("should validate a valid search query", () => {
+      const result = searchPatientSchema.safeParse({ q: "john" });
+      expect(result.success).toBe(true);
+    });
+
+    it("should use defaults for page and limit", () => {
+      const result = searchPatientSchema.parse({ q: "john" });
+      expect(result.page).toBe(1);
+      expect(result.limit).toBe(20);
+    });
+
+    it("should reject empty query", () => {
+      const result = searchPatientSchema.safeParse({ q: "" });
+      expect(result.success).toBe(false);
+    });
+
+    it("should coerce page and limit from strings", () => {
+      const result = searchPatientSchema.parse({ q: "test", page: "2", limit: "50" });
+      expect(result.page).toBe(2);
+      expect(result.limit).toBe(50);
+    });
+  });
+
+  describe("createEmergencyContactSchema", () => {
+    it("should validate a valid emergency contact", () => {
+      const result = createEmergencyContactSchema.safeParse({
+        name: "John Doe",
+        relationship: "Brother",
+        phone: "+254700000000",
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it("should reject missing name", () => {
+      const result = createEmergencyContactSchema.safeParse({
+        relationship: "Brother",
+        phone: "+254700000000",
+      });
+      expect(result.success).toBe(false);
+    });
+
+    it("should reject empty relationship", () => {
+      const result = createEmergencyContactSchema.safeParse({
+        name: "John",
+        relationship: "",
+        phone: "+254700000000",
+      });
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe("updateEmergencyContactSchema", () => {
+    it("should accept partial updates", () => {
+      const result = updateEmergencyContactSchema.safeParse({ name: "Updated" });
+      expect(result.success).toBe(true);
+    });
+
+    it("should accept empty object", () => {
+      const result = updateEmergencyContactSchema.safeParse({});
+      expect(result.success).toBe(true);
+    });
+  });
+
+  describe("createMedicalHistorySchema", () => {
+    it("should validate a valid entry", () => {
+      const result = createMedicalHistorySchema.safeParse({
+        condition: "Diabetes Type 2",
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it("should accept optional fields", () => {
+      const result = createMedicalHistorySchema.safeParse({
+        condition: "Asthma",
+        description: "Mild asthma since childhood",
+        diagnosedAt: "2020-01-15",
+        isActive: true,
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it("should reject missing condition", () => {
+      const result = createMedicalHistorySchema.safeParse({
+        description: "some description",
+      });
+      expect(result.success).toBe(false);
+    });
+
+    it("should default isActive to true", () => {
+      const result = createMedicalHistorySchema.parse({
+        condition: "Test",
+      });
+      expect(result.isActive).toBe(true);
+    });
+  });
+
+  describe("updateMedicalHistorySchema", () => {
+    it("should accept partial updates", () => {
+      const result = updateMedicalHistorySchema.safeParse({ isActive: false });
+      expect(result.success).toBe(true);
+    });
+
+    it("should accept nullable fields", () => {
+      const result = updateMedicalHistorySchema.safeParse({
+        description: null,
+        diagnosedAt: null,
+      });
+      expect(result.success).toBe(true);
+    });
+  });
+
+  describe("createPatientDocumentSchema", () => {
+    it("should validate a valid document", () => {
+      const result = createPatientDocumentSchema.safeParse({
+        title: "National ID Card",
+        fileUrl: "https://minio.example.com/docs/id.pdf",
+        fileType: "pdf",
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it("should reject missing title", () => {
+      const result = createPatientDocumentSchema.safeParse({
+        fileUrl: "https://minio.example.com/docs/id.pdf",
+        fileType: "pdf",
+      });
+      expect(result.success).toBe(false);
+    });
+
+    it("should reject missing fileUrl", () => {
+      const result = createPatientDocumentSchema.safeParse({
+        title: "Some doc",
+        fileType: "pdf",
+      });
       expect(result.success).toBe(false);
     });
   });
