@@ -1,0 +1,84 @@
+services:
+  # --- Next.js Application ---
+  hms-app:
+    image: ${IMAGE_TAG:-ghcr.io/tedev555/hms:uat}
+    container_name: hms-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://hms_user:${POSTGRES_PASSWORD:-hms_password}@hms-db:5432/hms_db?schema=public
+      - REDIS_URL=redis://hms-redis:6379
+      - MINIO_ENDPOINT=hms-minio
+    depends_on:
+      hms-db:
+        condition: service_healthy
+      hms-redis:
+        condition: service_healthy
+    networks:
+      - default
+
+  # --- PostgreSQL Database ---
+  hms-db:
+    image: postgres:16-alpine
+    container_name: hms-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: hms_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hms_password}
+      POSTGRES_DB: hms_db
+    volumes:
+      - hms_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hms_user -d hms_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default
+
+  # --- Redis Cache ---
+  hms-redis:
+    image: redis:7-alpine
+    container_name: hms-redis
+    restart: unless-stopped
+    volumes:
+      - hms_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default
+
+  # --- MinIO Object Storage ---
+  hms-minio:
+    image: minio/minio:latest
+    container_name: hms-minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    volumes:
+      - hms_minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - default
+
+volumes:
+  hms_pgdata:
+  hms_redis_data:
+  hms_minio_data:
+
+networks:
+  default:
+    name: hms_default
