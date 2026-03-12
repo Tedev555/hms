@@ -9,6 +9,7 @@ export type JwtPayload = {
   userId: string;
   username: string;
   role: UserRole;
+  departmentId?: string;
 };
 
 export async function hashPassword(password: string): Promise<string> {

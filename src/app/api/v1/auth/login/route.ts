@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
         isActive: true,
         firstName: true,
         lastName: true,
+        departmentId: true,
       },
     });
 
@@ -38,7 +39,12 @@ export async function POST(request: NextRequest) {
       return unauthorizedResponse("Invalid credentials");
     }
 
-    const payload = { userId: user.id, username: user.username, role: user.role };
+    const payload = {
+      userId: user.id,
+      username: user.username,
+      role: user.role,
+      ...(user.departmentId && { departmentId: user.departmentId }),
+    };
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
 

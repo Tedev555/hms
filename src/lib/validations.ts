@@ -62,8 +62,24 @@ export const createAppointmentSchema = z.object({
   doctorId: z.string().uuid(),
   departmentId: z.string().uuid().optional(),
   scheduledAt: z.string().datetime(),
-  duration: z.number().int().positive().default(15),
+  duration: z.number().int().min(5).max(120).default(15),
   type: z.enum(["opd", "follow_up", "emergency", "teleconsult"]),
-  chiefComplaint: z.string().optional(),
-  notes: z.string().optional(),
+  chiefComplaint: z.string().max(1000).optional(),
+  notes: z.string().max(2000).optional(),
+});
+
+// Update appointment (reschedule)
+export const updateAppointmentSchema = z.object({
+  scheduledAt: z.string().datetime().optional(),
+  duration: z.number().int().min(5).max(120).optional(),
+  departmentId: z.string().uuid().optional(),
+  chiefComplaint: z.string().max(1000).optional(),
+  notes: z.string().max(2000).optional(),
+});
+
+// Update appointment status
+export const updateStatusSchema = z.object({
+  status: z.enum(["confirmed", "checked_in", "in_progress", "completed", "cancelled", "no_show"]),
+  cancelReason: z.string().max(500).optional(),
+  notes: z.string().max(2000).optional(),
 });

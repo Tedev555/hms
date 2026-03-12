@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
       userId: payload.userId,
       username: payload.username,
       role: payload.role,
+      ...(payload.departmentId && { departmentId: payload.departmentId }),
     };
 
     const newAccessToken = generateAccessToken(newPayload);
