@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { verifyAccessToken, type JwtPayload } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { unauthorizedResponse, forbiddenResponse } from "@/lib/api-response";
 import type { UserRole } from "@prisma/client";
 
@@ -21,22 +22,32 @@ export function getAuthPayload(request: NextRequest): JwtPayload | null {
 
 /**
  * Higher-order function to protect API routes.
- * Optionally restrict to specific roles.
+ * Validates JWT, checks user is still active, and optionally restricts to specific roles.
  */
 export function withAuth(
-  handler: (request: NextRequest, payload: JwtPayload) => Promise<Response>,
+  handler: (request: NextRequest, payload: JwtPayload, ...args: never[]) => Promise<Response>,
   allowedRoles?: UserRole[],
 ) {
-  return async (request: NextRequest) => {
+  return async (request: NextRequest, ...args: never[]) => {
     const payload = getAuthPayload(request);
     if (!payload) {
       return unauthorizedResponse("Invalid or expired token");
+    }
+
+    // Verify user is still active in the database
+    const user = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      select: { isActive: true },
+    });
+
+    if (!user || !user.isActive) {
+      return unauthorizedResponse("Account is no longer active");
     }
 
     if (allowedRoles && !allowedRoles.includes(payload.role)) {
       return forbiddenResponse("You do not have permission to access this resource");
     }
 
-    return handler(request, payload);
+    return handler(request, payload, ...args);
   };
 }

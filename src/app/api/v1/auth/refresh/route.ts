@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { verifyRefreshToken, generateAccessToken, generateRefreshToken } from "@/lib/auth";
-import { successResponse, unauthorizedResponse, errorResponse } from "@/lib/api-response";
+import { prisma } from "@/lib/prisma";
+import { successResponse, unauthorizedResponse } from "@/lib/api-response";
 import { serialize } from "cookie";
 
 export async function POST(request: NextRequest) {
@@ -12,11 +13,22 @@ export async function POST(request: NextRequest) {
     }
 
     const payload = verifyRefreshToken(refreshToken);
+
+    // Verify user is still active and get fresh data
+    const user = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      select: { isActive: true, departmentId: true, role: true, username: true },
+    });
+
+    if (!user || !user.isActive) {
+      return unauthorizedResponse("Account is no longer active");
+    }
+
     const newPayload = {
       userId: payload.userId,
-      username: payload.username,
-      role: payload.role,
-      ...(payload.departmentId && { departmentId: payload.departmentId }),
+      username: user.username,
+      role: user.role,
+      departmentId: user.departmentId,
     };
 
     const newAccessToken = generateAccessToken(newPayload);
