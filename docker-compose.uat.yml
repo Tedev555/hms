@@ -1,7 +1,7 @@
 services:
   # --- Next.js Application ---
   hms-app:
-    image: ${IMAGE_TAG:-ghcr.io/tedev555/hms:latest}
+    image: ${IMAGE_TAG:-ghcr.io/tedev555/hms:uat}
     container_name: hms-app
     restart: unless-stopped
     ports:

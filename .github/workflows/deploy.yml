@@ -1,8 +1,8 @@
-name: Build & Deploy
+name: Build & Deploy UAT
 
 on:
   push:
-    branches: [main]
+    branches: [uat]
   workflow_dispatch:
 
 env:
@@ -38,7 +38,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=sha
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=uat
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -59,14 +59,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Copy docker-compose.prod.yml to server
+      - name: Copy docker-compose.uat.yml to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT || 22 }}
-          source: "docker-compose.prod.yml"
+          source: "docker-compose.uat.yml"
           target: "~/hms"
 
       - name: Deploy via SSH
@@ -83,7 +83,7 @@ jobs:
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
             # Set image tag for compose
-            export IMAGE_TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            export IMAGE_TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:uat
 
             # Pull the latest image
             docker pull $IMAGE_TAG
@@ -96,7 +96,7 @@ jobs:
               npx prisma migrate deploy
 
             # Deploy with docker compose
-            IMAGE_TAG=$IMAGE_TAG docker compose -f docker-compose.prod.yml up -d --remove-orphans
+            IMAGE_TAG=$IMAGE_TAG docker compose -f docker-compose.uat.yml up -d --remove-orphans
 
             # Clean up old images
             docker image prune -f
