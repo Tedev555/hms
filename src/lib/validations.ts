@@ -56,6 +56,62 @@ export const createPatientSchema = z.object({
   allergies: z.array(z.string()).optional(),
 });
 
+// Update patient
+export const updatePatientSchema = z.object({
+  firstName: z.string().min(1).max(100).optional(),
+  lastName: z.string().min(1).max(100).optional(),
+  dateOfBirth: z.string().date().optional(),
+  gender: z.enum(["male", "female", "other"]).optional(),
+  nationalId: z.string().max(50).optional().nullable(),
+  phone: z.string().min(1).max(20).optional(),
+  email: z.string().email().optional().nullable(),
+  address: z.string().optional().nullable(),
+  bloodGroup: z.string().max(5).optional().nullable(),
+  allergies: z.array(z.string()).optional(),
+});
+
+// Search patient
+export const searchPatientSchema = z.object({
+  q: z.string().min(1),
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(100).default(20),
+});
+
+// Emergency contact
+export const createEmergencyContactSchema = z.object({
+  name: z.string().min(1).max(200),
+  relationship: z.string().min(1).max(50),
+  phone: z.string().min(1).max(20),
+});
+
+export const updateEmergencyContactSchema = z.object({
+  name: z.string().min(1).max(200).optional(),
+  relationship: z.string().min(1).max(50).optional(),
+  phone: z.string().min(1).max(20).optional(),
+});
+
+// Medical history
+export const createMedicalHistorySchema = z.object({
+  condition: z.string().min(1).max(300),
+  description: z.string().optional(),
+  diagnosedAt: z.string().date().optional(),
+  isActive: z.boolean().default(true),
+});
+
+export const updateMedicalHistorySchema = z.object({
+  condition: z.string().min(1).max(300).optional(),
+  description: z.string().optional().nullable(),
+  diagnosedAt: z.string().date().optional().nullable(),
+  isActive: z.boolean().optional(),
+});
+
+// Patient document
+export const createPatientDocumentSchema = z.object({
+  title: z.string().min(1).max(200),
+  fileUrl: z.string().min(1),
+  fileType: z.string().min(1).max(50),
+});
+
 // Create appointment
 export const createAppointmentSchema = z.object({
   patientId: z.string().uuid(),
