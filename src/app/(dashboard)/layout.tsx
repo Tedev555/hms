@@ -1,6 +1,7 @@
 import { Separator } from "@/components/ui/separator";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { MobileSidebar } from "@/components/layout/mobile-sidebar";
+import { LogoutButton } from "@/components/layout/logout-button";
 import { Toaster } from "@/components/ui/sonner";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -22,6 +23,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <h1 className="text-sm font-medium text-muted-foreground">
             Hospital Management System
           </h1>
+          <div className="ml-auto">
+            <LogoutButton />
+          </div>
         </header>
         <div className="p-6">{children}</div>
       </main>

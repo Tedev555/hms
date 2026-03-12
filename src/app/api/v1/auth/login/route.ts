@@ -5,6 +5,17 @@ import { successResponse, errorResponse, unauthorizedResponse } from "@/lib/api-
 import { loginSchema } from "@/lib/validations";
 import { serialize } from "cookie";
 
+const MAX_FAILED_ATTEMPTS = 5;
+const LOCKOUT_DURATION_MINUTES = 15;
+
+function getClientIp(request: NextRequest): string {
+  return (
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    request.headers.get("x-real-ip") ||
+    "unknown"
+  );
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -15,6 +26,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { username, password } = parsed.data;
+    const ipAddress = getClientIp(request);
 
     const user = await prisma.user.findUnique({
       where: { username },
@@ -26,26 +38,126 @@ export async function POST(request: NextRequest) {
         isActive: true,
         firstName: true,
         lastName: true,
+        departmentId: true,
+        failedLoginAttempts: true,
+        lockedUntil: true,
       },
     });
 
-    if (!user || !user.isActive) {
+    // User not found — log attempt and return generic error
+    if (!user) {
+      await prisma.auditLog.create({
+        data: {
+          action: "LOGIN_FAILED",
+          entity: "auth",
+          ipAddress,
+          newData: { username, reason: "user_not_found" },
+        },
+      });
       return unauthorizedResponse("Invalid credentials");
+    }
+
+    // Account deactivated
+    if (!user.isActive) {
+      await prisma.auditLog.create({
+        data: {
+          userId: user.id,
+          action: "LOGIN_FAILED",
+          entity: "auth",
+          ipAddress,
+          newData: { username, reason: "account_inactive" },
+        },
+      });
+      return unauthorizedResponse("Invalid credentials");
+    }
+
+    // Account locked — check if lockout has expired
+    if (user.lockedUntil && user.lockedUntil > new Date()) {
+      await prisma.auditLog.create({
+        data: {
+          userId: user.id,
+          action: "LOGIN_FAILED",
+          entity: "auth",
+          ipAddress,
+          newData: { username, reason: "account_locked" },
+        },
+      });
+      return errorResponse("Account is temporarily locked. Please try again later.", 423);
+    }
+
+    // If lockout expired, reset the counter before checking password
+    if (user.lockedUntil && user.lockedUntil <= new Date()) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { failedLoginAttempts: 0, lockedUntil: null },
+      });
     }
 
     const isValid = await verifyPassword(password, user.passwordHash);
+
     if (!isValid) {
+      const newFailedAttempts = user.failedLoginAttempts + 1;
+      const shouldLock = newFailedAttempts >= MAX_FAILED_ATTEMPTS;
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          failedLoginAttempts: newFailedAttempts,
+          lockedUntil: shouldLock
+            ? new Date(Date.now() + LOCKOUT_DURATION_MINUTES * 60 * 1000)
+            : null,
+        },
+      });
+
+      await prisma.auditLog.create({
+        data: {
+          userId: user.id,
+          action: "LOGIN_FAILED",
+          entity: "auth",
+          ipAddress,
+          newData: {
+            username,
+            reason: "invalid_password",
+            failedAttempts: newFailedAttempts,
+            accountLocked: shouldLock,
+          },
+        },
+      });
+
+      if (shouldLock) {
+        return errorResponse("Account is temporarily locked. Please try again later.", 423);
+      }
+
       return unauthorizedResponse("Invalid credentials");
     }
 
-    const payload = { userId: user.id, username: user.username, role: user.role };
+    // Successful login — reset failed attempts and update last login
+    const payload = {
+      userId: user.id,
+      username: user.username,
+      role: user.role,
+      departmentId: user.departmentId,
+    };
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
 
-    // Update last login
     await prisma.user.update({
       where: { id: user.id },
-      data: { lastLoginAt: new Date() },
+      data: {
+        lastLoginAt: new Date(),
+        failedLoginAttempts: 0,
+        lockedUntil: null,
+      },
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        userId: user.id,
+        action: "LOGIN_SUCCESS",
+        entity: "auth",
+        ipAddress,
+        newData: { username },
+      },
     });
 
     const response = successResponse({
@@ -56,6 +168,7 @@ export async function POST(request: NextRequest) {
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
+        departmentId: user.departmentId,
       },
     });
 

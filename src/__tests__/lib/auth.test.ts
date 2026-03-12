@@ -13,6 +13,7 @@ const mockPayload: JwtPayload = {
   userId: "user-123",
   username: "dr.smith",
   role: "doctor" as JwtPayload["role"],
+  departmentId: "dept-456",
 };
 
 describe("auth", () => {

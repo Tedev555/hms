@@ -7,6 +7,7 @@ export type AuthUser = {
   firstName: string;
   lastName: string;
   role: UserRole;
+  departmentId: string | null;
 };
 
 export type LoginResponse = {

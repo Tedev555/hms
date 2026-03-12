@@ -1,12 +1,24 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 import { getAuthPayload, withAuth } from "@/middleware/auth";
 import { generateAccessToken, type JwtPayload } from "@/lib/auth";
+
+// Mock Prisma
+vi.mock("@/lib/prisma", () => ({
+  prisma: {
+    user: {
+      findUnique: vi.fn(),
+    },
+  },
+}));
+
+import { prisma } from "@/lib/prisma";
 
 const mockPayload: JwtPayload = {
   userId: "user-123",
   username: "dr.smith",
   role: "doctor" as JwtPayload["role"],
+  departmentId: "dept-456",
 };
 
 function createRequest(authHeader?: string): NextRequest {
@@ -18,6 +30,14 @@ function createRequest(authHeader?: string): NextRequest {
 }
 
 describe("middleware/auth", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Default: user is active
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({
+      isActive: true,
+    } as never);
+  });
+
   describe("getAuthPayload", () => {
     it("should return payload for a valid Bearer token", () => {
       const token = generateAccessToken(mockPayload);
@@ -28,6 +48,7 @@ describe("middleware/auth", () => {
       expect(result!.userId).toBe("user-123");
       expect(result!.username).toBe("dr.smith");
       expect(result!.role).toBe("doctor");
+      expect(result!.departmentId).toBe("dept-456");
     });
 
     it("should return null when no authorization header", () => {
@@ -47,14 +68,14 @@ describe("middleware/auth", () => {
   });
 
   describe("withAuth", () => {
-    it("should call handler with payload when token is valid", async () => {
+    it("should call handler with payload when token is valid and user is active", async () => {
       const token = generateAccessToken(mockPayload);
       const request = createRequest(`Bearer ${token}`);
 
       const handler = vi.fn().mockResolvedValue(new Response("OK"));
       const protectedRoute = withAuth(handler);
 
-      const response = await protectedRoute(request);
+      await protectedRoute(request);
       expect(handler).toHaveBeenCalledOnce();
       expect(handler.mock.calls[0][1].userId).toBe("user-123");
     });
@@ -71,6 +92,36 @@ describe("middleware/auth", () => {
 
     it("should return 401 for invalid token", async () => {
       const request = createRequest("Bearer bad-token");
+      const handler = vi.fn();
+      const protectedRoute = withAuth(handler);
+
+      const response = await protectedRoute(request);
+      expect(response.status).toBe(401);
+      expect(handler).not.toHaveBeenCalled();
+    });
+
+    it("should return 401 when user is inactive", async () => {
+      vi.mocked(prisma.user.findUnique).mockResolvedValue({
+        isActive: false,
+      } as never);
+
+      const token = generateAccessToken(mockPayload);
+      const request = createRequest(`Bearer ${token}`);
+
+      const handler = vi.fn();
+      const protectedRoute = withAuth(handler);
+
+      const response = await protectedRoute(request);
+      expect(response.status).toBe(401);
+      expect(handler).not.toHaveBeenCalled();
+    });
+
+    it("should return 401 when user is not found in database", async () => {
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
+
+      const token = generateAccessToken(mockPayload);
+      const request = createRequest(`Bearer ${token}`);
+
       const handler = vi.fn();
       const protectedRoute = withAuth(handler);
 
