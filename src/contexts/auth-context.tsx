@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 import type { AuthUser, LoginResponse } from "@/types";
@@ -22,6 +22,7 @@ function decodeJwtPayload(token: string): {
   username: string;
   role: string;
   departmentId: string | null;
+  exp: number;
 } {
   const base64 = token.split(".")[1];
   const json = atob(base64.replace(/-/g, "+").replace(/_/g, "/"));
@@ -33,6 +34,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearRefreshTimer = useCallback(() => {
+    if (refreshTimerRef.current) {
+      clearTimeout(refreshTimerRef.current);
+      refreshTimerRef.current = null;
+    }
+  }, []);
+
+  const scheduleRefresh = useCallback(
+    (token: string) => {
+      clearRefreshTimer();
+      try {
+        const { exp } = decodeJwtPayload(token);
+        const delay = exp * 1000 - Date.now() - 60_000; // 1 min before expiry
+        if (delay <= 0) return;
+
+        refreshTimerRef.current = setTimeout(async () => {
+          try {
+            const res = await fetch("/api/v1/auth/refresh", { method: "POST" });
+            if (!res.ok) return;
+            const body = await res.json();
+            const newToken = body.data.accessToken as string;
+            setAccessToken(newToken);
+            scheduleRefresh(newToken);
+          } catch {
+            // Refresh failed — user will be redirected on next authFetch 401
+          }
+        }, delay);
+      } catch {
+        // Token decode failed
+      }
+    },
+    [clearRefreshTimer],
+  );
 
   // Restore session on mount via refresh endpoint
   useEffect(() => {
@@ -55,6 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           role: payload.role as AuthUser["role"],
           departmentId: payload.departmentId,
         });
+        scheduleRefresh(token);
       } catch {
         router.push("/login");
       } finally {
@@ -62,14 +99,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
     restore();
-  }, [router]);
+    return () => clearRefreshTimer();
+  }, [router, scheduleRefresh, clearRefreshTimer]);
 
-  const login = useCallback((data: LoginResponse) => {
-    setAccessToken(data.accessToken);
-    setUser(data.user);
-  }, []);
+  const login = useCallback(
+    (data: LoginResponse) => {
+      setAccessToken(data.accessToken);
+      setUser(data.user);
+      scheduleRefresh(data.accessToken);
+    },
+    [scheduleRefresh],
+  );
 
   const logout = useCallback(async () => {
+    clearRefreshTimer();
     try {
       await fetch("/api/v1/auth/logout", {
         method: "POST",
@@ -81,7 +124,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
     setAccessToken(null);
     router.push("/login");
-  }, [accessToken, router]);
+  }, [accessToken, router, clearRefreshTimer]);
 
   const authFetch = useCallback(
     async (url: string, options: RequestInit = {}) => {

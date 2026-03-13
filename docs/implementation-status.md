@@ -1,6 +1,6 @@
 # HMS Implementation Status — Modules 1–4
 
-**Version:** 2.0 | **Date:** March 13, 2026 | **Status:** Current
+**Version:** 3.0 | **Date:** March 13, 2026 | **Status:** Current
 
 ---
 
@@ -28,8 +28,12 @@ This document provides a requirement-by-requirement analysis of Modules 1–4, c
 - All backend APIs for Modules 1–4 are **fully implemented** (auth, patients, appointments, billing)
 - All validation schemas including billing are **implemented** in `src/lib/validations.ts`
 - Billing validation tests exist in `src/__tests__/lib/billing-validations.test.ts`
-- **Zero frontend UI pages** exist for patients, appointments, or billing
-- Auth frontend is **partially complete** — login works, but no role-aware sidebar or auth context
+- **All 12 frontend UI pages** are implemented (patients x4, appointments x4, billing x4)
+- Auth frontend is **fully implemented** — auth context, role-aware sidebar, role-based login redirect
+- Admin unlock endpoint implemented at `POST /api/v1/users/[id]/unlock`
+- Auto-refresh token logic implemented in auth context
+- Dashboard fetches real data (patient count, today's appointments, pending invoices)
+- E2E tests cover patients, appointments, and billing workflows
 - The dedicated billing calculation service (`src/lib/billing.ts`) from the roadmap was **not created** — calculation logic is inline in the invoice API routes
 
 ---
@@ -104,13 +108,13 @@ This document provides a requirement-by-requirement analysis of Modules 1–4, c
 
 ### 3.5 Roadmap Phase 1 Items
 
-| Item                       | Status  | Notes                                                  |
-| -------------------------- | ------- | ------------------------------------------------------ |
-| Auth context provider      | Missing | No `src/contexts/auth-context.tsx`                     |
-| Role-aware sidebar nav     | Missing | Sidebar shows all 9 items to all roles                 |
-| Role-based login redirect  | Missing | All users go to `/`                                    |
-| Admin unlock endpoint      | Missing | No `src/app/api/v1/users/[id]/unlock/route.ts`         |
-| Dashboard layout wrapper   | Missing | No `<AuthProvider>` in dashboard layout                |
+| Item                       | Status      | Notes                                                       |
+| -------------------------- | ----------- | ----------------------------------------------------------- |
+| Auth context provider      | Implemented | `src/contexts/auth-context.tsx` with session restore + auto-refresh |
+| Role-aware sidebar nav     | Implemented | `src/components/layout/sidebar-nav.tsx` filters by `roleRoutes` |
+| Role-based login redirect  | Implemented | `src/app/(auth)/login/page.tsx` uses `roleLanding` map       |
+| Admin unlock endpoint      | Implemented | `src/app/api/v1/users/[id]/unlock/route.ts`                 |
+| Dashboard layout wrapper   | Implemented | `<AuthProvider>` wraps dashboard in layout.tsx               |
 
 ---
 
@@ -186,12 +190,12 @@ This document provides a requirement-by-requirement analysis of Modules 1–4, c
 
 ### 4.4 UI Pages
 
-| Page                                | Status  |
-| ----------------------------------- | ------- |
-| `/patients` — List with search      | Missing |
-| `/patients/new` — Registration form | Missing |
-| `/patients/:id` — Detail with tabs  | Missing |
-| `/patients/:id/edit` — Edit form    | Missing |
+| Page                                | Status      |
+| ----------------------------------- | ----------- |
+| `/patients` — List with search      | Implemented |
+| `/patients/new` — Registration form | Implemented |
+| `/patients/:id` — Detail with tabs  | Implemented |
+| `/patients/:id/edit` — Edit form    | Implemented |
 
 ---
 
@@ -259,20 +263,20 @@ This document provides a requirement-by-requirement analysis of Modules 1–4, c
 
 ### 5.4 UI Pages
 
-| Page                                    | Status  |
-| --------------------------------------- | ------- |
-| `/appointments` — List with filters     | Missing |
-| `/appointments/new` — Booking form      | Missing |
-| `/appointments/:id` — Detail view       | Missing |
-| `/appointments/queue` — Queue dashboard | Missing |
+| Page                                    | Status      |
+| --------------------------------------- | ----------- |
+| `/appointments` — List with filters     | Implemented |
+| `/appointments/new` — Booking form      | Implemented |
+| `/appointments/:id` — Detail view       | Implemented |
+| `/appointments/queue` — Queue dashboard | Implemented |
 
 ### 5.5 Other Gaps
 
-| Item                                          | Status  | Notes                                     |
-| --------------------------------------------- | ------- | ----------------------------------------- |
-| Appointment audit logging                     | Missing | No `createAuditLog` in appointment routes |
-| Doctor availability/unavailability management | Missing | No availability model or calendar         |
-| Real-time queue updates                       | Missing | Polling only; no WebSocket/SSE            |
+| Item                                          | Status      | Notes                                        |
+| --------------------------------------------- | ----------- | -------------------------------------------- |
+| Appointment audit logging                     | Implemented | `createAuditLog` in all appointment routes   |
+| Doctor availability/unavailability management | Missing     | No availability model or calendar            |
+| Real-time queue updates                       | Partial     | 30s polling via auto-refresh; no WebSocket   |
 
 ---
 
@@ -324,12 +328,12 @@ This document provides a requirement-by-requirement analysis of Modules 1–4, c
 
 ### 6.4 UI Pages
 
-| Page                                        | Status  |
-| ------------------------------------------- | ------- |
-| `/billing` — Invoice list                   | Missing |
-| `/billing/new` — Create invoice             | Missing |
-| `/billing/:id` — Invoice detail             | Missing |
-| `/billing/:id/payment` — Record payment     | Missing |
+| Page                                        | Status      |
+| ------------------------------------------- | ----------- |
+| `/billing` — Invoice list                   | Implemented |
+| `/billing/new` — Create invoice             | Implemented |
+| `/billing/:id` — Invoice detail             | Implemented |
+| `/billing/:id/payment` — Record payment     | Implemented |
 
 ### 6.5 Infrastructure
 
@@ -353,24 +357,24 @@ Mapped against `docs/implementation-roadmap.md` phases:
 
 | Phase | Name                          | Status          | Completion | Notes                                                  |
 | ----- | ----------------------------- | --------------- | ---------- | ------------------------------------------------------ |
-| 1     | Auth & Frontend RBAC Fixes    | Not Started     | 0%         | No auth context, no role sidebar, no unlock endpoint   |
-| 2     | Patient UI Pages              | Not Started     | 0%         | All 4 UI pages missing; RBAC fix not applied           |
-| 3     | Appointment UI Pages          | Not Started     | 0%         | All 4 UI pages missing; audit logging not added        |
+| 1     | Auth & Frontend RBAC Fixes    | Complete        | 100%       | Auth context, role sidebar, unlock endpoint, auto-refresh |
+| 2     | Patient UI Pages              | Complete        | 100%       | All 4 UI pages implemented with RBAC                   |
+| 3     | Appointment UI Pages          | Complete        | 100%       | All 4 UI pages + audit logging implemented             |
 | 4     | Billing Validation & Calc     | Mostly Complete | 80%        | Schemas done + tests done; dedicated billing.ts missing |
 | 5     | Billing API Routes            | Complete        | 100%       | All 7 route files + patient invoices implemented       |
-| 6     | Billing UI Pages              | Not Started     | 0%         | All 4 UI pages missing                                 |
-| 7     | Testing                       | Partial         | 30%        | Billing validation tests done; E2E tests missing       |
+| 6     | Billing UI Pages              | Complete        | 100%       | All 4 UI pages implemented                             |
+| 7     | Testing                       | Mostly Complete | 80%        | Unit + E2E tests for all modules; billing calc tests pending |
 
 ### Overall Progress
 
 | Category         | Implemented | Total | Percentage |
 | ---------------- | ----------- | ----- | ---------- |
-| API Endpoints    | 29          | 29    | 100%       |
-| UI Pages         | 1 (login)   | 13    | 8%         |
+| API Endpoints    | 30          | 30    | 100%       |
+| UI Pages         | 13          | 13    | 100%       |
 | Validation Tests | 46+         | ~60   | ~75%       |
-| E2E Tests        | 3 files     | 6     | 50%        |
+| E2E Tests        | 6 files     | 6     | 100%       |
 
-**Bottom line:** The backend is essentially complete for Modules 1–4. The primary gap is **frontend UI** — zero module-specific pages exist for patients, appointments, or billing.
+**Bottom line:** Modules 1–4 are functionally complete — all APIs, UI pages, auth flows, and E2E tests are implemented. Remaining work is Modules 5–9.
 
 ---
 

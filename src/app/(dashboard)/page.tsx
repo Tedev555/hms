@@ -21,7 +21,7 @@ type DashboardStats = {
   totalPatients: number;
   appointmentsToday: number;
   bedOccupancy: string;
-  pendingLabResults: number;
+  pendingInvoices: number;
 };
 
 const statConfig = [
@@ -50,9 +50,9 @@ const statConfig = [
     bg: "bg-amber-50 dark:bg-amber-950",
   },
   {
-    key: "pendingLabResults" as const,
-    title: "Pending Lab Results",
-    description: "Awaiting processing",
+    key: "pendingInvoices" as const,
+    title: "Pending Invoices",
+    description: "Draft & issued invoices",
     icon: FlaskConical,
     color: "text-purple-600",
     bg: "bg-purple-50 dark:bg-purple-950",
@@ -97,9 +97,13 @@ export default function DashboardPage() {
 
   const fetchStats = useCallback(async () => {
     try {
-      const [patientsRes, appointmentsRes] = await Promise.allSettled([
+      const today = new Date().toISOString().split("T")[0];
+
+      const [patientsRes, appointmentsRes, draftRes, issuedRes] = await Promise.allSettled([
         authFetch("/api/v1/patients?limit=1"),
-        authFetch("/api/v1/appointments?limit=1&date=" + new Date().toISOString().split("T")[0]),
+        authFetch(`/api/v1/appointments?date=${today}&limit=1`),
+        authFetch("/api/v1/invoices?status=draft&limit=1"),
+        authFetch("/api/v1/invoices?status=issued&limit=1"),
       ]);
 
       const totalPatients =
@@ -112,11 +116,21 @@ export default function DashboardPage() {
           ? ((await appointmentsRes.value.json()).meta?.total ?? 0)
           : 0;
 
+      const draftTotal =
+        draftRes.status === "fulfilled" && draftRes.value.ok
+          ? ((await draftRes.value.json()).meta?.total ?? 0)
+          : 0;
+
+      const issuedTotal =
+        issuedRes.status === "fulfilled" && issuedRes.value.ok
+          ? ((await issuedRes.value.json()).meta?.total ?? 0)
+          : 0;
+
       setStats({
         totalPatients,
         appointmentsToday,
         bedOccupancy: "—",
-        pendingLabResults: 0,
+        pendingInvoices: draftTotal + issuedTotal,
       });
     } catch {
       // Use fallback values
@@ -124,7 +138,7 @@ export default function DashboardPage() {
         totalPatients: 0,
         appointmentsToday: 0,
         bedOccupancy: "—",
-        pendingLabResults: 0,
+        pendingInvoices: 0,
       });
     } finally {
       setLoading(false);
