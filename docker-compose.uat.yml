@@ -5,7 +5,7 @@ services:
     container_name: hms-app
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "30000:30000"
     env_file:
       - .env
     environment:
