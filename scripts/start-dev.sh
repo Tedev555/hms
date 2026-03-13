@@ -331,7 +331,7 @@ check_port() {
   return 0
 }
 
-check_port 3000 "Next.js dev server" || true
+check_port 30000 "Next.js dev server" || true
 check_port 54320 "PostgreSQL" || true
 check_port 63790 "Redis" || true
 check_port 9000 "MinIO API" || true
@@ -365,7 +365,7 @@ echo ""
 
 if [ "$NO_DEV" = false ]; then
   step "Starting development server"
-  info "Starting Next.js dev server on http://localhost:3000"
+  info "Starting Next.js dev server on http://localhost:30000"
   echo ""
   exec npm run dev
 fi
