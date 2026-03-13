@@ -218,3 +218,80 @@ export const recordPaymentSchema = z.object({
   paymentMethod: z.enum(["cash", "card", "bank_transfer", "insurance", "mixed"]),
   reference: z.string().max(100).optional(),
 });
+
+// ============================================================
+// PHARMACY MODULE
+// ============================================================
+
+const drugFormulationEnum = z.enum([
+  "tablet",
+  "capsule",
+  "syrup",
+  "injection",
+  "cream",
+  "inhaler",
+  "drops",
+  "other",
+]);
+
+// Create drug
+export const createDrugSchema = z.object({
+  genericName: z.string().min(1).max(200),
+  brandName: z.string().max(200).optional(),
+  category: z.string().max(100).optional(),
+  formulation: drugFormulationEnum,
+  strength: z.string().max(50).optional(),
+  unit: z.string().min(1).max(20),
+  reorderLevel: z.number().int().min(0).default(10),
+  unitPrice: z.number().positive(),
+  isControlled: z.boolean().default(false),
+  requiresPrescription: z.boolean().default(true),
+});
+
+// Update drug
+export const updateDrugSchema = z.object({
+  genericName: z.string().min(1).max(200).optional(),
+  brandName: z.string().max(200).nullable().optional(),
+  category: z.string().max(100).nullable().optional(),
+  formulation: drugFormulationEnum.optional(),
+  strength: z.string().max(50).nullable().optional(),
+  unit: z.string().min(1).max(20).optional(),
+  reorderLevel: z.number().int().min(0).optional(),
+  unitPrice: z.number().positive().optional(),
+  isControlled: z.boolean().optional(),
+  requiresPrescription: z.boolean().optional(),
+});
+
+// Create drug batch (stock receipt)
+export const createBatchSchema = z.object({
+  batchNo: z.string().min(1).max(50),
+  quantity: z.number().int().positive(),
+  expiryDate: z.string().date(),
+  costPrice: z.number().positive(),
+  supplier: z.string().max(200).optional(),
+});
+
+// Create prescription
+export const createPrescriptionSchema = z.object({
+  patientId: z.string().uuid(),
+  appointmentId: z.string().uuid().optional(),
+  diagnosis: z.string().max(2000).optional(),
+  notes: z.string().max(2000).optional(),
+  items: z
+    .array(
+      z.object({
+        drugId: z.string().uuid(),
+        dosage: z.string().min(1).max(100),
+        frequency: z.string().min(1).max(100),
+        duration: z.string().min(1).max(50),
+        quantity: z.number().int().positive(),
+        instructions: z.string().max(500).optional(),
+      }),
+    )
+    .min(1),
+});
+
+// Dispense prescription item
+export const dispensePrescriptionItemSchema = z.object({
+  confirm: z.literal(true),
+});

@@ -41,10 +41,10 @@ const sectionLabels: Record<string, string> = {
 
 const roleRoutes: Record<UserRole, string[]> = {
   receptionist: ["/", "/patients", "/appointments", "/billing"],
-  admin: ["/", "/patients", "/appointments", "/billing", "/users", "/reports"],
-  doctor: ["/", "/patients", "/appointments", "/laboratory"],
+  admin: ["/", "/patients", "/appointments", "/billing", "/pharmacy", "/users", "/reports"],
+  doctor: ["/", "/patients", "/appointments", "/pharmacy", "/laboratory"],
   nurse: ["/", "/patients", "/appointments", "/ward"],
-  director: ["/", "/patients", "/appointments", "/billing", "/users", "/reports"],
+  director: ["/", "/patients", "/appointments", "/billing", "/pharmacy", "/users", "/reports"],
   lab_tech: ["/", "/laboratory"],
   pharmacist: ["/", "/pharmacy"],
   paramedic: ["/", "/patients", "/appointments", "/ward"],
