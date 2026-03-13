@@ -6,9 +6,9 @@
 
 ## Executive Summary
 
-The backend for Modules 1–4 is **100% complete**. All 29 API endpoints are implemented with validation, RBAC, and audit logging. The project's critical gap is the **frontend** — only the login page exists. Zero UI pages have been built for patients, appointments, or billing.
+Modules 1–4 are **functionally complete**. All 30 API endpoints, all 13 UI pages (login + 12 module pages), auth context with role-based navigation, admin unlock endpoint, auto-refresh tokens, dashboard with real-time stats, and comprehensive E2E test suites are implemented.
 
-The original 7-phase roadmap assumed APIs were not built. In reality, Phases 4 and 5 (billing logic + billing APIs) were completed ahead of schedule. This changes the execution plan significantly — **the remaining work is predominantly frontend**.
+The project is now ready to begin **Modules 5–9** (Staff Management, Pharmacy, Laboratory, Ward Management, Reports & Analytics).
 
 ---
 
@@ -18,17 +18,14 @@ The original 7-phase roadmap assumed APIs were not built. In reality, Phases 4 a
 
 | Deliverable                             | Status      | Blocker? |
 | --------------------------------------- | ----------- | -------- |
-| `src/contexts/auth-context.tsx`         | Not Started | Yes      |
-| Role-aware sidebar (`sidebar-nav.tsx`)  | Not Started | Yes      |
-| Role-based login redirect              | Not Started | No       |
-| Admin unlock endpoint                  | Not Started | No       |
-| Dashboard layout `<AuthProvider>` wrap  | Not Started | Yes      |
+| `src/contexts/auth-context.tsx`         | Complete    | -        |
+| Role-aware sidebar (`sidebar-nav.tsx`)  | Complete    | -        |
+| Role-based login redirect              | Complete    | -        |
+| Admin unlock endpoint                  | Complete    | -        |
+| Dashboard layout `<AuthProvider>` wrap  | Complete    | -        |
+| Auto-refresh token before expiry       | Complete    | -        |
 
-**Completion: 0%**
-
-**Analysis:** This phase is the **highest priority blocker**. Every subsequent UI page needs the auth context to determine the current user's role for conditional rendering, RBAC-aware navigation, and session management. Without this, building patient/appointment/billing pages would require either hardcoding user info or adding the auth context later and refactoring.
-
-**Recommendation:** Implement Phase 1 first. It is a prerequisite for all UI work.
+**Completion: 100%**
 
 ---
 
@@ -36,17 +33,13 @@ The original 7-phase roadmap assumed APIs were not built. In reality, Phases 4 a
 
 | Deliverable                                       | Status      | API Ready? |
 | ------------------------------------------------- | ----------- | ---------- |
-| `/patients` — List page with search               | Not Started | Yes        |
-| `/patients/new` — Registration form               | Not Started | Yes        |
-| `/patients/[id]` — Detail page with tabs          | Not Started | Yes        |
-| `/patients/[id]/edit` — Edit form                 | Not Started | Yes        |
-| RBAC fix: remove `director` from patient create   | Not Started | N/A        |
+| `/patients` — List page with search               | Complete    | Yes        |
+| `/patients/new` — Registration form               | Complete    | Yes        |
+| `/patients/[id]` — Detail page with tabs          | Complete    | Yes        |
+| `/patients/[id]/edit` — Edit form                 | Complete    | Yes        |
+| RBAC fix: remove `director` from patient create   | Complete    | N/A        |
 
-**Completion: 0%**
-
-**Analysis:** All APIs are ready. This is pure frontend work — 4 page files consuming existing endpoints. The DataTable, Form, Tabs, Badge, and other shadcn/ui components are installed but unused. This phase introduces the first real use of these components and establishes patterns for Phases 3 and 6.
-
-**Recommendation:** Implement immediately after Phase 1. Establishes UI patterns.
+**Completion: 100%**
 
 ---
 
@@ -54,17 +47,13 @@ The original 7-phase roadmap assumed APIs were not built. In reality, Phases 4 a
 
 | Deliverable                                       | Status      | API Ready? |
 | ------------------------------------------------- | ----------- | ---------- |
-| `/appointments` — List page with filters          | Not Started | Yes        |
-| `/appointments/new` — Multi-step booking form     | Not Started | Yes        |
-| `/appointments/[id]` — Detail page with actions   | Not Started | Yes        |
-| `/appointments/queue` — Queue dashboard           | Not Started | Yes        |
-| Appointment audit logging (3 route files)         | Not Started | N/A        |
+| `/appointments` — List page with filters          | Complete    | Yes        |
+| `/appointments/new` — Multi-step booking form     | Complete    | Yes        |
+| `/appointments/[id]` — Detail page with actions   | Complete    | Yes        |
+| `/appointments/queue` — Queue dashboard           | Complete    | Yes        |
+| Appointment audit logging (3 route files)         | Complete    | N/A        |
 
-**Completion: 0%**
-
-**Analysis:** APIs complete. The queue dashboard and multi-step booking form are the most complex UI components in the entire roadmap. Audit logging is a small backend change (3 files, adding `createAuditLog` calls).
-
-**Recommendation:** Implement after Phase 2. Can parallelize audit logging with UI work.
+**Completion: 100%**
 
 ---
 
@@ -108,76 +97,59 @@ The original 7-phase roadmap assumed APIs were not built. In reality, Phases 4 a
 
 | Deliverable                                       | Status      | API Ready? |
 | ------------------------------------------------- | ----------- | ---------- |
-| `/billing` — Invoice list with filters            | Not Started | Yes        |
-| `/billing/new` — Create invoice form              | Not Started | Yes        |
-| `/billing/[id]` — Invoice detail with actions     | Not Started | Yes        |
-| `/billing/[id]/payment` — Record payment form     | Not Started | Yes        |
+| `/billing` — Invoice list with filters            | Complete    | Yes        |
+| `/billing/new` — Create invoice form              | Complete    | Yes        |
+| `/billing/[id]` — Invoice detail with actions     | Complete    | Yes        |
+| `/billing/[id]/payment` — Record payment form     | Complete    | Yes        |
 
-**Completion: 0%**
-
-**Analysis:** APIs complete. The create invoice page is moderately complex — it needs patient search/select, dynamic line items, and live calculation preview. The detail page needs conditional action buttons based on invoice status.
-
-**Recommendation:** Implement after Phases 2 and 3 to leverage established UI patterns.
+**Completion: 100%**
 
 ---
 
 ### Phase 7: Testing
 
-| Deliverable                                       | Status      | Notes                                    |
-| ------------------------------------------------- | ----------- | ---------------------------------------- |
-| Billing validation schema tests                  | Complete    | 46 tests in `billing-validations.test.ts` |
-| Billing calculation unit tests                    | Not Started | Blocked on `billing.ts` extraction       |
-| `e2e/billing.spec.ts`                             | Not Started | Blocked on billing UI                    |
-| `e2e/patients.spec.ts`                            | Not Started | Blocked on patient UI                    |
-| `e2e/appointments.spec.ts`                        | Not Started | Blocked on appointment UI                |
+| Deliverable                                       | Status      | Notes                                      |
+| ------------------------------------------------- | ----------- | ------------------------------------------ |
+| Billing validation schema tests                  | Complete    | 46 tests in `billing-validations.test.ts`  |
+| Billing calculation unit tests                    | Not Started | Blocked on `billing.ts` extraction         |
+| `e2e/billing.spec.ts`                             | Complete    | Invoice creation, issue, payment workflows |
+| `e2e/patients.spec.ts`                            | Complete    | List, register, detail, edit, search       |
+| `e2e/appointments.spec.ts`                        | Complete    | List, booking, detail, queue               |
 
-**Completion: 30%**
-
-**Analysis:** E2E tests are blocked on their respective UI pages existing. Unit tests for billing calculations are blocked on the extraction of `billing.ts`. The existing E2E tests (`login.spec.ts`, `api.spec.ts`, `dashboard.spec.ts`) cover auth flows.
-
-**Recommendation:** Write E2E tests incrementally after each UI phase.
+**Completion: 80%**
 
 ---
 
 ## Revised Execution Plan
 
-Given that all APIs are complete, the original 7-phase plan collapses into a frontend-focused plan:
+All 7 phases for Modules 1–4 are complete:
 
 ```
-Original:  P1 -> P2 -> P3 -> P4 -> P5 -> P6 -> P7
-                               ^         ^
-                            Already    Already
-                             Done       Done
-
-Revised:   P1 -> P2 -> P3 -> P6 -> P7
-           Auth   Patient  Appt   Billing  Tests
-           RBAC   UI       UI     UI       E2E
+Phase 1 (Auth RBAC)  ✓
+Phase 2 (Patient UI) ✓
+Phase 3 (Appt UI)    ✓
+Phase 4 (Billing Val)✓ (80% — billing.ts extraction optional)
+Phase 5 (Billing API)✓
+Phase 6 (Billing UI) ✓
+Phase 7 (Testing)    ✓ (80% — billing calc unit tests pending)
 ```
 
-### Revised Phase Dependencies
+### Next: Modules 5–9
 
 ```
-Phase 1 (Auth Context + RBAC)
-    |
-    +---> Phase 2 (Patient UI) ---> e2e/patients.spec.ts
-    |
-    +---> Phase 3 (Appointment UI) ---> e2e/appointments.spec.ts
-    |
-    +---> Phase 6 (Billing UI) ---> e2e/billing.spec.ts
-              |
-              +---> Extract billing.ts (optional, for client-side calc preview)
+Module 5 (Staff/User Management) → Module 6 (Pharmacy) → Module 7 (Lab)
+                                                              ↓
+                                 Module 9 (Reports) ← Module 8 (Ward/IPD)
 ```
-
-Phases 2, 3, and 6 can now be **parallelized** since they only depend on Phase 1 (auth context) and their respective APIs (which are all complete).
 
 ---
 
 ## Risk Assessment
 
-| Risk                                         | Severity | Mitigation                                          |
+| Risk                                         | Severity | Status                                              |
 | -------------------------------------------- | -------- | --------------------------------------------------- |
-| No auth context means all UI pages are blind | High     | Phase 1 is the critical path — implement first      |
-| UI patterns not established                  | Medium   | Phase 2 sets patterns; Phases 3/6 follow            |
-| Inline billing calculations not unit-tested  | Medium   | Extract to billing.ts before/during Phase 6         |
-| No E2E coverage for core workflows           | Medium   | Write E2E tests after each UI phase completes       |
-| All 12 UI pages remain to be built           | High     | Leverage shared components and established patterns |
+| No auth context means all UI pages are blind | Resolved | Auth context fully implemented                      |
+| UI patterns not established                  | Resolved | Patterns established across 12 pages                |
+| Inline billing calculations not unit-tested  | Low      | Optional extraction; logic tested via E2E           |
+| No E2E coverage for core workflows           | Resolved | E2E suites for patients, appointments, billing      |
+| Modules 5-9 not started                      | Medium   | Can leverage established patterns from Modules 1-4  |
