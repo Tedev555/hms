@@ -194,7 +194,7 @@ describe("validations", () => {
     });
 
     it("should reject missing required phone", () => {
-      const { phone, ...noPhone } = validPatient;
+      const { phone: _phone, ...noPhone } = validPatient;
       const result = createPatientSchema.safeParse(noPhone);
       expect(result.success).toBe(false);
     });

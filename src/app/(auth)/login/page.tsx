@@ -8,6 +8,19 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
+import type { AuthUser } from "@/types";
+
+const roleLanding: Record<string, string> = {
+  receptionist: "/patients",
+  admin: "/",
+  doctor: "/appointments",
+  nurse: "/appointments",
+  director: "/",
+  lab_tech: "/laboratory",
+  pharmacist: "/pharmacy",
+  paramedic: "/appointments",
+};
+
 export default function LoginPage() {
   const router = useRouter();
   const [username, setUsername] = useState("");
@@ -33,7 +46,10 @@ export default function LoginPage() {
         return;
       }
 
-      router.push("/");
+      const body = await res.json();
+      const user = body.data.user as AuthUser;
+      const landing = roleLanding[user.role] || "/";
+      router.push(landing);
       router.refresh();
     } catch {
       setError("An unexpected error occurred");

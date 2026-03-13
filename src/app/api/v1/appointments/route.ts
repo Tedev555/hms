@@ -4,6 +4,7 @@ import { withAuth } from "@/middleware/auth";
 import { successResponse, paginatedResponse, errorResponse } from "@/lib/api-response";
 import { createAppointmentSchema } from "@/lib/validations";
 import { parsePagination, generateCode } from "@/lib/utils";
+import { createAuditLog } from "@/lib/audit";
 import type { JwtPayload } from "@/lib/auth";
 import { Prisma } from "@prisma/client";
 
@@ -84,7 +85,7 @@ export const GET = withAuth(async (request: NextRequest, payload: JwtPayload) =>
 
 // POST /api/v1/appointments — Create appointment
 export const POST = withAuth(
-  async (request: NextRequest, _payload: JwtPayload) => {
+  async (request: NextRequest, payload: JwtPayload) => {
     try {
       const body = await request.json();
       const parsed = createAppointmentSchema.safeParse(body);
@@ -180,6 +181,14 @@ export const POST = withAuth(
           doctor: { select: { id: true, firstName: true, lastName: true } },
           department: { select: { id: true, name: true } },
         },
+      });
+
+      await createAuditLog({
+        userId: payload.userId,
+        action: "CREATE",
+        entity: "appointment",
+        entityId: appointment.id,
+        newData: appointment,
       });
 
       return successResponse(appointment, 201);

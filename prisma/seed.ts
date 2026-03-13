@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Seeding database...");
+  console.warn("Seeding database...");
 
   // Create departments
   const departments = await Promise.all(
@@ -27,7 +27,7 @@ async function main() {
     ),
   );
 
-  console.log(`Created ${departments.length} departments`);
+  console.warn(`Created ${departments.length} departments`);
 
   // Create default admin user
   const passwordHash = await bcrypt.hash("Admin@12345", 12);
@@ -46,7 +46,7 @@ async function main() {
     },
   });
 
-  console.log(`Created admin user: ${admin.username}`);
+  console.warn(`Created admin user: ${admin.username}`);
 
   // Create sample lab tests
   const labTests = await Promise.all(
@@ -100,9 +100,9 @@ async function main() {
     ),
   );
 
-  console.log(`Created ${labTests.length} lab tests`);
+  console.warn(`Created ${labTests.length} lab tests`);
 
-  console.log("Seeding complete.");
+  console.warn("Seeding complete.");
 }
 
 main()
