@@ -120,7 +120,15 @@ export function SidebarNav({ className }: { className?: string }) {
       {user && (
         <div className="mt-auto pt-4">
           <Separator className="mb-4" />
-          <div className="flex items-center gap-3 px-3 py-2">
+          <Link
+            href="/profile"
+            className={cn(
+              "flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150",
+              pathname === "/profile"
+                ? "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+                : "hover:bg-accent",
+            )}
+          >
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 text-sm font-semibold flex-shrink-0">
               {user.firstName?.[0]?.toUpperCase() || user.username[0]?.toUpperCase()}
             </div>
@@ -130,7 +138,7 @@ export function SidebarNav({ className }: { className?: string }) {
                 {roleLabels[user.role] || user.role}
               </p>
             </div>
-          </div>
+          </Link>
         </div>
       )}
     </div>
