@@ -24,11 +24,11 @@ export function getAuthPayload(request: NextRequest): JwtPayload | null {
  * Higher-order function to protect API routes.
  * Validates JWT, checks user is still active, and optionally restricts to specific roles.
  */
-export function withAuth(
-  handler: (request: NextRequest, payload: JwtPayload, ...args: never[]) => Promise<Response>,
+export function withAuth<T extends unknown[] = []>(
+  handler: (request: NextRequest, payload: JwtPayload, ...args: T) => Promise<Response>,
   allowedRoles?: UserRole[],
 ) {
-  return async (request: NextRequest, ...args: never[]) => {
+  return async (request: NextRequest, ...args: T) => {
     const payload = getAuthPayload(request);
     if (!payload) {
       return unauthorizedResponse("Invalid or expired token");
@@ -48,6 +48,6 @@ export function withAuth(
       return forbiddenResponse("You do not have permission to access this resource");
     }
 
-    return handler(request, payload, ...args);
+    return handler(request, payload, ...args) as Promise<Response>;
   };
 }

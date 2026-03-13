@@ -6,54 +6,64 @@ import { updateAppointmentSchema } from "@/lib/validations";
 import type { JwtPayload } from "@/lib/auth";
 
 // GET /api/v1/appointments/:id — Get appointment details
-export const GET = withAuth(async (request: NextRequest, _payload: JwtPayload) => {
-  try {
-    const id = request.nextUrl.pathname.split("/").pop()!;
+export const GET = withAuth(
+  async (
+    request: NextRequest,
+    _payload: JwtPayload,
+    { params }: { params: Promise<{ id: string }> },
+  ) => {
+    try {
+      const { id } = await params;
 
-    const appointment = await prisma.appointment.findUnique({
-      where: { id },
-      include: {
-        patient: {
-          select: {
-            id: true,
-            patientCode: true,
-            firstName: true,
-            lastName: true,
-            dateOfBirth: true,
-            gender: true,
-            phone: true,
-            bloodGroup: true,
-            allergies: true,
+      const appointment = await prisma.appointment.findUnique({
+        where: { id },
+        include: {
+          patient: {
+            select: {
+              id: true,
+              patientCode: true,
+              firstName: true,
+              lastName: true,
+              dateOfBirth: true,
+              gender: true,
+              phone: true,
+              bloodGroup: true,
+              allergies: true,
+            },
           },
-        },
-        doctor: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            department: { select: { id: true, name: true } },
+          doctor: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              department: { select: { id: true, name: true } },
+            },
           },
+          department: { select: { id: true, name: true } },
         },
-        department: { select: { id: true, name: true } },
-      },
-    });
+      });
 
-    if (!appointment) {
-      return notFoundResponse("Appointment");
+      if (!appointment) {
+        return notFoundResponse("Appointment");
+      }
+
+      return successResponse(appointment);
+    } catch (error) {
+      console.error("Get appointment error:", error);
+      return errorResponse("Internal server error", 500);
     }
-
-    return successResponse(appointment);
-  } catch (error) {
-    console.error("Get appointment error:", error);
-    return errorResponse("Internal server error", 500);
-  }
-});
+  },
+);
 
 // PUT /api/v1/appointments/:id — Update/reschedule appointment
 export const PUT = withAuth(
-  async (request: NextRequest, _payload: JwtPayload) => {
+  async (
+    request: NextRequest,
+    _payload: JwtPayload,
+    { params }: { params: Promise<{ id: string }> },
+  ) => {
     try {
-      const id = request.nextUrl.pathname.split("/").pop()!;
+      const { id } = await params;
 
       const existing = await prisma.appointment.findUnique({ where: { id } });
       if (!existing) {

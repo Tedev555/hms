@@ -11,7 +11,7 @@ export const PUT = withAuth(
   async (
     request: NextRequest,
     payload: JwtPayload,
-    { params }: { params: { id: string; contactId: string } },
+    { params }: { params: Promise<{ id: string; contactId: string }> },
   ) => {
     try {
       const { id, contactId } = await params;
@@ -57,7 +57,7 @@ export const DELETE = withAuth(
   async (
     _request: NextRequest,
     payload: JwtPayload,
-    { params }: { params: { id: string; contactId: string } },
+    { params }: { params: Promise<{ id: string; contactId: string }> },
   ) => {
     try {
       const { id, contactId } = await params;

@@ -11,7 +11,7 @@ export const PUT = withAuth(
   async (
     request: NextRequest,
     payload: JwtPayload,
-    { params }: { params: { id: string; historyId: string } },
+    { params }: { params: Promise<{ id: string; historyId: string }> },
   ) => {
     try {
       const { id, historyId } = await params;

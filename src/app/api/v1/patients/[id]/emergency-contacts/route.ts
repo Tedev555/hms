@@ -8,7 +8,11 @@ import type { JwtPayload } from "@/lib/auth";
 
 // POST /api/v1/patients/:id/emergency-contacts — Add emergency contact
 export const POST = withAuth(
-  async (request: NextRequest, payload: JwtPayload, { params }: { params: { id: string } }) => {
+  async (
+    request: NextRequest,
+    payload: JwtPayload,
+    { params }: { params: Promise<{ id: string }> },
+  ) => {
     try {
       const { id } = await params;
       const patient = await prisma.patient.findUnique({ where: { id } });

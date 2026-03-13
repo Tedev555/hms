@@ -8,7 +8,11 @@ import type { JwtPayload } from "@/lib/auth";
 
 // GET /api/v1/patients/:id — Get patient details
 export const GET = withAuth(
-  async (request: NextRequest, _payload: JwtPayload, { params }: { params: { id: string } }) => {
+  async (
+    request: NextRequest,
+    _payload: JwtPayload,
+    { params }: { params: Promise<{ id: string }> },
+  ) => {
     try {
       const { id } = await params;
       const patient = await prisma.patient.findUnique({
@@ -41,7 +45,11 @@ export const GET = withAuth(
 
 // PUT /api/v1/patients/:id — Update patient record
 export const PUT = withAuth(
-  async (request: NextRequest, payload: JwtPayload, { params }: { params: { id: string } }) => {
+  async (
+    request: NextRequest,
+    payload: JwtPayload,
+    { params }: { params: Promise<{ id: string }> },
+  ) => {
     try {
       const { id } = await params;
       const existing = await prisma.patient.findUnique({ where: { id } });
