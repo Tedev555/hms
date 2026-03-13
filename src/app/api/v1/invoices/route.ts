@@ -1,11 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { withAuth } from "@/middleware/auth";
-import {
-  successResponse,
-  paginatedResponse,
-  errorResponse,
-} from "@/lib/api-response";
+import { successResponse, paginatedResponse, errorResponse } from "@/lib/api-response";
 import { createInvoiceSchema } from "@/lib/validations";
 import { parsePagination, generateCode } from "@/lib/utils";
 import { createAuditLog } from "@/lib/audit";
@@ -144,9 +140,7 @@ export const POST = withAuth(
         orderBy: { createdAt: "desc" },
         select: { invoiceNumber: true },
       });
-      const sequence = lastInvoice
-        ? parseInt(lastInvoice.invoiceNumber.split("-")[1], 10) + 1
-        : 1;
+      const sequence = lastInvoice ? parseInt(lastInvoice.invoiceNumber.split("-")[1], 10) + 1 : 1;
 
       const invoice = await prisma.invoice.create({
         data: {

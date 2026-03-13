@@ -1,11 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { withAuth } from "@/middleware/auth";
-import {
-  successResponse,
-  errorResponse,
-  notFoundResponse,
-} from "@/lib/api-response";
+import { successResponse, errorResponse, notFoundResponse } from "@/lib/api-response";
 import { updateInvoiceItemSchema } from "@/lib/validations";
 import type { JwtPayload } from "@/lib/auth";
 
@@ -122,7 +118,10 @@ export const DELETE = withAuth(
       // Ensure at least one item remains
       const itemCount = await prisma.invoiceItem.count({ where: { invoiceId } });
       if (itemCount <= 1) {
-        return errorResponse("Cannot remove the last line item. An invoice must have at least one item.", 400);
+        return errorResponse(
+          "Cannot remove the last line item. An invoice must have at least one item.",
+          400,
+        );
       }
 
       await prisma.invoiceItem.delete({ where: { id: itemId } });

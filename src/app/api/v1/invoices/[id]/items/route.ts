@@ -1,11 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { withAuth } from "@/middleware/auth";
-import {
-  successResponse,
-  errorResponse,
-  notFoundResponse,
-} from "@/lib/api-response";
+import { successResponse, errorResponse, notFoundResponse } from "@/lib/api-response";
 import { addInvoiceItemSchema } from "@/lib/validations";
 import type { JwtPayload } from "@/lib/auth";
 
@@ -51,9 +47,10 @@ export const POST = withAuth(
       const allItems = await prisma.invoiceItem.findMany({ where: { invoiceId } });
       const subtotal = allItems.reduce((sum, i) => sum + Number(i.totalPrice), 0);
       const roundedSubtotal = Math.round(subtotal * 100) / 100;
-      const totalAmount = Math.round(
-        (roundedSubtotal - Number(invoice.discountAmount) + Number(invoice.taxAmount)) * 100,
-      ) / 100;
+      const totalAmount =
+        Math.round(
+          (roundedSubtotal - Number(invoice.discountAmount) + Number(invoice.taxAmount)) * 100,
+        ) / 100;
 
       await prisma.invoice.update({
         where: { id: invoiceId },

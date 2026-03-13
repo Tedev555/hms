@@ -13,9 +13,7 @@ describe("billing validations", () => {
     const validInvoice = {
       patientId: "550e8400-e29b-41d4-a716-446655440000",
       dueDate: "2025-06-15",
-      items: [
-        { description: "OPD Consultation", quantity: 1, unitPrice: 500 },
-      ],
+      items: [{ description: "OPD Consultation", quantity: 1, unitPrice: 500 }],
     };
 
     it("should validate a correct invoice", () => {

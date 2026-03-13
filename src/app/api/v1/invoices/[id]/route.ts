@@ -1,59 +1,53 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { withAuth } from "@/middleware/auth";
-import {
-  successResponse,
-  errorResponse,
-  notFoundResponse,
-} from "@/lib/api-response";
+import { successResponse, errorResponse, notFoundResponse } from "@/lib/api-response";
 import { updateInvoiceSchema } from "@/lib/validations";
 import { createAuditLog } from "@/lib/audit";
 import type { JwtPayload } from "@/lib/auth";
 
 // GET /api/v1/invoices/:id — Get invoice details with items and payments
-export const GET = withAuth(
-  async (request: NextRequest, _payload: JwtPayload) => {
-    try {
-      const id = request.nextUrl.pathname.split("/").pop()!;
+export const GET = withAuth(async (request: NextRequest, _payload: JwtPayload) => {
+  try {
+    const id = request.nextUrl.pathname.split("/").pop()!;
 
-      const invoice = await prisma.invoice.findUnique({
-        where: { id },
-        include: {
-          patient: {
-            select: {
-              id: true,
-              patientCode: true,
-              firstName: true,
-              lastName: true,
-              phone: true,
-              email: true,
-              address: true,
-            },
+    const invoice = await prisma.invoice.findUnique({
+      where: { id },
+      include: {
+        patient: {
+          select: {
+            id: true,
+            patientCode: true,
+            firstName: true,
+            lastName: true,
+            phone: true,
+            email: true,
+            address: true,
           },
-          appointment: {
-            select: {
-              id: true,
-              appointmentCode: true,
-              scheduledAt: true,
-              type: true,
-            },
-          },
-          items: true,
-          payments: { orderBy: { paidAt: "desc" } },
         },
-      });
+        appointment: {
+          select: {
+            id: true,
+            appointmentCode: true,
+            scheduledAt: true,
+            type: true,
+          },
+        },
+        items: true,
+        payments: { orderBy: { paidAt: "desc" } },
+      },
+    });
 
-      if (!invoice) {
-        return notFoundResponse("Invoice");
-      }
-
-      return successResponse(invoice);
-    } catch (error) {
-      console.error("Get invoice error:", error);
-      return errorResponse("Internal server error", 500);
+    if (!invoice) {
+      return notFoundResponse("Invoice");
     }
-  },
-);
+
+    return successResponse(invoice);
+  } catch (error) {
+    console.error("Get invoice error:", error);
+    return errorResponse("Internal server error", 500);
+  }
+});
 
 // PUT /api/v1/invoices/:id — Update draft invoice
 export const PUT = withAuth(
