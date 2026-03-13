@@ -3,6 +3,19 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import {
+  ArrowLeft,
+  Calendar,
+  Clock,
+  Timer,
+  Stethoscope,
+  User,
+  Phone,
+  Droplets,
+  Building2,
+  AlertTriangle,
+  FileText,
+} from "lucide-react";
 
 import { useAuth } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
@@ -10,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -54,42 +68,47 @@ type AppointmentDetail = {
   department: { id: string; name: string } | null;
 };
 
+const statusStyles: Record<string, string> = {
+  scheduled:
+    "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
+  confirmed:
+    "bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700",
+  checked_in:
+    "bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950 dark:text-cyan-300 dark:border-cyan-800",
+  in_progress:
+    "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300 dark:border-indigo-800",
+  completed:
+    "bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800",
+  cancelled:
+    "bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800",
+  no_show:
+    "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800",
+};
+
 function getStatusBadge(status: string) {
   const label = status.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  switch (status) {
-    case "scheduled":
-      return <Badge variant="default">{label}</Badge>;
-    case "confirmed":
-      return <Badge variant="secondary">{label}</Badge>;
-    case "checked_in":
-      return <Badge variant="outline">{label}</Badge>;
-    case "in_progress":
-      return (
-        <Badge variant="default" className="bg-blue-600 hover:bg-blue-500">
-          {label}
-        </Badge>
-      );
-    case "completed":
-      return (
-        <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">
-          {label}
-        </Badge>
-      );
-    case "cancelled":
-      return <Badge variant="destructive">{label}</Badge>;
-    case "no_show":
-      return <Badge variant="destructive">{label}</Badge>;
-    default:
-      return <Badge variant="outline">{label}</Badge>;
-  }
+  const style = statusStyles[status] || "";
+  return (
+    <Badge variant="outline" className={`${style} text-sm px-3 py-1`}>
+      {label}
+    </Badge>
+  );
 }
 
 function getTypeBadge(type: string) {
   const label = type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   if (type === "emergency") {
-    return <Badge variant="destructive">{label}</Badge>;
+    return (
+      <Badge variant="destructive" className="text-sm px-3 py-1">
+        {label}
+      </Badge>
+    );
   }
-  return <Badge variant="outline">{label}</Badge>;
+  return (
+    <Badge variant="outline" className="text-sm px-3 py-1">
+      {label}
+    </Badge>
+  );
 }
 
 export default function AppointmentDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -187,21 +206,33 @@ export default function AppointmentDetailPage({ params }: { params: Promise<{ id
 
   return (
     <div className="space-y-6 max-w-4xl">
+      {/* Back button */}
+      <Button
+        variant="ghost"
+        size="sm"
+        className="gap-2 -ml-2 text-muted-foreground"
+        onClick={() => router.push("/appointments")}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Appointments
+      </Button>
+
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
+      <div className="flex items-start justify-between flex-wrap gap-4">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-3xl font-bold tracking-tight">{appointment.appointmentCode}</h1>
             {getStatusBadge(status)}
             {getTypeBadge(appointment.type)}
           </div>
-          <Button
-            variant="link"
-            className="p-0 h-auto"
-            onClick={() => router.push("/appointments")}
-          >
-            Back to Appointments
-          </Button>
+          <p className="text-sm text-muted-foreground">
+            {new Date(appointment.scheduledAt).toLocaleDateString("en-US", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </p>
         </div>
 
         {/* Action buttons */}
@@ -242,8 +273,11 @@ export default function AppointmentDetailPage({ params }: { params: Promise<{ id
           )}
 
           {status === "completed" && (
-            <Button size="sm" variant="outline" asChild>
-              <Link href={`/billing/new?appointmentId=${id}`}>Generate Invoice</Link>
+            <Button size="sm" variant="outline" asChild className="gap-2">
+              <Link href={`/billing/new?appointmentId=${id}`}>
+                <FileText className="h-4 w-4" />
+                Generate Invoice
+              </Link>
             </Button>
           )}
 
@@ -284,60 +318,106 @@ export default function AppointmentDetailPage({ params }: { params: Promise<{ id
         </div>
       </div>
 
+      {/* Allergies Alert */}
+      {appointment.patient.allergies && appointment.patient.allergies.length > 0 && (
+        <div className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900 dark:bg-red-950/50">
+          <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 dark:text-red-400" />
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-sm font-semibold text-red-700 dark:text-red-300">
+              Patient Allergies:
+            </span>
+            {appointment.patient.allergies.map((allergy) => (
+              <Badge key={allergy} variant="destructive" className="text-xs">
+                {allergy}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="grid gap-6 md:grid-cols-2">
         {/* Patient Info */}
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Patient Information</CardTitle>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-base font-semibold flex items-center gap-2">
+              <User className="h-4 w-4 text-muted-foreground" />
+              Patient Information
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <span className="text-muted-foreground">Name</span>
-              <span className="font-medium">
-                {appointment.patient.firstName} {appointment.patient.lastName}
-              </span>
-              <span className="text-muted-foreground">Code</span>
-              <span className="font-mono">{appointment.patient.patientCode}</span>
-              <span className="text-muted-foreground">Phone</span>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 text-sm font-semibold">
+                {appointment.patient.firstName[0]}
+                {appointment.patient.lastName[0]}
+              </div>
+              <div>
+                <p className="font-medium">
+                  {appointment.patient.firstName} {appointment.patient.lastName}
+                </p>
+                <p className="text-xs text-muted-foreground font-mono">
+                  {appointment.patient.patientCode}
+                </p>
+              </div>
+            </div>
+            <Separator />
+            <div className="grid grid-cols-2 gap-3 text-sm pt-1">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Phone className="h-3.5 w-3.5" />
+                <span>Phone</span>
+              </div>
               <span>{appointment.patient.phone}</span>
-              <span className="text-muted-foreground">Gender</span>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <User className="h-3.5 w-3.5" />
+                <span>Gender</span>
+              </div>
               <span className="capitalize">{appointment.patient.gender}</span>
-              <span className="text-muted-foreground">Date of Birth</span>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Calendar className="h-3.5 w-3.5" />
+                <span>DOB</span>
+              </div>
               <span>{new Date(appointment.patient.dateOfBirth).toLocaleDateString()}</span>
               {appointment.patient.bloodGroup && (
                 <>
-                  <span className="text-muted-foreground">Blood Group</span>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Droplets className="h-3.5 w-3.5" />
+                    <span>Blood</span>
+                  </div>
                   <span>{appointment.patient.bloodGroup}</span>
                 </>
               )}
             </div>
-            {appointment.patient.allergies && appointment.patient.allergies.length > 0 && (
-              <div>
-                <span className="text-sm text-muted-foreground">Allergies</span>
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {appointment.patient.allergies.map((allergy) => (
-                    <Badge key={allergy} variant="destructive">
-                      {allergy}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
           </CardContent>
         </Card>
 
         {/* Doctor Info */}
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Doctor Information</CardTitle>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-base font-semibold flex items-center gap-2">
+              <Stethoscope className="h-4 w-4 text-muted-foreground" />
+              Doctor Information
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <span className="text-muted-foreground">Doctor</span>
-              <span className="font-medium">
-                Dr. {appointment.doctor.firstName} {appointment.doctor.lastName}
-              </span>
-              <span className="text-muted-foreground">Department</span>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300 text-sm font-semibold">
+                {appointment.doctor.firstName[0]}
+                {appointment.doctor.lastName[0]}
+              </div>
+              <div>
+                <p className="font-medium">
+                  Dr. {appointment.doctor.firstName} {appointment.doctor.lastName}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {appointment.doctor.department?.name || appointment.department?.name || "N/A"}
+                </p>
+              </div>
+            </div>
+            <Separator />
+            <div className="grid grid-cols-2 gap-3 text-sm pt-1">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Building2 className="h-3.5 w-3.5" />
+                <span>Department</span>
+              </div>
               <span>
                 {appointment.doctor.department?.name || appointment.department?.name || "N/A"}
               </span>
@@ -348,33 +428,58 @@ export default function AppointmentDetailPage({ params }: { params: Promise<{ id
 
       {/* Schedule */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Schedule</CardTitle>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-base font-semibold flex items-center gap-2">
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+            Schedule Details
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div>
-              <span className="text-muted-foreground">Date</span>
-              <p className="font-medium">
-                {new Date(appointment.scheduledAt).toLocaleDateString()}
-              </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="flex items-start gap-3">
+              <div className="rounded-md bg-muted p-2">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Date</p>
+                <p className="text-sm font-medium">
+                  {new Date(appointment.scheduledAt).toLocaleDateString()}
+                </p>
+              </div>
             </div>
-            <div>
-              <span className="text-muted-foreground">Time</span>
-              <p className="font-medium">
-                {new Date(appointment.scheduledAt).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </p>
+            <div className="flex items-start gap-3">
+              <div className="rounded-md bg-muted p-2">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Time</p>
+                <p className="text-sm font-medium">
+                  {new Date(appointment.scheduledAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
+              </div>
             </div>
-            <div>
-              <span className="text-muted-foreground">Duration</span>
-              <p className="font-medium">{appointment.duration} minutes</p>
+            <div className="flex items-start gap-3">
+              <div className="rounded-md bg-muted p-2">
+                <Timer className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Duration</p>
+                <p className="text-sm font-medium">{appointment.duration} min</p>
+              </div>
             </div>
-            <div>
-              <span className="text-muted-foreground">Type</span>
-              <p className="font-medium capitalize">{appointment.type.replace(/_/g, " ")}</p>
+            <div className="flex items-start gap-3">
+              <div className="rounded-md bg-muted p-2">
+                <Stethoscope className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Type</p>
+                <p className="text-sm font-medium capitalize">
+                  {appointment.type.replace(/_/g, " ")}
+                </p>
+              </div>
             </div>
           </div>
         </CardContent>
@@ -383,26 +488,35 @@ export default function AppointmentDetailPage({ params }: { params: Promise<{ id
       {/* Notes */}
       {(appointment.chiefComplaint || appointment.notes || appointment.cancelReason) && (
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Notes</CardTitle>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-base font-semibold flex items-center gap-2">
+              <FileText className="h-4 w-4 text-muted-foreground" />
+              Notes
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-4">
             {appointment.chiefComplaint && (
               <div>
-                <span className="text-sm text-muted-foreground">Chief Complaint</span>
-                <p className="text-sm mt-1">{appointment.chiefComplaint}</p>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                  Chief Complaint
+                </p>
+                <p className="text-sm">{appointment.chiefComplaint}</p>
               </div>
             )}
             {appointment.notes && (
               <div>
-                <span className="text-sm text-muted-foreground">Notes</span>
-                <p className="text-sm mt-1">{appointment.notes}</p>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                  Additional Notes
+                </p>
+                <p className="text-sm">{appointment.notes}</p>
               </div>
             )}
             {appointment.cancelReason && (
               <div>
-                <span className="text-sm text-muted-foreground">Cancel Reason</span>
-                <p className="text-sm mt-1 text-destructive">{appointment.cancelReason}</p>
+                <p className="text-xs font-medium text-red-600 dark:text-red-400 uppercase tracking-wider mb-1">
+                  Cancellation Reason
+                </p>
+                <p className="text-sm text-red-600 dark:text-red-400">{appointment.cancelReason}</p>
               </div>
             )}
           </CardContent>
