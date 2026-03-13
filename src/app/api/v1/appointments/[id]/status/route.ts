@@ -1,11 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { withAuth } from "@/middleware/auth";
-import {
-  successResponse,
-  errorResponse,
-  notFoundResponse,
-} from "@/lib/api-response";
+import { successResponse, errorResponse, notFoundResponse } from "@/lib/api-response";
 import { updateStatusSchema } from "@/lib/validations";
 import type { JwtPayload } from "@/lib/auth";
 
@@ -30,12 +26,13 @@ const ROLE_STATUS_PERMISSIONS: Record<string, string[]> = {
 
 // PATCH /api/v1/appointments/:id/status — Change appointment status
 export const PATCH = withAuth(
-  async (request: NextRequest, payload: JwtPayload) => {
+  async (
+    request: NextRequest,
+    payload: JwtPayload,
+    { params }: { params: Promise<{ id: string }> },
+  ) => {
     try {
-      // Extract appointment ID from URL: /api/v1/appointments/:id/status
-      const segments = request.nextUrl.pathname.split("/");
-      const statusIdx = segments.lastIndexOf("status");
-      const id = segments[statusIdx - 1];
+      const { id } = await params;
 
       const existing = await prisma.appointment.findUnique({ where: { id } });
       if (!existing) {

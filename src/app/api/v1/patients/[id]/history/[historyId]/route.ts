@@ -1,11 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { withAuth } from "@/middleware/auth";
-import {
-  successResponse,
-  errorResponse,
-  notFoundResponse,
-} from "@/lib/api-response";
+import { successResponse, errorResponse, notFoundResponse } from "@/lib/api-response";
 import { updateMedicalHistorySchema } from "@/lib/validations";
 import { createAuditLog } from "@/lib/audit";
 import type { JwtPayload } from "@/lib/auth";
@@ -15,7 +11,7 @@ export const PUT = withAuth(
   async (
     request: NextRequest,
     payload: JwtPayload,
-    { params }: { params: { id: string; historyId: string } },
+    { params }: { params: Promise<{ id: string; historyId: string }> },
   ) => {
     try {
       const { id, historyId } = await params;

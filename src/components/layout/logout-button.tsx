@@ -22,13 +22,7 @@ export function LogoutButton() {
   }
 
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={handleLogout}
-      disabled={loading}
-      className="gap-2"
-    >
+    <Button variant="ghost" size="sm" onClick={handleLogout} disabled={loading} className="gap-2">
       <LogOut className="h-4 w-4" />
       {loading ? "Signing out..." : "Sign out"}
     </Button>

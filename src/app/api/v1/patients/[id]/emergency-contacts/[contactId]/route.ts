@@ -1,11 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { withAuth } from "@/middleware/auth";
-import {
-  successResponse,
-  errorResponse,
-  notFoundResponse,
-} from "@/lib/api-response";
+import { successResponse, errorResponse, notFoundResponse } from "@/lib/api-response";
 import { updateEmergencyContactSchema } from "@/lib/validations";
 import { createAuditLog } from "@/lib/audit";
 import type { JwtPayload } from "@/lib/auth";
@@ -15,7 +11,7 @@ export const PUT = withAuth(
   async (
     request: NextRequest,
     payload: JwtPayload,
-    { params }: { params: { id: string; contactId: string } },
+    { params }: { params: Promise<{ id: string; contactId: string }> },
   ) => {
     try {
       const { id, contactId } = await params;
@@ -61,7 +57,7 @@ export const DELETE = withAuth(
   async (
     _request: NextRequest,
     payload: JwtPayload,
-    { params }: { params: { id: string; contactId: string } },
+    { params }: { params: Promise<{ id: string; contactId: string }> },
   ) => {
     try {
       const { id, contactId } = await params;

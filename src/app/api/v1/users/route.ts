@@ -2,11 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { withAuth } from "@/middleware/auth";
 import { hashPassword } from "@/lib/auth";
-import {
-  successResponse,
-  paginatedResponse,
-  errorResponse,
-} from "@/lib/api-response";
+import { successResponse, paginatedResponse, errorResponse } from "@/lib/api-response";
 import { createUserSchema } from "@/lib/validations";
 import { parsePagination } from "@/lib/utils";
 import type { JwtPayload } from "@/lib/auth";

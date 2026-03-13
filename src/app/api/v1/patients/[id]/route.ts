@@ -1,18 +1,18 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { withAuth } from "@/middleware/auth";
-import {
-  successResponse,
-  errorResponse,
-  notFoundResponse,
-} from "@/lib/api-response";
+import { successResponse, errorResponse, notFoundResponse } from "@/lib/api-response";
 import { updatePatientSchema } from "@/lib/validations";
 import { createAuditLog } from "@/lib/audit";
 import type { JwtPayload } from "@/lib/auth";
 
 // GET /api/v1/patients/:id — Get patient details
 export const GET = withAuth(
-  async (request: NextRequest, _payload: JwtPayload, { params }: { params: { id: string } }) => {
+  async (
+    request: NextRequest,
+    _payload: JwtPayload,
+    { params }: { params: Promise<{ id: string }> },
+  ) => {
     try {
       const { id } = await params;
       const patient = await prisma.patient.findUnique({
@@ -45,7 +45,11 @@ export const GET = withAuth(
 
 // PUT /api/v1/patients/:id — Update patient record
 export const PUT = withAuth(
-  async (request: NextRequest, payload: JwtPayload, { params }: { params: { id: string } }) => {
+  async (
+    request: NextRequest,
+    payload: JwtPayload,
+    { params }: { params: Promise<{ id: string }> },
+  ) => {
     try {
       const { id } = await params;
       const existing = await prisma.patient.findUnique({ where: { id } });
@@ -74,9 +78,7 @@ export const PUT = withAuth(
         where: { id },
         data: {
           ...parsed.data,
-          dateOfBirth: parsed.data.dateOfBirth
-            ? new Date(parsed.data.dateOfBirth)
-            : undefined,
+          dateOfBirth: parsed.data.dateOfBirth ? new Date(parsed.data.dateOfBirth) : undefined,
         },
       });
 

@@ -20,9 +20,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <main className="flex-1">
         <header className="flex h-16 items-center gap-4 border-b px-6">
           <MobileSidebar />
-          <h1 className="text-sm font-medium text-muted-foreground">
-            Hospital Management System
-          </h1>
+          <h1 className="text-sm font-medium text-muted-foreground">Hospital Management System</h1>
           <div className="ml-auto">
             <LogoutButton />
           </div>

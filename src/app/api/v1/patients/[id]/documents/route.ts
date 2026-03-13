@@ -14,7 +14,11 @@ import type { JwtPayload } from "@/lib/auth";
 
 // GET /api/v1/patients/:id/documents — List patient documents
 export const GET = withAuth(
-  async (request: NextRequest, _payload: JwtPayload, { params }: { params: { id: string } }) => {
+  async (
+    request: NextRequest,
+    _payload: JwtPayload,
+    { params }: { params: Promise<{ id: string }> },
+  ) => {
     try {
       const { id } = await params;
       const patient = await prisma.patient.findUnique({ where: { id } });
@@ -44,7 +48,11 @@ export const GET = withAuth(
 
 // POST /api/v1/patients/:id/documents — Upload document metadata
 export const POST = withAuth(
-  async (request: NextRequest, payload: JwtPayload, { params }: { params: { id: string } }) => {
+  async (
+    request: NextRequest,
+    payload: JwtPayload,
+    { params }: { params: Promise<{ id: string }> },
+  ) => {
     try {
       const { id } = await params;
       const patient = await prisma.patient.findUnique({ where: { id } });
