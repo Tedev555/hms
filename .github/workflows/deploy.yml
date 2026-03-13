@@ -90,12 +90,11 @@ jobs:
             # Pull the latest image
             docker pull "$IMAGE_TAG"
 
+            # Start infrastructure services first
+            IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.uat.yml up -d hms-db hms-redis hms-minio
+
             # Run database migrations
-            docker run --rm \
-              --network hms_default \
-              --env-file .env \
-              "$IMAGE_TAG" \
-              npx prisma migrate deploy
+            IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.uat.yml run --rm hms-app npx prisma migrate deploy
 
             # Deploy with docker compose
             IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.uat.yml up -d --remove-orphans
