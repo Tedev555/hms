@@ -139,3 +139,51 @@ export const updateStatusSchema = z.object({
   cancelReason: z.string().max(500).optional(),
   notes: z.string().max(2000).optional(),
 });
+
+// Invoice line item schema (reusable)
+const invoiceItemSchema = z.object({
+  description: z.string().min(1).max(300),
+  quantity: z.number().int().min(1),
+  unitPrice: z.number().positive(),
+});
+
+// Create invoice
+export const createInvoiceSchema = z.object({
+  patientId: z.string().uuid(),
+  appointmentId: z.string().uuid().optional(),
+  admissionId: z.string().uuid().optional(),
+  dueDate: z.string().date(),
+  notes: z.string().max(1000).optional(),
+  items: z.array(invoiceItemSchema).min(1),
+});
+
+// Update draft invoice
+export const updateInvoiceSchema = z.object({
+  dueDate: z.string().date().optional(),
+  notes: z.string().max(1000).optional().nullable(),
+  discountAmount: z.number().min(0).optional(),
+  taxAmount: z.number().min(0).optional(),
+});
+
+// Update invoice status
+export const updateInvoiceStatusSchema = z.object({
+  status: z.enum(["issued", "cancelled", "overdue"]),
+  notes: z.string().max(1000).optional(),
+});
+
+// Add line item to invoice
+export const addInvoiceItemSchema = invoiceItemSchema;
+
+// Update line item
+export const updateInvoiceItemSchema = z.object({
+  description: z.string().min(1).max(300).optional(),
+  quantity: z.number().int().min(1).optional(),
+  unitPrice: z.number().positive().optional(),
+});
+
+// Record payment
+export const recordPaymentSchema = z.object({
+  amount: z.number().positive(),
+  paymentMethod: z.enum(["cash", "card", "bank_transfer", "insurance", "mixed"]),
+  reference: z.string().max(100).optional(),
+});
