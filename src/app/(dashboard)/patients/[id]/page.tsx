@@ -2,13 +2,14 @@
 
 import { use, useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Pencil } from "lucide-react";
+import { Pencil, ArrowLeft, User, Phone, Mail, MapPin, Droplets, AlertTriangle, Plus, Trash2, FileText, Heart, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
@@ -134,37 +135,68 @@ export default function PatientDetailPage({ params }: { params: Promise<{ id: st
   }
 
   if (!patient) {
-    return <p className="text-muted-foreground">Patient not found.</p>;
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <div className="rounded-full bg-muted p-4 mb-4">
+          <User className="h-8 w-8 text-muted-foreground/50" />
+        </div>
+        <p className="font-medium text-muted-foreground">Patient not found</p>
+        <Button variant="outline" size="sm" className="mt-4" onClick={() => router.push("/patients")}>
+          Back to Patients
+        </Button>
+      </div>
+    );
   }
+
+  const age = Math.floor(
+    (Date.now() - new Date(patient.dateOfBirth).getTime()) / (365.25 * 24 * 60 * 60 * 1000),
+  );
 
   return (
     <div className="space-y-6">
+      {/* Back button */}
+      <Button variant="ghost" size="sm" className="gap-2 -ml-2 text-muted-foreground" onClick={() => router.push("/patients")}>
+        <ArrowLeft className="h-4 w-4" />
+        Patients
+      </Button>
+
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">
-            {patient.firstName} {patient.lastName}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {patient.patientCode} &middot; Registered{" "}
-            {new Date(patient.createdAt).toLocaleDateString()}
-          </p>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start gap-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 text-xl font-semibold flex-shrink-0">
+            {patient.firstName[0]}{patient.lastName[0]}
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold">
+              {patient.firstName} {patient.lastName}
+            </h1>
+            <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
+              <span className="font-mono">{patient.patientCode}</span>
+              <span>&middot;</span>
+              <span className="capitalize">{patient.gender}</span>
+              <span>&middot;</span>
+              <span>{age} years old</span>
+            </div>
+          </div>
         </div>
-        <Button variant="outline" onClick={() => router.push(`/patients/${id}/edit`)}>
-          <Pencil className="mr-2 h-4 w-4" />
+        <Button variant="outline" onClick={() => router.push(`/patients/${id}/edit`)} className="gap-2">
+          <Pencil className="h-4 w-4" />
           Edit
         </Button>
       </div>
 
       {/* Allergies Alert */}
       {patient.allergies && patient.allergies.length > 0 && (
-        <div className="flex items-center gap-2 rounded-md border border-destructive/50 bg-destructive/10 p-3">
-          <span className="text-sm font-medium">Allergies:</span>
-          {patient.allergies.map((allergy) => (
-            <Badge key={allergy} variant="destructive">
-              {allergy}
-            </Badge>
-          ))}
+        <div className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900 dark:bg-red-950/50">
+          <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 dark:text-red-400" />
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-sm font-semibold text-red-700 dark:text-red-300">Allergies:</span>
+            {patient.allergies.map((allergy) => (
+              <Badge key={allergy} variant="destructive" className="text-xs">
+                {allergy}
+              </Badge>
+            ))}
+          </div>
         </div>
       )}
 
@@ -172,75 +204,76 @@ export default function PatientDetailPage({ params }: { params: Promise<{ id: st
       <Tabs defaultValue="demographics">
         <TabsList>
           <TabsTrigger value="demographics">Demographics</TabsTrigger>
-          <TabsTrigger value="history">Medical History</TabsTrigger>
+          <TabsTrigger value="history">
+            Medical History
+            {patient.medicalHistory.length > 0 && (
+              <Badge variant="secondary" className="ml-2 h-5 min-w-5 text-xs">
+                {patient.medicalHistory.length}
+              </Badge>
+            )}
+          </TabsTrigger>
           <TabsTrigger value="documents">Documents</TabsTrigger>
-          <TabsTrigger value="contacts">Emergency Contacts</TabsTrigger>
+          <TabsTrigger value="contacts">
+            Contacts
+            {patient.emergencyContacts.length > 0 && (
+              <Badge variant="secondary" className="ml-2 h-5 min-w-5 text-xs">
+                {patient.emergencyContacts.length}
+              </Badge>
+            )}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="demographics">
           <Card>
             <CardContent className="pt-6">
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                <div>
-                  <p className="text-sm text-muted-foreground">First Name</p>
-                  <p className="font-medium">{patient.firstName}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Last Name</p>
-                  <p className="font-medium">{patient.lastName}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Gender</p>
-                  <p className="font-medium capitalize">{patient.gender}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Date of Birth</p>
-                  <p className="font-medium">
-                    {new Date(patient.dateOfBirth).toLocaleDateString()}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Phone</p>
-                  <p className="font-medium">{patient.phone}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Email</p>
-                  <p className="font-medium">{patient.email || "—"}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">National ID</p>
-                  <p className="font-medium">{patient.nationalId || "—"}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Blood Group</p>
-                  <p className="font-medium">{patient.bloodGroup || "—"}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Address</p>
-                  <p className="font-medium">{patient.address || "—"}</p>
-                </div>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <InfoItem icon={User} label="First Name" value={patient.firstName} />
+                <InfoItem icon={User} label="Last Name" value={patient.lastName} />
+                <InfoItem icon={User} label="Gender" value={patient.gender} capitalize />
+                <InfoItem icon={User} label="Date of Birth" value={new Date(patient.dateOfBirth).toLocaleDateString()} />
+                <InfoItem icon={Phone} label="Phone" value={patient.phone} />
+                <InfoItem icon={Mail} label="Email" value={patient.email || "—"} />
+                <InfoItem icon={Shield} label="National ID" value={patient.nationalId || "—"} />
+                <InfoItem icon={Droplets} label="Blood Group" value={patient.bloodGroup || "—"} />
+                <InfoItem icon={MapPin} label="Address" value={patient.address || "—"} />
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="history">
-          <div className="space-y-4">
+          <div className="space-y-3">
             {patient.medicalHistory.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No medical history recorded.</p>
+              <Card>
+                <CardContent className="py-12">
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <div className="rounded-full bg-muted p-3 mb-3">
+                      <Heart className="h-6 w-6 text-muted-foreground/50" />
+                    </div>
+                    <p className="text-sm text-muted-foreground">No medical history recorded</p>
+                  </div>
+                </CardContent>
+              </Card>
             ) : (
               patient.medicalHistory.map((entry) => (
                 <Card key={entry.id}>
-                  <CardContent className="pt-6">
-                    <div className="flex items-start justify-between">
-                      <div>
+                  <CardContent className="py-4 px-6">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0">
                         <p className="font-medium">{entry.condition}</p>
                         {entry.description && (
                           <p className="mt-1 text-sm text-muted-foreground">{entry.description}</p>
                         )}
                       </div>
-                      <div className="text-right">
-                        <Badge variant={entry.isActive ? "default" : "secondary"}>
+                      <div className="text-right flex-shrink-0">
+                        <Badge
+                          variant="outline"
+                          className={
+                            entry.isActive
+                              ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800"
+                              : "bg-gray-50 text-gray-500 border-gray-200 dark:bg-gray-900 dark:text-gray-400 dark:border-gray-700"
+                          }
+                        >
                           {entry.isActive ? "Active" : "Inactive"}
                         </Badge>
                         {entry.diagnosedAt && (
@@ -258,18 +291,32 @@ export default function PatientDetailPage({ params }: { params: Promise<{ id: st
         </TabsContent>
 
         <TabsContent value="documents">
-          <div className="space-y-4">
+          <div className="space-y-3">
             {patient.documents.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No documents uploaded.</p>
+              <Card>
+                <CardContent className="py-12">
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <div className="rounded-full bg-muted p-3 mb-3">
+                      <FileText className="h-6 w-6 text-muted-foreground/50" />
+                    </div>
+                    <p className="text-sm text-muted-foreground">No documents uploaded</p>
+                  </div>
+                </CardContent>
+              </Card>
             ) : (
               patient.documents.map((doc) => (
                 <Card key={doc.id}>
-                  <CardContent className="flex items-center justify-between pt-6">
-                    <div>
-                      <p className="font-medium">{doc.title}</p>
-                      <p className="text-sm text-muted-foreground">{doc.fileType}</p>
+                  <CardContent className="flex items-center justify-between py-4 px-6">
+                    <div className="flex items-center gap-3">
+                      <div className="rounded-lg bg-muted p-2">
+                        <FileText className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">{doc.title}</p>
+                        <p className="text-xs text-muted-foreground">{doc.fileType}</p>
+                      </div>
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       {new Date(doc.createdAt).toLocaleDateString()}
                     </p>
                   </CardContent>
@@ -280,17 +327,20 @@ export default function PatientDetailPage({ params }: { params: Promise<{ id: st
         </TabsContent>
 
         <TabsContent value="contacts">
-          <div className="space-y-4">
+          <div className="space-y-3">
             <Dialog open={contactDialogOpen} onOpenChange={setContactDialogOpen}>
               <DialogTrigger asChild>
-                <Button size="sm">Add Contact</Button>
+                <Button size="sm" className="gap-2">
+                  <Plus className="h-4 w-4" />
+                  Add Contact
+                </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Add Emergency Contact</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
-                  <div>
+                  <div className="space-y-2">
                     <Label>Name</Label>
                     <Input
                       value={contactName}
@@ -298,7 +348,7 @@ export default function PatientDetailPage({ params }: { params: Promise<{ id: st
                       placeholder="Contact name"
                     />
                   </div>
-                  <div>
+                  <div className="space-y-2">
                     <Label>Relationship</Label>
                     <Input
                       value={contactRelationship}
@@ -306,7 +356,7 @@ export default function PatientDetailPage({ params }: { params: Promise<{ id: st
                       placeholder="e.g. Spouse, Parent"
                     />
                   </div>
-                  <div>
+                  <div className="space-y-2">
                     <Label>Phone</Label>
                     <Input
                       value={contactPhone}
@@ -314,30 +364,47 @@ export default function PatientDetailPage({ params }: { params: Promise<{ id: st
                       placeholder="Phone number"
                     />
                   </div>
-                  <Button onClick={handleAddContact}>Add Contact</Button>
+                  <Button onClick={handleAddContact} className="w-full">Add Contact</Button>
                 </div>
               </DialogContent>
             </Dialog>
 
             {patient.emergencyContacts.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No emergency contacts.</p>
+              <Card>
+                <CardContent className="py-12">
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <div className="rounded-full bg-muted p-3 mb-3">
+                      <Phone className="h-6 w-6 text-muted-foreground/50" />
+                    </div>
+                    <p className="text-sm text-muted-foreground">No emergency contacts added</p>
+                    <p className="text-xs text-muted-foreground/70 mt-1">
+                      Add an emergency contact for this patient
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
             ) : (
               patient.emergencyContacts.map((contact) => (
                 <Card key={contact.id}>
-                  <CardContent className="flex items-center justify-between pt-6">
-                    <div>
-                      <p className="font-medium">{contact.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {contact.relationship} &middot; {contact.phone}
-                      </p>
+                  <CardContent className="flex items-center justify-between py-4 px-6">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-sm font-medium">
+                        {contact.name[0]?.toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">{contact.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {contact.relationship} &middot; {contact.phone}
+                        </p>
+                      </div>
                     </div>
                     <Button
                       variant="ghost"
-                      size="sm"
-                      className="text-destructive"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
                       onClick={() => handleDeleteContact(contact.id)}
                     >
-                      Remove
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </CardContent>
                 </Card>
@@ -346,6 +413,30 @@ export default function PatientDetailPage({ params }: { params: Promise<{ id: st
           </div>
         </TabsContent>
       </Tabs>
+    </div>
+  );
+}
+
+function InfoItem({
+  icon: Icon,
+  label,
+  value,
+  capitalize,
+}: {
+  icon: React.ElementType;
+  label: string;
+  value: string;
+  capitalize?: boolean;
+}) {
+  return (
+    <div className="flex items-start gap-3">
+      <div className="rounded-md bg-muted p-2 mt-0.5">
+        <Icon className="h-4 w-4 text-muted-foreground" />
+      </div>
+      <div>
+        <p className="text-xs text-muted-foreground">{label}</p>
+        <p className={`text-sm font-medium ${capitalize ? "capitalize" : ""}`}>{value}</p>
+      </div>
     </div>
   );
 }

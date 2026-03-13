@@ -3,7 +3,7 @@
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { SidebarNav } from "@/components/layout/sidebar-nav";
+import { SidebarNav, SidebarBrand } from "@/components/layout/sidebar-nav";
 
 export function MobileSidebar() {
   return (
@@ -14,11 +14,13 @@ export function MobileSidebar() {
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-64 p-0">
-        <SheetHeader className="border-b px-6 py-4">
-          <SheetTitle>HMS</SheetTitle>
+      <SheetContent side="left" className="w-64 p-0 flex flex-col">
+        <SheetHeader className="border-b p-0">
+          <SheetTitle asChild>
+            <SidebarBrand />
+          </SheetTitle>
         </SheetHeader>
-        <SidebarNav className="p-4" />
+        <SidebarNav className="p-3 flex-1" />
       </SheetContent>
     </Sheet>
   );

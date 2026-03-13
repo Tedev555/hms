@@ -2,9 +2,10 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Users, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -82,98 +83,135 @@ export default function PatientsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Patients</h1>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Patients</h1>
+          <p className="text-muted-foreground mt-1">
+            {meta.total} patient{meta.total !== 1 ? "s" : ""} registered
+          </p>
+        </div>
         {canCreate && (
-          <Button onClick={() => router.push("/patients/new")}>
-            <Plus className="mr-2 h-4 w-4" />
+          <Button onClick={() => router.push("/patients/new")} className="gap-2">
+            <Plus className="h-4 w-4" />
             Register Patient
           </Button>
         )}
       </div>
 
-      <div className="flex items-center gap-2">
-        <Search className="h-4 w-4 text-muted-foreground" />
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Search by name, code, phone, or national ID..."
           value={search}
           onChange={(e) => handleSearch(e.target.value)}
-          className="max-w-sm"
+          className="pl-10"
         />
       </div>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Code</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Gender</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Date of Birth</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i}>
-                  {Array.from({ length: 5 }).map((_, j) => (
-                    <TableCell key={j}>
-                      <Skeleton className="h-4 w-24" />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : patients.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
-                  No patients found.
-                </TableCell>
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow className="hover:bg-transparent">
+                <TableHead>Code</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead className="hidden sm:table-cell">Gender</TableHead>
+                <TableHead>Phone</TableHead>
+                <TableHead className="hidden md:table-cell">Date of Birth</TableHead>
               </TableRow>
-            ) : (
-              patients.map((patient) => (
-                <TableRow
-                  key={patient.id}
-                  className="cursor-pointer"
-                  onClick={() => router.push(`/patients/${patient.id}`)}
-                >
-                  <TableCell className="font-mono text-sm">{patient.patientCode}</TableCell>
-                  <TableCell className="font-medium">
-                    {patient.firstName} {patient.lastName}
+            </TableHeader>
+            <TableBody>
+              {loading ? (
+                Array.from({ length: 8 }).map((_, i) => (
+                  <TableRow key={i}>
+                    {Array.from({ length: 5 }).map((_, j) => (
+                      <TableCell key={j} className={j >= 3 ? "hidden md:table-cell" : j >= 2 ? "hidden sm:table-cell" : ""}>
+                        <Skeleton className="h-4 w-24" />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : patients.length === 0 ? (
+                <TableRow className="hover:bg-transparent">
+                  <TableCell colSpan={5} className="h-48">
+                    <div className="flex flex-col items-center justify-center text-center">
+                      <div className="rounded-full bg-muted p-4 mb-4">
+                        <Users className="h-8 w-8 text-muted-foreground/50" />
+                      </div>
+                      <p className="font-medium text-muted-foreground">No patients found</p>
+                      <p className="text-sm text-muted-foreground/70 mt-1">
+                        {search
+                          ? "Try adjusting your search terms"
+                          : "Get started by registering a new patient"}
+                      </p>
+                      {canCreate && !search && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="mt-4"
+                          onClick={() => router.push("/patients/new")}
+                        >
+                          <Plus className="mr-2 h-4 w-4" />
+                          Register Patient
+                        </Button>
+                      )}
+                    </div>
                   </TableCell>
-                  <TableCell className="capitalize">{patient.gender}</TableCell>
-                  <TableCell>{patient.phone}</TableCell>
-                  <TableCell>{new Date(patient.dateOfBirth).toLocaleDateString()}</TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              ) : (
+                patients.map((patient) => (
+                  <TableRow
+                    key={patient.id}
+                    className="cursor-pointer transition-colors"
+                    onClick={() => router.push(`/patients/${patient.id}`)}
+                  >
+                    <TableCell className="font-mono text-sm text-muted-foreground">
+                      {patient.patientCode}
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-medium">
+                        {patient.firstName} {patient.lastName}
+                      </span>
+                    </TableCell>
+                    <TableCell className="capitalize hidden sm:table-cell">{patient.gender}</TableCell>
+                    <TableCell>{patient.phone}</TableCell>
+                    <TableCell className="hidden md:table-cell text-muted-foreground">
+                      {new Date(patient.dateOfBirth).toLocaleDateString()}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
       {!loading && meta.totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Showing {patients.length} of {meta.total} patients
+            Showing {(meta.page - 1) * meta.limit + 1}-
+            {Math.min(meta.page * meta.limit, meta.total)} of {meta.total}
           </p>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <Button
               variant="outline"
-              size="sm"
+              size="icon"
+              className="h-8 w-8"
               disabled={meta.page <= 1}
               onClick={() => fetchPatients(meta.page - 1, search || undefined)}
             >
-              Previous
+              <ChevronLeft className="h-4 w-4" />
             </Button>
-            <span className="text-sm">
-              Page {meta.page} of {meta.totalPages}
+            <span className="text-sm px-3 tabular-nums">
+              {meta.page} / {meta.totalPages}
             </span>
             <Button
               variant="outline"
-              size="sm"
+              size="icon"
+              className="h-8 w-8"
               disabled={meta.page >= meta.totalPages}
               onClick={() => fetchPatients(meta.page + 1, search || undefined)}
             >
-              Next
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         </div>

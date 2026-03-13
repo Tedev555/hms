@@ -3,11 +3,13 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ChevronLeft, ChevronRight, Filter, Receipt, X, Plus } from "lucide-react";
 
 import { useAuth } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -47,28 +49,30 @@ const STATUS_OPTIONS = [
   { value: "cancelled", label: "Cancelled" },
 ];
 
+const statusStyles: Record<string, string> = {
+  draft: "bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700",
+  issued: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
+  partially_paid: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800",
+  paid: "bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800",
+  overdue: "bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800",
+  cancelled: "bg-gray-50 text-gray-500 border-gray-200 dark:bg-gray-900 dark:text-gray-400 dark:border-gray-700",
+};
+
 function getStatusBadge(status: string) {
   const label = status.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  switch (status) {
-    case "draft":
-      return <Badge variant="outline">{label}</Badge>;
-    case "issued":
-      return <Badge variant="default">{label}</Badge>;
-    case "partially_paid":
-      return <Badge variant="secondary">{label}</Badge>;
-    case "paid":
-      return (
-        <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">
-          {label}
-        </Badge>
-      );
-    case "overdue":
-      return <Badge variant="destructive">{label}</Badge>;
-    case "cancelled":
-      return <Badge variant="destructive">{label}</Badge>;
-    default:
-      return <Badge variant="outline">{label}</Badge>;
-  }
+  const style = statusStyles[status] || "";
+  return (
+    <Badge variant="outline" className={style}>
+      {label}
+    </Badge>
+  );
+}
+
+function formatCurrency(amount: number) {
+  return new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
 }
 
 export default function BillingPage() {
@@ -86,6 +90,8 @@ export default function BillingPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+
+  const hasFilters = statusFilter !== "all" || dateFrom || dateTo;
 
   const fetchInvoices = useCallback(async () => {
     setLoading(true);
@@ -116,27 +122,39 @@ export default function BillingPage() {
     fetchInvoices();
   }, [fetchInvoices]);
 
-  // Reset page when filters change
   useEffect(() => {
     setPage(1);
   }, [statusFilter, dateFrom, dateTo]);
+
+  function clearFilters() {
+    setStatusFilter("all");
+    setDateFrom("");
+    setDateTo("");
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Billing</h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground mt-1">
             {total} invoice{total !== 1 ? "s" : ""} total
           </p>
         </div>
-        <Button asChild>
-          <Link href="/billing/new">Create Invoice</Link>
+        <Button asChild className="gap-2">
+          <Link href="/billing/new">
+            <Plus className="h-4 w-4" />
+            Create Invoice
+          </Link>
         </Button>
       </div>
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Filter className="h-4 w-4" />
+          <span className="hidden sm:inline">Filters:</span>
+        </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-44">
             <SelectValue placeholder="Status" />
@@ -163,78 +181,101 @@ export default function BillingPage() {
           className="w-44"
           placeholder="To date"
         />
-        {(statusFilter !== "all" || dateFrom || dateTo) && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              setStatusFilter("all");
-              setDateFrom("");
-              setDateTo("");
-            }}
-          >
-            Clear Filters
+        {hasFilters && (
+          <Button variant="ghost" size="sm" onClick={clearFilters} className="gap-1 text-muted-foreground">
+            <X className="h-3 w-3" />
+            Clear
           </Button>
         )}
       </div>
 
       {/* Table */}
-      {loading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <Skeleton key={i} className="h-12 w-full" />
-          ))}
-        </div>
-      ) : (
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Invoice #</TableHead>
-                <TableHead>Patient</TableHead>
-                <TableHead>Issue Date</TableHead>
-                <TableHead className="text-right">Total</TableHead>
-                <TableHead className="text-right">Paid</TableHead>
-                <TableHead className="text-right">Balance</TableHead>
-                <TableHead>Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {invoices.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                    No invoices found.
-                  </TableCell>
+      <Card>
+        <CardContent className="p-0">
+          {loading ? (
+            <div className="p-6 space-y-3">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <Skeleton key={i} className="h-12 w-full" />
+              ))}
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead>Invoice #</TableHead>
+                  <TableHead>Patient</TableHead>
+                  <TableHead className="hidden md:table-cell">Issue Date</TableHead>
+                  <TableHead className="text-right">Total</TableHead>
+                  <TableHead className="text-right hidden sm:table-cell">Paid</TableHead>
+                  <TableHead className="text-right hidden lg:table-cell">Balance</TableHead>
+                  <TableHead>Status</TableHead>
                 </TableRow>
-              ) : (
-                invoices.map((invoice) => (
-                  <TableRow
-                    key={invoice.id}
-                    className="cursor-pointer"
-                    onClick={() => router.push(`/billing/${invoice.id}`)}
-                  >
-                    <TableCell className="font-mono text-sm">{invoice.invoiceNumber}</TableCell>
-                    <TableCell>
-                      {invoice.patient.firstName} {invoice.patient.lastName}
+              </TableHeader>
+              <TableBody>
+                {invoices.length === 0 ? (
+                  <TableRow className="hover:bg-transparent">
+                    <TableCell colSpan={7} className="h-48">
+                      <div className="flex flex-col items-center justify-center text-center">
+                        <div className="rounded-full bg-muted p-4 mb-4">
+                          <Receipt className="h-8 w-8 text-muted-foreground/50" />
+                        </div>
+                        <p className="font-medium text-muted-foreground">No invoices found</p>
+                        <p className="text-sm text-muted-foreground/70 mt-1">
+                          {hasFilters
+                            ? "Try adjusting your filters"
+                            : "Create a new invoice to get started"}
+                        </p>
+                        {hasFilters && (
+                          <Button variant="outline" size="sm" className="mt-4" onClick={clearFilters}>
+                            Clear Filters
+                          </Button>
+                        )}
+                      </div>
                     </TableCell>
-                    <TableCell>{new Date(invoice.issueDate).toLocaleDateString()}</TableCell>
-                    <TableCell className="text-right">
-                      {Number(invoice.totalAmount).toFixed(2)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {Number(invoice.paidAmount).toFixed(2)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {(Number(invoice.totalAmount) - Number(invoice.paidAmount)).toFixed(2)}
-                    </TableCell>
-                    <TableCell>{getStatusBadge(invoice.status)}</TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+                ) : (
+                  invoices.map((invoice) => {
+                    const balance = Number(invoice.totalAmount) - Number(invoice.paidAmount);
+                    return (
+                      <TableRow
+                        key={invoice.id}
+                        className="cursor-pointer transition-colors"
+                        onClick={() => router.push(`/billing/${invoice.id}`)}
+                      >
+                        <TableCell className="font-mono text-sm text-muted-foreground">
+                          {invoice.invoiceNumber}
+                        </TableCell>
+                        <TableCell>
+                          <span className="font-medium">
+                            {invoice.patient.firstName} {invoice.patient.lastName}
+                          </span>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell text-muted-foreground">
+                          {new Date(invoice.issueDate).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell className="text-right font-medium tabular-nums">
+                          {formatCurrency(Number(invoice.totalAmount))}
+                        </TableCell>
+                        <TableCell className="text-right tabular-nums hidden sm:table-cell">
+                          {formatCurrency(Number(invoice.paidAmount))}
+                        </TableCell>
+                        <TableCell
+                          className={`text-right tabular-nums hidden lg:table-cell font-medium ${
+                            balance > 0 ? "text-amber-600 dark:text-amber-400" : "text-green-600 dark:text-green-400"
+                          }`}
+                        >
+                          {formatCurrency(balance)}
+                        </TableCell>
+                        <TableCell>{getStatusBadge(invoice.status)}</TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Pagination */}
       {totalPages > 1 && (
@@ -242,22 +283,27 @@ export default function BillingPage() {
           <p className="text-sm text-muted-foreground">
             Page {page} of {totalPages}
           </p>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-1">
             <Button
               variant="outline"
-              size="sm"
+              size="icon"
+              className="h-8 w-8"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
             >
-              Previous
+              <ChevronLeft className="h-4 w-4" />
             </Button>
+            <span className="text-sm px-3 tabular-nums">
+              {page} / {totalPages}
+            </span>
             <Button
               variant="outline"
-              size="sm"
+              size="icon"
+              className="h-8 w-8"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
             >
-              Next
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         </div>

@@ -3,11 +3,13 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { CalendarDays, ChevronLeft, ChevronRight, Filter, X } from "lucide-react";
 
 import { useAuth } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -57,34 +59,24 @@ const TYPE_OPTIONS = [
   { value: "teleconsult", label: "Teleconsult" },
 ];
 
+const statusStyles: Record<string, string> = {
+  scheduled: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
+  confirmed: "bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700",
+  checked_in: "bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950 dark:text-cyan-300 dark:border-cyan-800",
+  in_progress: "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300 dark:border-indigo-800",
+  completed: "bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800",
+  cancelled: "bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800",
+  no_show: "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800",
+};
+
 function getStatusBadge(status: string) {
   const label = status.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  switch (status) {
-    case "scheduled":
-      return <Badge variant="default">{label}</Badge>;
-    case "confirmed":
-      return <Badge variant="secondary">{label}</Badge>;
-    case "checked_in":
-      return <Badge variant="outline">{label}</Badge>;
-    case "in_progress":
-      return (
-        <Badge variant="default" className="bg-blue-600 hover:bg-blue-500">
-          {label}
-        </Badge>
-      );
-    case "completed":
-      return (
-        <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">
-          {label}
-        </Badge>
-      );
-    case "cancelled":
-      return <Badge variant="destructive">{label}</Badge>;
-    case "no_show":
-      return <Badge variant="destructive">{label}</Badge>;
-    default:
-      return <Badge variant="outline">{label}</Badge>;
-  }
+  const style = statusStyles[status] || "";
+  return (
+    <Badge variant="outline" className={style}>
+      {label}
+    </Badge>
+  );
 }
 
 function getTypeBadge(type: string) {
@@ -110,6 +102,8 @@ export default function AppointmentsPage() {
   const [dateFilter, setDateFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
+
+  const hasFilters = dateFilter || statusFilter !== "all" || typeFilter !== "all";
 
   const fetchAppointments = useCallback(async () => {
     setLoading(true);
@@ -140,27 +134,39 @@ export default function AppointmentsPage() {
     fetchAppointments();
   }, [fetchAppointments]);
 
-  // Reset page when filters change
   useEffect(() => {
     setPage(1);
   }, [dateFilter, statusFilter, typeFilter]);
+
+  function clearFilters() {
+    setDateFilter("");
+    setStatusFilter("all");
+    setTypeFilter("all");
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Appointments</h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground mt-1">
             {total} appointment{total !== 1 ? "s" : ""} total
           </p>
         </div>
-        <Button asChild>
-          <Link href="/appointments/new">Book Appointment</Link>
+        <Button asChild className="gap-2">
+          <Link href="/appointments/new">
+            <CalendarDays className="h-4 w-4" />
+            Book Appointment
+          </Link>
         </Button>
       </div>
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Filter className="h-4 w-4" />
+          <span className="hidden sm:inline">Filters:</span>
+        </div>
         <Input
           type="date"
           value={dateFilter}
@@ -191,78 +197,98 @@ export default function AppointmentsPage() {
             ))}
           </SelectContent>
         </Select>
-        {(dateFilter || statusFilter !== "all" || typeFilter !== "all") && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              setDateFilter("");
-              setStatusFilter("all");
-              setTypeFilter("all");
-            }}
-          >
-            Clear Filters
+        {hasFilters && (
+          <Button variant="ghost" size="sm" onClick={clearFilters} className="gap-1 text-muted-foreground">
+            <X className="h-3 w-3" />
+            Clear
           </Button>
         )}
       </div>
 
       {/* Table */}
-      {loading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <Skeleton key={i} className="h-12 w-full" />
-          ))}
-        </div>
-      ) : (
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Code</TableHead>
-                <TableHead>Patient</TableHead>
-                <TableHead>Doctor</TableHead>
-                <TableHead>Date &amp; Time</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {appointments.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                    No appointments found.
-                  </TableCell>
+      <Card>
+        <CardContent className="p-0">
+          {loading ? (
+            <div className="p-6 space-y-3">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <Skeleton key={i} className="h-12 w-full" />
+              ))}
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead>Code</TableHead>
+                  <TableHead>Patient</TableHead>
+                  <TableHead className="hidden md:table-cell">Doctor</TableHead>
+                  <TableHead>Date & Time</TableHead>
+                  <TableHead className="hidden sm:table-cell">Type</TableHead>
+                  <TableHead>Status</TableHead>
                 </TableRow>
-              ) : (
-                appointments.map((apt) => (
-                  <TableRow
-                    key={apt.id}
-                    className="cursor-pointer"
-                    onClick={() => router.push(`/appointments/${apt.id}`)}
-                  >
-                    <TableCell className="font-mono text-sm">{apt.appointmentCode}</TableCell>
-                    <TableCell>
-                      {apt.patient.firstName} {apt.patient.lastName}
+              </TableHeader>
+              <TableBody>
+                {appointments.length === 0 ? (
+                  <TableRow className="hover:bg-transparent">
+                    <TableCell colSpan={6} className="h-48">
+                      <div className="flex flex-col items-center justify-center text-center">
+                        <div className="rounded-full bg-muted p-4 mb-4">
+                          <CalendarDays className="h-8 w-8 text-muted-foreground/50" />
+                        </div>
+                        <p className="font-medium text-muted-foreground">No appointments found</p>
+                        <p className="text-sm text-muted-foreground/70 mt-1">
+                          {hasFilters
+                            ? "Try adjusting your filters"
+                            : "Book a new appointment to get started"}
+                        </p>
+                        {hasFilters && (
+                          <Button variant="outline" size="sm" className="mt-4" onClick={clearFilters}>
+                            Clear Filters
+                          </Button>
+                        )}
+                      </div>
                     </TableCell>
-                    <TableCell>
-                      Dr. {apt.doctor.firstName} {apt.doctor.lastName}
-                    </TableCell>
-                    <TableCell>
-                      {new Date(apt.scheduledAt).toLocaleDateString()}{" "}
-                      {new Date(apt.scheduledAt).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </TableCell>
-                    <TableCell>{getTypeBadge(apt.type)}</TableCell>
-                    <TableCell>{getStatusBadge(apt.status)}</TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+                ) : (
+                  appointments.map((apt) => (
+                    <TableRow
+                      key={apt.id}
+                      className="cursor-pointer transition-colors"
+                      onClick={() => router.push(`/appointments/${apt.id}`)}
+                    >
+                      <TableCell className="font-mono text-sm text-muted-foreground">
+                        {apt.appointmentCode}
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-medium">
+                          {apt.patient.firstName} {apt.patient.lastName}
+                        </span>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        Dr. {apt.doctor.firstName} {apt.doctor.lastName}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span className="text-sm">
+                            {new Date(apt.scheduledAt).toLocaleDateString()}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(apt.scheduledAt).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden sm:table-cell">{getTypeBadge(apt.type)}</TableCell>
+                      <TableCell>{getStatusBadge(apt.status)}</TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Pagination */}
       {totalPages > 1 && (
@@ -270,22 +296,27 @@ export default function AppointmentsPage() {
           <p className="text-sm text-muted-foreground">
             Page {page} of {totalPages}
           </p>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-1">
             <Button
               variant="outline"
-              size="sm"
+              size="icon"
+              className="h-8 w-8"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
             >
-              Previous
+              <ChevronLeft className="h-4 w-4" />
             </Button>
+            <span className="text-sm px-3 tabular-nums">
+              {page} / {totalPages}
+            </span>
             <Button
               variant="outline"
-              size="sm"
+              size="icon"
+              className="h-8 w-8"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
             >
-              Next
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         </div>
