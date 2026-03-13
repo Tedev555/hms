@@ -26,7 +26,7 @@ function createRequest(authHeader?: string): NextRequest {
   if (authHeader) {
     headers.set("authorization", authHeader);
   }
-  return new NextRequest("http://localhost:3000/api/test", { headers });
+  return new NextRequest("http://localhost:30000/api/test", { headers });
 }
 
 describe("middleware/auth", () => {

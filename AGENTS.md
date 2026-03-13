@@ -6,7 +6,7 @@ Monorepo-style single package. App Router with route groups for auth and dashboa
 ## Build / Dev / Lint Commands
 
 ```bash
-npm run dev              # Start Next.js dev server (port 3000)
+npm run dev              # Start Next.js dev server (port 30000)
 npm run build            # Production build
 npm run lint             # ESLint check (next lint)
 npm run lint:fix         # ESLint autofix

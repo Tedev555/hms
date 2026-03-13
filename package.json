@@ -4,9 +4,9 @@
   "description": "Hospital Management System — Comprehensive web-based platform for hospital operations",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --port 30000",
     "build": "next build",
-    "start": "next start",
+    "start": "next start --port 30000",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
