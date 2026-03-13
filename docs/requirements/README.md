@@ -19,6 +19,7 @@ This directory contains detailed requirement specifications for each module of t
 | 7 | [Laboratory & Diagnostics](./07-laboratory-and-diagnostics.md) | `07-laboratory-and-diagnostics.md` | Phase 3 |
 | 8 | [Inpatient & Ward Management](./08-inpatient-and-ward-management.md) | `08-inpatient-and-ward-management.md` | Phase 4 |
 | 9 | [Reports & Analytics](./09-reports-and-analytics.md) | `09-reports-and-analytics.md` | Phase 5 |
+| 10 | [Multilingual Support (i18n)](./10-multilingual-support.md) | `10-multilingual-support.md` | Phase 6 |
 
 ---
 
