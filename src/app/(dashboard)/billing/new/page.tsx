@@ -13,13 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const invoiceFormSchema = z.object({
@@ -33,7 +27,7 @@ const invoiceFormSchema = z.object({
         description: z.string().min(1, "Description is required"),
         quantity: z.number().int().min(1, "Min 1"),
         unitPrice: z.number().positive("Must be positive"),
-      })
+      }),
     )
     .min(1, "At least one item is required"),
 });
@@ -132,9 +126,7 @@ export default function NewInvoicePage({
       }
       setSearching(true);
       try {
-        const res = await authFetch(
-          `/api/v1/patients/search?q=${encodeURIComponent(query)}`
-        );
+        const res = await authFetch(`/api/v1/patients/search?q=${encodeURIComponent(query)}`);
         if (res.ok) {
           const body = await res.json();
           setSearchResults(body.data);
@@ -146,7 +138,7 @@ export default function NewInvoicePage({
         setSearching(false);
       }
     },
-    [authFetch]
+    [authFetch],
   );
 
   useEffect(() => {
@@ -217,9 +209,7 @@ export default function NewInvoicePage({
     <div className="space-y-6 max-w-3xl">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Create Invoice</h1>
-        <p className="text-muted-foreground">
-          Create a new invoice for a patient
-        </p>
+        <p className="text-muted-foreground">Create a new invoice for a patient</p>
       </div>
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -236,9 +226,7 @@ export default function NewInvoicePage({
                   <p className="font-medium">
                     {selectedPatient.firstName} {selectedPatient.lastName}
                   </p>
-                  <p className="text-sm text-muted-foreground">
-                    {selectedPatient.patientCode}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{selectedPatient.patientCode}</p>
                 </div>
                 {!appointmentId && (
                   <Button
@@ -268,9 +256,7 @@ export default function NewInvoicePage({
                     setTimeout(() => setShowResults(false), 200);
                   }}
                 />
-                {searching && (
-                  <p className="text-sm text-muted-foreground mt-1">Searching...</p>
-                )}
+                {searching && <p className="text-sm text-muted-foreground mt-1">Searching...</p>}
                 {showResults && searchResults.length > 0 && (
                   <div className="absolute z-10 mt-1 w-full rounded-md border bg-background shadow-lg max-h-60 overflow-auto">
                     {searchResults.map((patient) => (
@@ -283,9 +269,7 @@ export default function NewInvoicePage({
                         <span className="font-medium">
                           {patient.firstName} {patient.lastName}
                         </span>
-                        <span className="text-muted-foreground ml-2">
-                          {patient.patientCode}
-                        </span>
+                        <span className="text-muted-foreground ml-2">{patient.patientCode}</span>
                       </button>
                     ))}
                   </div>
@@ -379,9 +363,7 @@ export default function NewInvoicePage({
             </Button>
 
             {form.formState.errors.items?.root && (
-              <p className="text-sm text-destructive">
-                {form.formState.errors.items.root.message}
-              </p>
+              <p className="text-sm text-destructive">{form.formState.errors.items.root.message}</p>
             )}
           </CardContent>
         </Card>
@@ -394,16 +376,9 @@ export default function NewInvoicePage({
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="dueDate">Due Date</Label>
-              <Input
-                id="dueDate"
-                type="date"
-                {...form.register("dueDate")}
-                className="w-44"
-              />
+              <Input id="dueDate" type="date" {...form.register("dueDate")} className="w-44" />
               {form.formState.errors.dueDate && (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.dueDate.message}
-                </p>
+                <p className="text-sm text-destructive">{form.formState.errors.dueDate.message}</p>
               )}
             </div>
             <div className="space-y-2">
@@ -439,11 +414,7 @@ export default function NewInvoicePage({
           <Button type="submit" disabled={submitting}>
             {submitting ? "Creating..." : "Create Invoice"}
           </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.push("/billing")}
-          >
+          <Button type="button" variant="outline" onClick={() => router.push("/billing")}>
             Cancel
           </Button>
         </div>

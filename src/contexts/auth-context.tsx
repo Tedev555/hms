@@ -17,7 +17,12 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-function decodeJwtPayload(token: string): { userId: string; username: string; role: string; departmentId: string | null } {
+function decodeJwtPayload(token: string): {
+  userId: string;
+  username: string;
+  role: string;
+  departmentId: string | null;
+} {
   const base64 = token.split(".")[1];
   const json = atob(base64.replace(/-/g, "+").replace(/_/g, "/"));
   return JSON.parse(json);

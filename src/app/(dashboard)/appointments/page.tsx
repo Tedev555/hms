@@ -67,9 +67,17 @@ function getStatusBadge(status: string) {
     case "checked_in":
       return <Badge variant="outline">{label}</Badge>;
     case "in_progress":
-      return <Badge variant="default" className="bg-blue-600 hover:bg-blue-500">{label}</Badge>;
+      return (
+        <Badge variant="default" className="bg-blue-600 hover:bg-blue-500">
+          {label}
+        </Badge>
+      );
     case "completed":
-      return <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">{label}</Badge>;
+      return (
+        <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">
+          {label}
+        </Badge>
+      );
     case "cancelled":
       return <Badge variant="destructive">{label}</Badge>;
     case "no_show":

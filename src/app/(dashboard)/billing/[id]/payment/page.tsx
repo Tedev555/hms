@@ -19,13 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 type InvoiceSummary = {
@@ -53,11 +47,7 @@ const PAYMENT_METHODS = [
   { value: "insurance", label: "Insurance" },
 ];
 
-export default function RecordPaymentPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default function RecordPaymentPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const { authFetch } = useAuth();
   const router = useRouter();
@@ -161,9 +151,8 @@ export default function RecordPaymentPage({
     );
   }
 
-  const outstanding = Math.round(
-    (Number(invoice.totalAmount) - Number(invoice.paidAmount)) * 100
-  ) / 100;
+  const outstanding =
+    Math.round((Number(invoice.totalAmount) - Number(invoice.paidAmount)) * 100) / 100;
 
   return (
     <div className="space-y-6 max-w-lg">
@@ -221,9 +210,7 @@ export default function RecordPaymentPage({
                 {...form.register("amount", { valueAsNumber: true })}
               />
               {form.formState.errors.amount && (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.amount.message}
-                </p>
+                <p className="text-sm text-destructive">{form.formState.errors.amount.message}</p>
               )}
             </div>
 

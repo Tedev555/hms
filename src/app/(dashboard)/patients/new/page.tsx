@@ -251,7 +251,12 @@ export default function NewPatientPage() {
                           onChange={(e) => {
                             const val = e.target.value;
                             field.onChange(
-                              val ? val.split(",").map((s) => s.trim()).filter(Boolean) : [],
+                              val
+                                ? val
+                                    .split(",")
+                                    .map((s) => s.trim())
+                                    .filter(Boolean)
+                                : [],
                             );
                           }}
                         />

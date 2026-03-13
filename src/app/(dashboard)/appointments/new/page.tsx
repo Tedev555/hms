@@ -114,7 +114,9 @@ export default function NewAppointmentPage() {
       }
       setDoctorSearching(true);
       try {
-        const res = await authFetch(`/api/v1/users?role=doctor&search=${encodeURIComponent(query)}`);
+        const res = await authFetch(
+          `/api/v1/users?role=doctor&search=${encodeURIComponent(query)}`,
+        );
         if (res.ok) {
           const body = await res.json();
           const users = body.data;
@@ -244,9 +246,7 @@ export default function NewAppointmentPage() {
             >
               {label}
             </span>
-            {i < STEPS.length - 1 && (
-              <div className="h-px w-8 bg-border" />
-            )}
+            {i < STEPS.length - 1 && <div className="h-px w-8 bg-border" />}
           </div>
         ))}
       </div>
@@ -298,8 +298,7 @@ export default function NewAppointmentPage() {
                           {patient.firstName} {patient.lastName}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {patient.patientCode} | {patient.phone} |{" "}
-                          {patient.gender} |{" "}
+                          {patient.patientCode} | {patient.phone} | {patient.gender} |{" "}
                           {new Date(patient.dateOfBirth).toLocaleDateString()}
                         </p>
                       </div>
@@ -316,7 +315,8 @@ export default function NewAppointmentPage() {
               <div className="p-3 rounded-md bg-muted/50 border">
                 <p className="text-sm font-medium">Selected Patient</p>
                 <p>
-                  {selectedPatient.firstName} {selectedPatient.lastName} ({selectedPatient.patientCode})
+                  {selectedPatient.firstName} {selectedPatient.lastName} (
+                  {selectedPatient.patientCode})
                 </p>
               </div>
             )}
@@ -371,9 +371,7 @@ export default function NewAppointmentPage() {
                           Dr. {doctor.firstName} {doctor.lastName}
                         </p>
                         {doctor.department && (
-                          <p className="text-sm text-muted-foreground">
-                            {doctor.department.name}
-                          </p>
+                          <p className="text-sm text-muted-foreground">{doctor.department.name}</p>
                         )}
                       </div>
                       {selectedDoctor?.id === doctor.id && (
@@ -459,9 +457,7 @@ export default function NewAppointmentPage() {
             )}
 
             {!slotsLoading && slotDate && slots.length === 0 && (
-              <p className="text-sm text-muted-foreground">
-                No slots available for this date.
-              </p>
+              <p className="text-sm text-muted-foreground">No slots available for this date.</p>
             )}
           </CardContent>
         </Card>
@@ -524,14 +520,10 @@ export default function NewAppointmentPage() {
                 <span>{slotDate ? new Date(slotDate).toLocaleDateString() : "-"}</span>
                 <span className="text-muted-foreground">Time:</span>
                 <span>
-                  {selectedSlot
-                    ? `${selectedSlot.startTime} - ${selectedSlot.endTime}`
-                    : "-"}
+                  {selectedSlot ? `${selectedSlot.startTime} - ${selectedSlot.endTime}` : "-"}
                 </span>
                 <span className="text-muted-foreground">Type:</span>
-                <span>
-                  {APPOINTMENT_TYPES.find((t) => t.value === appointmentType)?.label}
-                </span>
+                <span>{APPOINTMENT_TYPES.find((t) => t.value === appointmentType)?.label}</span>
               </div>
             </div>
           </CardContent>
@@ -540,11 +532,7 @@ export default function NewAppointmentPage() {
 
       {/* Navigation */}
       <div className="flex justify-between">
-        <Button
-          variant="outline"
-          onClick={() => setStep((s) => s - 1)}
-          disabled={step === 0}
-        >
+        <Button variant="outline" onClick={() => setStep((s) => s - 1)} disabled={step === 0}>
           Back
         </Button>
         {step < STEPS.length - 1 ? (

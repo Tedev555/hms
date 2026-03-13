@@ -55,9 +55,7 @@ export default function QueueDashboardPage() {
   // Collect unique departments from queue data
   const departments = Array.from(
     new Map(
-      queue
-        .filter((d) => d.department)
-        .map((d) => [d.department!.id, d.department!]),
+      queue.filter((d) => d.department).map((d) => [d.department!.id, d.department!]),
     ).values(),
   );
 
@@ -92,9 +90,7 @@ export default function QueueDashboardPage() {
   }, [fetchQueue]);
 
   const filteredQueue =
-    departmentFilter === "all"
-      ? queue
-      : queue.filter((d) => d.department?.id === departmentFilter);
+    departmentFilter === "all" ? queue : queue.filter((d) => d.department?.id === departmentFilter);
 
   return (
     <div className="space-y-6">
@@ -134,9 +130,7 @@ export default function QueueDashboardPage() {
           ))}
         </div>
       ) : filteredQueue.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          No doctors in queue.
-        </div>
+        <div className="text-center py-12 text-muted-foreground">No doctors in queue.</div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredQueue.map((item) => (
@@ -163,7 +157,9 @@ export default function QueueDashboardPage() {
                       </span>
                     </p>
                     {item.inProgress.type === "emergency" && (
-                      <Badge variant="destructive" className="mt-1">Emergency</Badge>
+                      <Badge variant="destructive" className="mt-1">
+                        Emergency
+                      </Badge>
                     )}
                   </div>
                 )}

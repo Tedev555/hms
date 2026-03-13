@@ -15,12 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -121,11 +116,7 @@ function getStatusBadge(status: string) {
   }
 }
 
-export default function InvoiceDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default function InvoiceDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const { authFetch, user } = useAuth();
   const router = useRouter();
@@ -303,13 +294,12 @@ export default function InvoiceDetailPage({
       <div className="flex items-start justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold tracking-tight">
-              {invoice.invoiceNumber}
-            </h1>
+            <h1 className="text-3xl font-bold tracking-tight">{invoice.invoiceNumber}</h1>
             {getStatusBadge(invoice.status)}
           </div>
           <p className="text-muted-foreground">
-            Patient: {invoice.patient.firstName} {invoice.patient.lastName} ({invoice.patient.patientCode})
+            Patient: {invoice.patient.firstName} {invoice.patient.lastName} (
+            {invoice.patient.patientCode})
           </p>
           {invoice.appointment && (
             <p className="text-sm text-muted-foreground">
@@ -345,10 +335,7 @@ export default function InvoiceDetailPage({
                 <DialogHeader>
                   <DialogTitle>Add Line Item</DialogTitle>
                 </DialogHeader>
-                <form
-                  onSubmit={addItemForm.handleSubmit(handleAddItem)}
-                  className="space-y-4"
-                >
+                <form onSubmit={addItemForm.handleSubmit(handleAddItem)} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="add-desc">Description</Label>
                     <Input
@@ -428,9 +415,7 @@ export default function InvoiceDetailPage({
                       <TableCell className="text-right">
                         {Number(item.unitPrice).toFixed(2)}
                       </TableCell>
-                      <TableCell className="text-right">
-                        {Number(item.total).toFixed(2)}
-                      </TableCell>
+                      <TableCell className="text-right">{Number(item.total).toFixed(2)}</TableCell>
                       {invoice.status === "draft" && (
                         <TableCell>
                           <Button
@@ -506,9 +491,7 @@ export default function InvoiceDetailPage({
                 <TableBody>
                   {invoice.payments.map((payment) => (
                     <TableRow key={payment.id}>
-                      <TableCell>
-                        {new Date(payment.paidAt).toLocaleDateString()}
-                      </TableCell>
+                      <TableCell>{new Date(payment.paidAt).toLocaleDateString()}</TableCell>
                       <TableCell className="capitalize">
                         {payment.paymentMethod.replace(/_/g, " ")}
                       </TableCell>
@@ -532,9 +515,7 @@ export default function InvoiceDetailPage({
             <CardTitle>Notes</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-              {invoice.notes}
-            </p>
+            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{invoice.notes}</p>
           </CardContent>
         </Card>
       )}
@@ -594,15 +575,13 @@ export default function InvoiceDetailPage({
                 <AlertDialogHeader>
                   <AlertDialogTitle>Issue Invoice?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will mark the invoice as issued and it can no longer be
-                    edited. This action cannot be undone.
+                    This will mark the invoice as issued and it can no longer be edited. This action
+                    cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleIssue}>
-                    Issue Invoice
-                  </AlertDialogAction>
+                  <AlertDialogAction onClick={handleIssue}>Issue Invoice</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
@@ -617,15 +596,12 @@ export default function InvoiceDetailPage({
                 <AlertDialogHeader>
                   <AlertDialogTitle>Cancel Invoice?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will permanently cancel the invoice. This action cannot
-                    be undone.
+                    This will permanently cancel the invoice. This action cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Go Back</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleCancel}>
-                    Cancel Invoice
-                  </AlertDialogAction>
+                  <AlertDialogAction onClick={handleCancel}>Cancel Invoice</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
@@ -648,15 +624,12 @@ export default function InvoiceDetailPage({
                   <AlertDialogHeader>
                     <AlertDialogTitle>Cancel Invoice?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This will permanently cancel the invoice. This action
-                      cannot be undone.
+                      This will permanently cancel the invoice. This action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Go Back</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleCancel}>
-                      Cancel Invoice
-                    </AlertDialogAction>
+                    <AlertDialogAction onClick={handleCancel}>Cancel Invoice</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>

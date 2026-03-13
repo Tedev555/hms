@@ -248,7 +248,11 @@ export default function EditPatientPage({ params }: { params: Promise<{ id: stri
                   <FormItem>
                     <FormLabel>National ID</FormLabel>
                     <FormControl>
-                      <Input placeholder="National ID number" {...field} value={field.value || ""} />
+                      <Input
+                        placeholder="National ID number"
+                        {...field}
+                        value={field.value || ""}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -307,7 +311,12 @@ export default function EditPatientPage({ params }: { params: Promise<{ id: stri
                           onChange={(e) => {
                             const val = e.target.value;
                             field.onChange(
-                              val ? val.split(",").map((s) => s.trim()).filter(Boolean) : [],
+                              val
+                                ? val
+                                    .split(",")
+                                    .map((s) => s.trim())
+                                    .filter(Boolean)
+                                : [],
                             );
                           }}
                         />

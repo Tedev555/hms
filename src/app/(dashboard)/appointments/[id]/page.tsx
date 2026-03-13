@@ -64,9 +64,17 @@ function getStatusBadge(status: string) {
     case "checked_in":
       return <Badge variant="outline">{label}</Badge>;
     case "in_progress":
-      return <Badge variant="default" className="bg-blue-600 hover:bg-blue-500">{label}</Badge>;
+      return (
+        <Badge variant="default" className="bg-blue-600 hover:bg-blue-500">
+          {label}
+        </Badge>
+      );
     case "completed":
-      return <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">{label}</Badge>;
+      return (
+        <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">
+          {label}
+        </Badge>
+      );
     case "cancelled":
       return <Badge variant="destructive">{label}</Badge>;
     case "no_show":
@@ -84,11 +92,7 @@ function getTypeBadge(type: string) {
   return <Badge variant="outline">{label}</Badge>;
 }
 
-export default function AppointmentDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default function AppointmentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
   const { authFetch, user } = useAuth();
   const router = useRouter();
@@ -187,13 +191,15 @@ export default function AppointmentDetailPage({
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold tracking-tight">
-              {appointment.appointmentCode}
-            </h1>
+            <h1 className="text-3xl font-bold tracking-tight">{appointment.appointmentCode}</h1>
             {getStatusBadge(status)}
             {getTypeBadge(appointment.type)}
           </div>
-          <Button variant="link" className="p-0 h-auto" onClick={() => router.push("/appointments")}>
+          <Button
+            variant="link"
+            className="p-0 h-auto"
+            onClick={() => router.push("/appointments")}
+          >
             Back to Appointments
           </Button>
         </div>
@@ -206,17 +212,16 @@ export default function AppointmentDetailPage({
             </Button>
           )}
 
-          {(status === "scheduled" || status === "confirmed") &&
-            canPerformAction("no_show") && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => updateStatus("no_show")}
-                disabled={actionLoading}
-              >
-                Mark No-Show
-              </Button>
-            )}
+          {(status === "scheduled" || status === "confirmed") && canPerformAction("no_show") && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => updateStatus("no_show")}
+              disabled={actionLoading}
+            >
+              Mark No-Show
+            </Button>
+          )}
 
           {status === "confirmed" && canPerformAction("checked_in") && (
             <Button size="sm" onClick={() => updateStatus("checked_in")} disabled={actionLoading}>
@@ -334,9 +339,7 @@ export default function AppointmentDetailPage({
               </span>
               <span className="text-muted-foreground">Department</span>
               <span>
-                {appointment.doctor.department?.name ||
-                  appointment.department?.name ||
-                  "N/A"}
+                {appointment.doctor.department?.name || appointment.department?.name || "N/A"}
               </span>
             </div>
           </CardContent>
@@ -371,9 +374,7 @@ export default function AppointmentDetailPage({
             </div>
             <div>
               <span className="text-muted-foreground">Type</span>
-              <p className="font-medium capitalize">
-                {appointment.type.replace(/_/g, " ")}
-              </p>
+              <p className="font-medium capitalize">{appointment.type.replace(/_/g, " ")}</p>
             </div>
           </div>
         </CardContent>

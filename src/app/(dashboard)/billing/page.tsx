@@ -213,15 +213,11 @@ export default function BillingPage() {
                     className="cursor-pointer"
                     onClick={() => router.push(`/billing/${invoice.id}`)}
                   >
-                    <TableCell className="font-mono text-sm">
-                      {invoice.invoiceNumber}
-                    </TableCell>
+                    <TableCell className="font-mono text-sm">{invoice.invoiceNumber}</TableCell>
                     <TableCell>
                       {invoice.patient.firstName} {invoice.patient.lastName}
                     </TableCell>
-                    <TableCell>
-                      {new Date(invoice.issueDate).toLocaleDateString()}
-                    </TableCell>
+                    <TableCell>{new Date(invoice.issueDate).toLocaleDateString()}</TableCell>
                     <TableCell className="text-right">
                       {Number(invoice.totalAmount).toFixed(2)}
                     </TableCell>

@@ -6,7 +6,7 @@ import { Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -236,9 +236,7 @@ export default function PatientDetailPage({ params }: { params: Promise<{ id: st
                       <div>
                         <p className="font-medium">{entry.condition}</p>
                         {entry.description && (
-                          <p className="mt-1 text-sm text-muted-foreground">
-                            {entry.description}
-                          </p>
+                          <p className="mt-1 text-sm text-muted-foreground">{entry.description}</p>
                         )}
                       </div>
                       <div className="text-right">
