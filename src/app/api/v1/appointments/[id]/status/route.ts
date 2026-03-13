@@ -1,11 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { withAuth } from "@/middleware/auth";
-import {
-  successResponse,
-  errorResponse,
-  notFoundResponse,
-} from "@/lib/api-response";
+import { successResponse, errorResponse, notFoundResponse } from "@/lib/api-response";
 import { updateStatusSchema } from "@/lib/validations";
 import type { JwtPayload } from "@/lib/auth";
 

@@ -1,11 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { withAuth } from "@/middleware/auth";
-import {
-  successResponse,
-  paginatedResponse,
-  errorResponse,
-} from "@/lib/api-response";
+import { successResponse, paginatedResponse, errorResponse } from "@/lib/api-response";
 import { createAppointmentSchema } from "@/lib/validations";
 import { parsePagination, generateCode } from "@/lib/utils";
 import type { JwtPayload } from "@/lib/auth";
@@ -97,7 +93,14 @@ export const POST = withAuth(
         return errorResponse("Validation failed", 400, parsed.error.flatten().fieldErrors);
       }
 
-      const { patientId, doctorId, scheduledAt: scheduledAtStr, duration, type, ...rest } = parsed.data;
+      const {
+        patientId,
+        doctorId,
+        scheduledAt: scheduledAtStr,
+        duration,
+        type,
+        ...rest
+      } = parsed.data;
 
       const scheduledAt = new Date(scheduledAtStr);
 
@@ -146,7 +149,10 @@ export const POST = withAuth(
         // More precise overlap check using duration
         const conflictEnd = new Date(conflict.scheduledAt.getTime() + conflict.duration * 60000);
         if (scheduledAt < conflictEnd && appointmentEnd > conflict.scheduledAt) {
-          return errorResponse("Time slot is not available. Doctor already has an appointment at this time.", 409);
+          return errorResponse(
+            "Time slot is not available. Doctor already has an appointment at this time.",
+            409,
+          );
         }
       }
 

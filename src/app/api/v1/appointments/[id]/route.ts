@@ -1,59 +1,53 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { withAuth } from "@/middleware/auth";
-import {
-  successResponse,
-  errorResponse,
-  notFoundResponse,
-} from "@/lib/api-response";
+import { successResponse, errorResponse, notFoundResponse } from "@/lib/api-response";
 import { updateAppointmentSchema } from "@/lib/validations";
 import type { JwtPayload } from "@/lib/auth";
 
 // GET /api/v1/appointments/:id — Get appointment details
-export const GET = withAuth(
-  async (request: NextRequest, _payload: JwtPayload) => {
-    try {
-      const id = request.nextUrl.pathname.split("/").pop()!;
+export const GET = withAuth(async (request: NextRequest, _payload: JwtPayload) => {
+  try {
+    const id = request.nextUrl.pathname.split("/").pop()!;
 
-      const appointment = await prisma.appointment.findUnique({
-        where: { id },
-        include: {
-          patient: {
-            select: {
-              id: true,
-              patientCode: true,
-              firstName: true,
-              lastName: true,
-              dateOfBirth: true,
-              gender: true,
-              phone: true,
-              bloodGroup: true,
-              allergies: true,
-            },
+    const appointment = await prisma.appointment.findUnique({
+      where: { id },
+      include: {
+        patient: {
+          select: {
+            id: true,
+            patientCode: true,
+            firstName: true,
+            lastName: true,
+            dateOfBirth: true,
+            gender: true,
+            phone: true,
+            bloodGroup: true,
+            allergies: true,
           },
-          doctor: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              department: { select: { id: true, name: true } },
-            },
-          },
-          department: { select: { id: true, name: true } },
         },
-      });
+        doctor: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            department: { select: { id: true, name: true } },
+          },
+        },
+        department: { select: { id: true, name: true } },
+      },
+    });
 
-      if (!appointment) {
-        return notFoundResponse("Appointment");
-      }
-
-      return successResponse(appointment);
-    } catch (error) {
-      console.error("Get appointment error:", error);
-      return errorResponse("Internal server error", 500);
+    if (!appointment) {
+      return notFoundResponse("Appointment");
     }
-  },
-);
+
+    return successResponse(appointment);
+  } catch (error) {
+    console.error("Get appointment error:", error);
+    return errorResponse("Internal server error", 500);
+  }
+});
 
 // PUT /api/v1/appointments/:id — Update/reschedule appointment
 export const PUT = withAuth(
@@ -112,7 +106,10 @@ export const PUT = withAuth(
         if (conflict) {
           const conflictEnd = new Date(conflict.scheduledAt.getTime() + conflict.duration * 60000);
           if (newScheduledAt < conflictEnd && appointmentEnd > conflict.scheduledAt) {
-            return errorResponse("Time slot is not available. Doctor already has an appointment at this time.", 409);
+            return errorResponse(
+              "Time slot is not available. Doctor already has an appointment at this time.",
+              409,
+            );
           }
         }
 
@@ -120,8 +117,10 @@ export const PUT = withAuth(
       }
 
       if (parsed.data.duration !== undefined) updateData.duration = parsed.data.duration;
-      if (parsed.data.departmentId !== undefined) updateData.departmentId = parsed.data.departmentId;
-      if (parsed.data.chiefComplaint !== undefined) updateData.chiefComplaint = parsed.data.chiefComplaint;
+      if (parsed.data.departmentId !== undefined)
+        updateData.departmentId = parsed.data.departmentId;
+      if (parsed.data.chiefComplaint !== undefined)
+        updateData.chiefComplaint = parsed.data.chiefComplaint;
       if (parsed.data.notes !== undefined) updateData.notes = parsed.data.notes;
 
       const appointment = await prisma.appointment.update({

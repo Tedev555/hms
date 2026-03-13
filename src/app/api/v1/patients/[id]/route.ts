@@ -1,11 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { withAuth } from "@/middleware/auth";
-import {
-  successResponse,
-  errorResponse,
-  notFoundResponse,
-} from "@/lib/api-response";
+import { successResponse, errorResponse, notFoundResponse } from "@/lib/api-response";
 import { updatePatientSchema } from "@/lib/validations";
 import { createAuditLog } from "@/lib/audit";
 import type { JwtPayload } from "@/lib/auth";
@@ -74,9 +70,7 @@ export const PUT = withAuth(
         where: { id },
         data: {
           ...parsed.data,
-          dateOfBirth: parsed.data.dateOfBirth
-            ? new Date(parsed.data.dateOfBirth)
-            : undefined,
+          dateOfBirth: parsed.data.dateOfBirth ? new Date(parsed.data.dateOfBirth) : undefined,
         },
       });
 

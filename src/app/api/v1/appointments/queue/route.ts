@@ -1,10 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { withAuth } from "@/middleware/auth";
-import {
-  successResponse,
-  errorResponse,
-} from "@/lib/api-response";
+import { successResponse, errorResponse } from "@/lib/api-response";
 import type { JwtPayload } from "@/lib/auth";
 
 const AVG_CONSULTATION_MINUTES = 15;
@@ -63,13 +60,16 @@ export const GET = withAuth(
       });
 
       // Group by doctor
-      const grouped: Record<string, {
-        doctor: { id: string; firstName: string; lastName: string };
-        department: { id: string; name: string } | null;
-        inProgress: typeof queueAppointments[number] | null;
-        waiting: (typeof queueAppointments[number] & { estimatedWaitMinutes: number })[];
-        totalWaiting: number;
-      }> = {};
+      const grouped: Record<
+        string,
+        {
+          doctor: { id: string; firstName: string; lastName: string };
+          department: { id: string; name: string } | null;
+          inProgress: (typeof queueAppointments)[number] | null;
+          waiting: ((typeof queueAppointments)[number] & { estimatedWaitMinutes: number })[];
+          totalWaiting: number;
+        }
+      > = {};
 
       for (const apt of queueAppointments) {
         const dId = apt.doctorId;
