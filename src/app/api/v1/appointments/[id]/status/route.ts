@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { withAuth } from "@/middleware/auth";
 import { successResponse, errorResponse, notFoundResponse } from "@/lib/api-response";
 import { updateStatusSchema } from "@/lib/validations";
+import { createAuditLog } from "@/lib/audit";
 import type { JwtPayload } from "@/lib/auth";
 
 // Valid status transitions per BR-3.3
@@ -88,6 +89,15 @@ export const PATCH = withAuth(
           doctor: { select: { id: true, firstName: true, lastName: true } },
           department: { select: { id: true, name: true } },
         },
+      });
+
+      await createAuditLog({
+        userId: payload.userId,
+        action: "STATUS_CHANGE",
+        entity: "appointment",
+        entityId: id,
+        oldData: { status: existing.status },
+        newData: { status: newStatus, cancelReason, notes },
       });
 
       return successResponse(appointment);

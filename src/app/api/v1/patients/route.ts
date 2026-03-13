@@ -89,5 +89,5 @@ export const POST = withAuth(
       return errorResponse("Internal server error", 500);
     }
   },
-  ["receptionist", "admin", "director"],
+  ["receptionist", "admin"],
 );

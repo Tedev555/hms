@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { withAuth } from "@/middleware/auth";
 import { successResponse, errorResponse, notFoundResponse } from "@/lib/api-response";
 import { updateAppointmentSchema } from "@/lib/validations";
+import { createAuditLog } from "@/lib/audit";
 import type { JwtPayload } from "@/lib/auth";
 
 // GET /api/v1/appointments/:id — Get appointment details
@@ -59,7 +60,7 @@ export const GET = withAuth(
 export const PUT = withAuth(
   async (
     request: NextRequest,
-    _payload: JwtPayload,
+    payload: JwtPayload,
     { params }: { params: Promise<{ id: string }> },
   ) => {
     try {
@@ -141,6 +142,15 @@ export const PUT = withAuth(
           doctor: { select: { id: true, firstName: true, lastName: true } },
           department: { select: { id: true, name: true } },
         },
+      });
+
+      await createAuditLog({
+        userId: payload.userId,
+        action: "UPDATE",
+        entity: "appointment",
+        entityId: id,
+        oldData: existing,
+        newData: appointment,
       });
 
       return successResponse(appointment);
