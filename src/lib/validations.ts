@@ -21,6 +21,18 @@ export const passwordSchema = z
   .regex(/[0-9]/, "Must contain a number")
   .regex(/[^a-zA-Z0-9]/, "Must contain a special character");
 
+// User roles enum (reusable)
+const userRoleEnum = z.enum([
+  "doctor",
+  "nurse",
+  "paramedic",
+  "receptionist",
+  "admin",
+  "lab_tech",
+  "pharmacist",
+  "director",
+]);
+
 // Create user
 export const createUserSchema = z.object({
   username: z.string().min(3).max(100),
@@ -28,18 +40,37 @@ export const createUserSchema = z.object({
   password: passwordSchema,
   firstName: z.string().min(1).max(100),
   lastName: z.string().min(1).max(100),
-  role: z.enum([
-    "doctor",
-    "nurse",
-    "paramedic",
-    "receptionist",
-    "admin",
-    "lab_tech",
-    "pharmacist",
-    "director",
-  ]),
+  role: userRoleEnum,
   departmentId: z.string().uuid().optional(),
-  phone: z.string().optional(),
+  phone: z.string().max(20).optional(),
+});
+
+// Update user (admin/director updating another user's profile)
+export const updateUserSchema = z.object({
+  email: z.string().email().max(150).optional(),
+  firstName: z.string().min(1).max(100).optional(),
+  lastName: z.string().min(1).max(100).optional(),
+  role: userRoleEnum.optional(),
+  departmentId: z.string().uuid().nullable().optional(),
+  phone: z.string().max(20).nullable().optional(),
+});
+
+// Update own profile (self-service — limited fields)
+export const updateOwnProfileSchema = z.object({
+  email: z.string().email().max(150).optional(),
+  firstName: z.string().min(1).max(100).optional(),
+  lastName: z.string().min(1).max(100).optional(),
+  phone: z.string().max(20).nullable().optional(),
+});
+
+// Reset password
+export const resetPasswordSchema = z.object({
+  newPassword: passwordSchema,
+});
+
+// Toggle user active status
+export const updateUserStatusSchema = z.object({
+  isActive: z.boolean(),
 });
 
 // Create patient

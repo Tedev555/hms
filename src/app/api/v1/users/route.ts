@@ -4,6 +4,7 @@ import { withAuth } from "@/middleware/auth";
 import { hashPassword } from "@/lib/auth";
 import { successResponse, paginatedResponse, errorResponse } from "@/lib/api-response";
 import { createUserSchema } from "@/lib/validations";
+import { createAuditLog } from "@/lib/audit";
 import { parsePagination } from "@/lib/utils";
 import type { JwtPayload } from "@/lib/auth";
 
@@ -11,10 +12,38 @@ import type { JwtPayload } from "@/lib/auth";
 export const GET = withAuth(
   async (request: NextRequest, _payload: JwtPayload) => {
     try {
-      const { page, limit, skip } = parsePagination(request.nextUrl.searchParams);
+      const searchParams = request.nextUrl.searchParams;
+      const { page, limit, skip } = parsePagination(searchParams);
+
+      // Filtering
+      const role = searchParams.get("role") || undefined;
+      const departmentId = searchParams.get("departmentId") || undefined;
+      const isActiveParam = searchParams.get("isActive");
+      const search = searchParams.get("search") || undefined;
+
+      const where: Record<string, unknown> = {};
+
+      if (role) {
+        where.role = role;
+      }
+      if (departmentId) {
+        where.departmentId = departmentId;
+      }
+      if (isActiveParam !== null && isActiveParam !== undefined && isActiveParam !== "") {
+        where.isActive = isActiveParam === "true";
+      }
+      if (search) {
+        where.OR = [
+          { firstName: { contains: search, mode: "insensitive" } },
+          { lastName: { contains: search, mode: "insensitive" } },
+          { username: { contains: search, mode: "insensitive" } },
+          { email: { contains: search, mode: "insensitive" } },
+        ];
+      }
 
       const [users, total] = await Promise.all([
         prisma.user.findMany({
+          where,
           skip,
           take: limit,
           orderBy: { createdAt: "desc" },
@@ -26,12 +55,13 @@ export const GET = withAuth(
             email: true,
             role: true,
             isActive: true,
-            department: { select: { name: true } },
+            phone: true,
+            department: { select: { id: true, name: true } },
             lastLoginAt: true,
             createdAt: true,
           },
         }),
-        prisma.user.count(),
+        prisma.user.count({ where }),
       ]);
 
       return paginatedResponse(users, total, page, limit);
@@ -73,6 +103,14 @@ export const POST = withAuth(
           isActive: true,
           createdAt: true,
         },
+      });
+
+      await createAuditLog({
+        userId: payload.userId,
+        action: "CREATE_USER",
+        entity: "User",
+        entityId: user.id,
+        newData: { username: user.username, role: user.role, email: user.email },
       });
 
       return successResponse(user, 201);
