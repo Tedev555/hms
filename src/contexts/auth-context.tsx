@@ -72,11 +72,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Restore session on mount via refresh endpoint
   useEffect(() => {
+    const controller = new AbortController();
+
     async function restore() {
       try {
-        const res = await fetch("/api/v1/auth/refresh", { method: "POST" });
+        const res = await fetch("/api/v1/auth/refresh", {
+          method: "POST",
+          signal: controller.signal,
+        });
+        if (controller.signal.aborted) return;
         if (!res.ok) {
-          router.push("/login");
+          // Only redirect if we are on a protected page (not already on /login).
+          // Edge middleware already validated the cookie for the initial page load,
+          // so a refresh failure here may be transient.
+          if (window.location.pathname !== "/login") {
+            router.push("/login");
+          }
           return;
         }
         const body = await res.json();
@@ -93,13 +104,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
         scheduleRefresh(token);
       } catch {
-        router.push("/login");
+        // Ignore aborted fetches (React Strict Mode, unmount during navigation)
+        if (controller.signal.aborted) return;
+        if (window.location.pathname !== "/login") {
+          router.push("/login");
+        }
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     }
     restore();
-    return () => clearRefreshTimer();
+    return () => {
+      controller.abort();
+      clearRefreshTimer();
+    };
   }, [router, scheduleRefresh, clearRefreshTimer]);
 
   const login = useCallback(

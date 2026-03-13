@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,7 +22,6 @@ const roleLanding: Record<string, string> = {
 };
 
 export default function LoginPage() {
-  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -50,8 +48,9 @@ export default function LoginPage() {
       const body = await res.json();
       const user = body.data.user as AuthUser;
       const landing = roleLanding[user.role] || "/";
-      router.push(landing);
-      router.refresh();
+      // Full page navigation ensures browser sends freshly-set cookies
+      // on the very first server request with no client router cache issues
+      window.location.href = landing;
     } catch {
       setError("An unexpected error occurred");
     } finally {

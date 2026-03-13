@@ -1119,8 +1119,51 @@ async function main() {
   }
 
   // ========================================================================
-  // 9. LAB TESTS (additional, beyond the original 4)
+  // 9. LAB TESTS
   // ========================================================================
+
+  const baseLabTests = [
+    {
+      name: "Complete Blood Count",
+      code: "CBC",
+      category: "Hematology",
+      sampleType: "Blood",
+      referenceRange: "Hb: 12-16 g/dL, WBC: 4-11 x10^9/L, Platelets: 150-450 x10^9/L",
+      unit: null,
+      price: 150.0,
+      turnaroundHrs: 2,
+    },
+    {
+      name: "Blood Glucose Fasting",
+      code: "BGF",
+      category: "Biochemistry",
+      sampleType: "Blood",
+      referenceRange: "70-99 mg/dL",
+      unit: "mg/dL",
+      price: 80.0,
+      turnaroundHrs: 1,
+    },
+    {
+      name: "Liver Function Test",
+      code: "LFT",
+      category: "Biochemistry",
+      sampleType: "Blood",
+      referenceRange: "ALT: 7-56 U/L, AST: 10-40 U/L, Bilirubin: 0.1-1.2 mg/dL",
+      unit: null,
+      price: 250.0,
+      turnaroundHrs: 4,
+    },
+    {
+      name: "Urinalysis",
+      code: "UA",
+      category: "Urine",
+      sampleType: "Urine",
+      referenceRange: "Color: yellow, Protein: negative, Glucose: negative",
+      unit: null,
+      price: 60.0,
+      turnaroundHrs: 1,
+    },
+  ];
 
   const additionalLabTests = [
     {
@@ -1186,7 +1229,7 @@ async function main() {
   ];
 
   const allLabTests = await Promise.all(
-    additionalLabTests.map((t) =>
+    [...baseLabTests, ...additionalLabTests].map((t) =>
       prisma.labTest.upsert({
         where: { code: t.code },
         update: {},
@@ -1195,17 +1238,8 @@ async function main() {
     ),
   );
 
-  // Also fetch the original 4 lab tests so we can reference them
-  const originalLabTests = await Promise.all(
-    ["CBC", "BGF", "LFT", "UA"].map((code) =>
-      prisma.labTest.findUniqueOrThrow({ where: { code } }),
-    ),
-  );
-
-  const labTestByCode = Object.fromEntries(
-    [...originalLabTests, ...allLabTests].map((t) => [t.code, t]),
-  );
-  console.warn(`  Additional lab tests: ${allLabTests.length}`);
+  const labTestByCode = Object.fromEntries(allLabTests.map((t) => [t.code, t]));
+  console.warn(`  Lab tests: ${allLabTests.length}`);
 
   // ========================================================================
   // 10. LAB ORDERS & ITEMS

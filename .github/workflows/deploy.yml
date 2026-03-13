@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: tedev555/hms
 
 jobs:
   build:
@@ -77,26 +77,33 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT || 22 }}
           script: |
+            set -euo pipefail
+
             cd ~/hms
 
             # Log in to GitHub Container Registry
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
             # Set image tag for compose
-            export IMAGE_TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:uat
+            export IMAGE_TAG="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:uat"
 
             # Pull the latest image
-            docker pull $IMAGE_TAG
+            docker pull "$IMAGE_TAG"
 
-            # Run database migrations
-            docker run --rm \
-              --network hms_default \
-              --env-file .env \
-              $IMAGE_TAG \
-              npx prisma migrate deploy
+            # Start infrastructure services first
+            IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.uat.yml up -d hms-db hms-redis hms-minio
+
+            # Sync database schema for UAT
+            IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.uat.yml run --rm --user root hms-app node ./node_modules/prisma/build/index.js db push --skip-generate
+
+            # Seed UAT sample data when bootstrap records are missing
+            LAB_ORDER_COUNT=$(docker compose -f docker-compose.uat.yml exec -T hms-db psql -U hms_user -d hms_db -tAc "SELECT COUNT(*) FROM public.lab_orders;")
+            if [ "$LAB_ORDER_COUNT" = "0" ]; then
+              IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.uat.yml run --rm --user root hms-app node ./node_modules/tsx/dist/cli.mjs prisma/seed.ts
+            fi
 
             # Deploy with docker compose
-            IMAGE_TAG=$IMAGE_TAG docker compose -f docker-compose.uat.yml up -d --remove-orphans
+            IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.uat.yml up -d --remove-orphans
 
             # Clean up old images
             docker image prune -f
