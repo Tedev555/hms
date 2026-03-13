@@ -96,9 +96,9 @@ jobs:
             # Sync database schema for UAT
             IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.uat.yml run --rm --user root hms-app node ./node_modules/prisma/build/index.js db push --skip-generate
 
-            # Seed UAT data only when the database is empty
-            USER_COUNT=$(docker compose -f docker-compose.uat.yml exec -T hms-db psql -U hms_user -d hms_db -tAc "SELECT COUNT(*) FROM public.users;")
-            if [ "$USER_COUNT" = "0" ]; then
+            # Seed UAT sample data when bootstrap records are missing
+            LAB_ORDER_COUNT=$(docker compose -f docker-compose.uat.yml exec -T hms-db psql -U hms_user -d hms_db -tAc "SELECT COUNT(*) FROM public.lab_orders;")
+            if [ "$LAB_ORDER_COUNT" = "0" ]; then
               IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.uat.yml run --rm --user root hms-app node ./node_modules/tsx/dist/cli.mjs prisma/seed.ts
             fi
 
