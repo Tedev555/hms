@@ -94,7 +94,7 @@ jobs:
             IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.uat.yml up -d hms-db hms-redis hms-minio
 
             # Run database migrations
-            IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.uat.yml run --rm hms-app ./node_modules/.bin/prisma migrate deploy
+            IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.uat.yml run --rm hms-app node ./node_modules/prisma/build/index.js migrate deploy
 
             # Deploy with docker compose
             IMAGE_TAG="$IMAGE_TAG" docker compose -f docker-compose.uat.yml up -d --remove-orphans
