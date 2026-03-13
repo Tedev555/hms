@@ -2,14 +2,27 @@
 
 import { use, useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Pencil, ArrowLeft, User, Phone, Mail, MapPin, Droplets, AlertTriangle, Plus, Trash2, FileText, Heart, Shield } from "lucide-react";
+import {
+  Pencil,
+  ArrowLeft,
+  User,
+  Phone,
+  Mail,
+  MapPin,
+  Droplets,
+  AlertTriangle,
+  Plus,
+  Trash2,
+  FileText,
+  Heart,
+  Shield,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
@@ -141,7 +154,12 @@ export default function PatientDetailPage({ params }: { params: Promise<{ id: st
           <User className="h-8 w-8 text-muted-foreground/50" />
         </div>
         <p className="font-medium text-muted-foreground">Patient not found</p>
-        <Button variant="outline" size="sm" className="mt-4" onClick={() => router.push("/patients")}>
+        <Button
+          variant="outline"
+          size="sm"
+          className="mt-4"
+          onClick={() => router.push("/patients")}
+        >
           Back to Patients
         </Button>
       </div>
@@ -155,7 +173,12 @@ export default function PatientDetailPage({ params }: { params: Promise<{ id: st
   return (
     <div className="space-y-6">
       {/* Back button */}
-      <Button variant="ghost" size="sm" className="gap-2 -ml-2 text-muted-foreground" onClick={() => router.push("/patients")}>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="gap-2 -ml-2 text-muted-foreground"
+        onClick={() => router.push("/patients")}
+      >
         <ArrowLeft className="h-4 w-4" />
         Patients
       </Button>
@@ -164,7 +187,8 @@ export default function PatientDetailPage({ params }: { params: Promise<{ id: st
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-4">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 text-xl font-semibold flex-shrink-0">
-            {patient.firstName[0]}{patient.lastName[0]}
+            {patient.firstName[0]}
+            {patient.lastName[0]}
           </div>
           <div>
             <h1 className="text-2xl font-bold">
@@ -179,7 +203,11 @@ export default function PatientDetailPage({ params }: { params: Promise<{ id: st
             </div>
           </div>
         </div>
-        <Button variant="outline" onClick={() => router.push(`/patients/${id}/edit`)} className="gap-2">
+        <Button
+          variant="outline"
+          onClick={() => router.push(`/patients/${id}/edit`)}
+          className="gap-2"
+        >
           <Pencil className="h-4 w-4" />
           Edit
         </Button>
@@ -230,7 +258,11 @@ export default function PatientDetailPage({ params }: { params: Promise<{ id: st
                 <InfoItem icon={User} label="First Name" value={patient.firstName} />
                 <InfoItem icon={User} label="Last Name" value={patient.lastName} />
                 <InfoItem icon={User} label="Gender" value={patient.gender} capitalize />
-                <InfoItem icon={User} label="Date of Birth" value={new Date(patient.dateOfBirth).toLocaleDateString()} />
+                <InfoItem
+                  icon={User}
+                  label="Date of Birth"
+                  value={new Date(patient.dateOfBirth).toLocaleDateString()}
+                />
                 <InfoItem icon={Phone} label="Phone" value={patient.phone} />
                 <InfoItem icon={Mail} label="Email" value={patient.email || "—"} />
                 <InfoItem icon={Shield} label="National ID" value={patient.nationalId || "—"} />
@@ -364,7 +396,9 @@ export default function PatientDetailPage({ params }: { params: Promise<{ id: st
                       placeholder="Phone number"
                     />
                   </div>
-                  <Button onClick={handleAddContact} className="w-full">Add Contact</Button>
+                  <Button onClick={handleAddContact} className="w-full">
+                    Add Contact
+                  </Button>
                 </div>
               </DialogContent>
             </Dialog>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { ClipboardList, RefreshCw, Stethoscope, Users } from "lucide-react";
+import { ClipboardList, RefreshCw, Users } from "lucide-react";
 
 import { useAuth } from "@/contexts/auth-context";
 import { Badge } from "@/components/ui/badge";
@@ -61,25 +61,28 @@ export default function QueueDashboardPage() {
     ).values(),
   );
 
-  const fetchQueue = useCallback(async (isManual = false) => {
-    if (isManual) setRefreshing(true);
-    try {
-      const params = new URLSearchParams();
-      if (departmentFilter !== "all") params.set("departmentId", departmentFilter);
-      const url = `/api/v1/appointments/queue${params.toString() ? `?${params.toString()}` : ""}`;
-      const res = await authFetch(url);
-      if (res.ok) {
-        const body: QueueResponse = await res.json();
-        setQueue(body.data.queue);
-        setGeneratedAt(body.data.generatedAt);
+  const fetchQueue = useCallback(
+    async (isManual = false) => {
+      if (isManual) setRefreshing(true);
+      try {
+        const params = new URLSearchParams();
+        if (departmentFilter !== "all") params.set("departmentId", departmentFilter);
+        const url = `/api/v1/appointments/queue${params.toString() ? `?${params.toString()}` : ""}`;
+        const res = await authFetch(url);
+        if (res.ok) {
+          const body: QueueResponse = await res.json();
+          setQueue(body.data.queue);
+          setGeneratedAt(body.data.generatedAt);
+        }
+      } catch (error) {
+        console.error("Failed to fetch queue:", error);
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
       }
-    } catch (error) {
-      console.error("Failed to fetch queue:", error);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [authFetch, departmentFilter]);
+    },
+    [authFetch, departmentFilter],
+  );
 
   useEffect(() => {
     fetchQueue();
@@ -151,7 +154,9 @@ export default function QueueDashboardPage() {
             <p className="text-xs text-muted-foreground">Doctors</p>
           </div>
           <div className="rounded-lg border bg-card p-3 text-center">
-            <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{totalInProgress}</p>
+            <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+              {totalInProgress}
+            </p>
             <p className="text-xs text-muted-foreground">In Progress</p>
           </div>
           <div className="rounded-lg border bg-card p-3 text-center">
@@ -184,7 +189,8 @@ export default function QueueDashboardPage() {
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300 text-sm font-semibold flex-shrink-0">
-                    {item.doctor.firstName[0]}{item.doctor.lastName[0]}
+                    {item.doctor.firstName[0]}
+                    {item.doctor.lastName[0]}
                   </div>
                   <div>
                     <CardTitle className="text-base">

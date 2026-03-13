@@ -69,13 +69,20 @@ type AppointmentDetail = {
 };
 
 const statusStyles: Record<string, string> = {
-  scheduled: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
-  confirmed: "bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700",
-  checked_in: "bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950 dark:text-cyan-300 dark:border-cyan-800",
-  in_progress: "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300 dark:border-indigo-800",
-  completed: "bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800",
-  cancelled: "bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800",
-  no_show: "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800",
+  scheduled:
+    "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
+  confirmed:
+    "bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700",
+  checked_in:
+    "bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950 dark:text-cyan-300 dark:border-cyan-800",
+  in_progress:
+    "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300 dark:border-indigo-800",
+  completed:
+    "bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800",
+  cancelled:
+    "bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800",
+  no_show:
+    "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800",
 };
 
 function getStatusBadge(status: string) {
@@ -91,9 +98,17 @@ function getStatusBadge(status: string) {
 function getTypeBadge(type: string) {
   const label = type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   if (type === "emergency") {
-    return <Badge variant="destructive" className="text-sm px-3 py-1">{label}</Badge>;
+    return (
+      <Badge variant="destructive" className="text-sm px-3 py-1">
+        {label}
+      </Badge>
+    );
   }
-  return <Badge variant="outline" className="text-sm px-3 py-1">{label}</Badge>;
+  return (
+    <Badge variant="outline" className="text-sm px-3 py-1">
+      {label}
+    </Badge>
+  );
 }
 
 export default function AppointmentDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -192,7 +207,12 @@ export default function AppointmentDetailPage({ params }: { params: Promise<{ id
   return (
     <div className="space-y-6 max-w-4xl">
       {/* Back button */}
-      <Button variant="ghost" size="sm" className="gap-2 -ml-2 text-muted-foreground" onClick={() => router.push("/appointments")}>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="gap-2 -ml-2 text-muted-foreground"
+        onClick={() => router.push("/appointments")}
+      >
         <ArrowLeft className="h-4 w-4" />
         Appointments
       </Button>
@@ -303,7 +323,9 @@ export default function AppointmentDetailPage({ params }: { params: Promise<{ id
         <div className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900 dark:bg-red-950/50">
           <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 dark:text-red-400" />
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-sm font-semibold text-red-700 dark:text-red-300">Patient Allergies:</span>
+            <span className="text-sm font-semibold text-red-700 dark:text-red-300">
+              Patient Allergies:
+            </span>
             {appointment.patient.allergies.map((allergy) => (
               <Badge key={allergy} variant="destructive" className="text-xs">
                 {allergy}
@@ -325,13 +347,16 @@ export default function AppointmentDetailPage({ params }: { params: Promise<{ id
           <CardContent className="space-y-3">
             <div className="flex items-center gap-3 mb-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 text-sm font-semibold">
-                {appointment.patient.firstName[0]}{appointment.patient.lastName[0]}
+                {appointment.patient.firstName[0]}
+                {appointment.patient.lastName[0]}
               </div>
               <div>
                 <p className="font-medium">
                   {appointment.patient.firstName} {appointment.patient.lastName}
                 </p>
-                <p className="text-xs text-muted-foreground font-mono">{appointment.patient.patientCode}</p>
+                <p className="text-xs text-muted-foreground font-mono">
+                  {appointment.patient.patientCode}
+                </p>
               </div>
             </div>
             <Separator />
@@ -375,7 +400,8 @@ export default function AppointmentDetailPage({ params }: { params: Promise<{ id
           <CardContent className="space-y-3">
             <div className="flex items-center gap-3 mb-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300 text-sm font-semibold">
-                {appointment.doctor.firstName[0]}{appointment.doctor.lastName[0]}
+                {appointment.doctor.firstName[0]}
+                {appointment.doctor.lastName[0]}
               </div>
               <div>
                 <p className="font-medium">
@@ -450,7 +476,9 @@ export default function AppointmentDetailPage({ params }: { params: Promise<{ id
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Type</p>
-                <p className="text-sm font-medium capitalize">{appointment.type.replace(/_/g, " ")}</p>
+                <p className="text-sm font-medium capitalize">
+                  {appointment.type.replace(/_/g, " ")}
+                </p>
               </div>
             </div>
           </div>

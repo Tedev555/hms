@@ -10,12 +10,10 @@ import {
   CalendarDays,
   BedDouble,
   FlaskConical,
-  Plus,
   ArrowRight,
   UserPlus,
   ClipboardList,
   Receipt,
-  TrendingUp,
 } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 
@@ -106,12 +104,12 @@ export default function DashboardPage() {
 
       const totalPatients =
         patientsRes.status === "fulfilled" && patientsRes.value.ok
-          ? (await patientsRes.value.json()).meta?.total ?? 0
+          ? ((await patientsRes.value.json()).meta?.total ?? 0)
           : 0;
 
       const appointmentsToday =
         appointmentsRes.status === "fulfilled" && appointmentsRes.value.ok
-          ? (await appointmentsRes.value.json()).meta?.total ?? 0
+          ? ((await appointmentsRes.value.json()).meta?.total ?? 0)
           : 0;
 
       setStats({
@@ -137,17 +135,13 @@ export default function DashboardPage() {
     fetchStats();
   }, [fetchStats]);
 
-  const userActions = quickActions.filter(
-    (action) => !user || action.roles.includes(user.role),
-  );
+  const userActions = quickActions.filter((action) => !user || action.roles.includes(user.role));
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">
-          Overview of your hospital operations
-        </p>
+        <p className="text-muted-foreground mt-1">Overview of your hospital operations</p>
       </div>
 
       {/* Stats Grid */}
@@ -166,9 +160,7 @@ export default function DashboardPage() {
               {loading ? (
                 <Skeleton className="h-8 w-20" />
               ) : (
-                <div className="text-3xl font-bold">
-                  {stats ? stats[stat.key] : "—"}
-                </div>
+                <div className="text-3xl font-bold">{stats ? stats[stat.key] : "—"}</div>
               )}
               <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
             </CardContent>
@@ -192,9 +184,7 @@ export default function DashboardPage() {
                       <p className="font-medium text-sm group-hover:text-blue-700 transition-colors dark:group-hover:text-blue-300">
                         {action.label}
                       </p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {action.description}
-                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{action.description}</p>
                     </div>
                     <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity mt-0.5" />
                   </CardContent>
@@ -219,9 +209,7 @@ export default function DashboardPage() {
           <CardContent>
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <Users className="h-10 w-10 text-muted-foreground/30 mb-3" />
-              <p className="text-sm text-muted-foreground">
-                Navigate to Patients to view records
-              </p>
+              <p className="text-sm text-muted-foreground">Navigate to Patients to view records</p>
             </div>
           </CardContent>
         </Card>

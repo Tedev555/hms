@@ -60,13 +60,20 @@ const TYPE_OPTIONS = [
 ];
 
 const statusStyles: Record<string, string> = {
-  scheduled: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
-  confirmed: "bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700",
-  checked_in: "bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950 dark:text-cyan-300 dark:border-cyan-800",
-  in_progress: "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300 dark:border-indigo-800",
-  completed: "bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800",
-  cancelled: "bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800",
-  no_show: "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800",
+  scheduled:
+    "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
+  confirmed:
+    "bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700",
+  checked_in:
+    "bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950 dark:text-cyan-300 dark:border-cyan-800",
+  in_progress:
+    "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300 dark:border-indigo-800",
+  completed:
+    "bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800",
+  cancelled:
+    "bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800",
+  no_show:
+    "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800",
 };
 
 function getStatusBadge(status: string) {
@@ -198,7 +205,12 @@ export default function AppointmentsPage() {
           </SelectContent>
         </Select>
         {hasFilters && (
-          <Button variant="ghost" size="sm" onClick={clearFilters} className="gap-1 text-muted-foreground">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearFilters}
+            className="gap-1 text-muted-foreground"
+          >
             <X className="h-3 w-3" />
             Clear
           </Button>
@@ -241,7 +253,12 @@ export default function AppointmentsPage() {
                             : "Book a new appointment to get started"}
                         </p>
                         {hasFilters && (
-                          <Button variant="outline" size="sm" className="mt-4" onClick={clearFilters}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-4"
+                            onClick={clearFilters}
+                          >
                             Clear Filters
                           </Button>
                         )}
@@ -279,7 +296,9 @@ export default function AppointmentsPage() {
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell className="hidden sm:table-cell">{getTypeBadge(apt.type)}</TableCell>
+                      <TableCell className="hidden sm:table-cell">
+                        {getTypeBadge(apt.type)}
+                      </TableCell>
                       <TableCell>{getStatusBadge(apt.status)}</TableCell>
                     </TableRow>
                   ))

@@ -124,7 +124,12 @@ export default function PatientsPage() {
                 Array.from({ length: 8 }).map((_, i) => (
                   <TableRow key={i}>
                     {Array.from({ length: 5 }).map((_, j) => (
-                      <TableCell key={j} className={j >= 3 ? "hidden md:table-cell" : j >= 2 ? "hidden sm:table-cell" : ""}>
+                      <TableCell
+                        key={j}
+                        className={
+                          j >= 3 ? "hidden md:table-cell" : j >= 2 ? "hidden sm:table-cell" : ""
+                        }
+                      >
                         <Skeleton className="h-4 w-24" />
                       </TableCell>
                     ))}
@@ -172,7 +177,9 @@ export default function PatientsPage() {
                         {patient.firstName} {patient.lastName}
                       </span>
                     </TableCell>
-                    <TableCell className="capitalize hidden sm:table-cell">{patient.gender}</TableCell>
+                    <TableCell className="capitalize hidden sm:table-cell">
+                      {patient.gender}
+                    </TableCell>
                     <TableCell>{patient.phone}</TableCell>
                     <TableCell className="hidden md:table-cell text-muted-foreground">
                       {new Date(patient.dateOfBirth).toLocaleDateString()}

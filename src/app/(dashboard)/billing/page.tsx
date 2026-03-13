@@ -50,12 +50,17 @@ const STATUS_OPTIONS = [
 ];
 
 const statusStyles: Record<string, string> = {
-  draft: "bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700",
-  issued: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
-  partially_paid: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800",
+  draft:
+    "bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700",
+  issued:
+    "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
+  partially_paid:
+    "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800",
   paid: "bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800",
-  overdue: "bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800",
-  cancelled: "bg-gray-50 text-gray-500 border-gray-200 dark:bg-gray-900 dark:text-gray-400 dark:border-gray-700",
+  overdue:
+    "bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800",
+  cancelled:
+    "bg-gray-50 text-gray-500 border-gray-200 dark:bg-gray-900 dark:text-gray-400 dark:border-gray-700",
 };
 
 function getStatusBadge(status: string) {
@@ -182,7 +187,12 @@ export default function BillingPage() {
           placeholder="To date"
         />
         {hasFilters && (
-          <Button variant="ghost" size="sm" onClick={clearFilters} className="gap-1 text-muted-foreground">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearFilters}
+            className="gap-1 text-muted-foreground"
+          >
             <X className="h-3 w-3" />
             Clear
           </Button>
@@ -226,7 +236,12 @@ export default function BillingPage() {
                             : "Create a new invoice to get started"}
                         </p>
                         {hasFilters && (
-                          <Button variant="outline" size="sm" className="mt-4" onClick={clearFilters}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-4"
+                            onClick={clearFilters}
+                          >
                             Clear Filters
                           </Button>
                         )}
@@ -261,7 +276,9 @@ export default function BillingPage() {
                         </TableCell>
                         <TableCell
                           className={`text-right tabular-nums hidden lg:table-cell font-medium ${
-                            balance > 0 ? "text-amber-600 dark:text-amber-400" : "text-green-600 dark:text-green-400"
+                            balance > 0
+                              ? "text-amber-600 dark:text-amber-400"
+                              : "text-green-600 dark:text-green-400"
                           }`}
                         >
                           {formatCurrency(balance)}

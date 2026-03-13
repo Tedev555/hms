@@ -90,8 +90,7 @@ export function SidebarNav({ className }: { className?: string }) {
             )}
             {items.map((item) => {
               const isActive =
-                pathname === item.href ||
-                (item.href !== "/" && pathname.startsWith(item.href));
+                pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
               return (
                 <Link
                   key={item.href}
@@ -126,9 +125,7 @@ export function SidebarNav({ className }: { className?: string }) {
               {user.firstName?.[0]?.toUpperCase() || user.username[0]?.toUpperCase()}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-medium truncate">
-                {user.firstName || user.username}
-              </p>
+              <p className="text-sm font-medium truncate">{user.firstName || user.username}</p>
               <p className="text-xs text-muted-foreground truncate">
                 {roleLabels[user.role] || user.role}
               </p>
@@ -148,7 +145,9 @@ export function SidebarBrand() {
       </div>
       <div>
         <h2 className="text-base font-bold leading-none">HMS</h2>
-        <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">Hospital Management</p>
+        <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">
+          Hospital Management
+        </p>
       </div>
     </div>
   );
