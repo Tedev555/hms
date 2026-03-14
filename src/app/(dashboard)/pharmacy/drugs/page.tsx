@@ -54,7 +54,10 @@ type Drug = {
 type Meta = { total: number; page: number; limit: number; totalPages: number };
 
 function formatCurrency(amount: number) {
-  return new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount);
+  return new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
 }
 
 export default function DrugCataloguePage() {
@@ -235,7 +238,10 @@ export default function DrugCataloguePage() {
                         </div>
                         <div className="flex gap-1 mt-1">
                           {drug.isControlled && (
-                            <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200">
+                            <Badge
+                              variant="outline"
+                              className="text-xs bg-red-50 text-red-700 border-red-200"
+                            >
                               Controlled
                             </Badge>
                           )}
@@ -249,9 +255,7 @@ export default function DrugCataloguePage() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
-                          {isLowStock && (
-                            <AlertTriangle className="h-3 w-3 text-amber-500" />
-                          )}
+                          {isLowStock && <AlertTriangle className="h-3 w-3 text-amber-500" />}
                           <span
                             className={
                               drug.currentStock === 0
@@ -263,9 +267,7 @@ export default function DrugCataloguePage() {
                           >
                             {drug.currentStock}
                           </span>
-                          <span className="text-muted-foreground text-xs">
-                            {drug.unit}
-                          </span>
+                          <span className="text-muted-foreground text-xs">{drug.unit}</span>
                         </div>
                       </TableCell>
                       <TableCell className="text-right tabular-nums hidden sm:table-cell">
@@ -273,15 +275,24 @@ export default function DrugCataloguePage() {
                       </TableCell>
                       <TableCell>
                         {drug.currentStock === 0 ? (
-                          <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+                          <Badge
+                            variant="outline"
+                            className="bg-red-50 text-red-700 border-red-200"
+                          >
                             Out of Stock
                           </Badge>
                         ) : isLowStock ? (
-                          <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                          <Badge
+                            variant="outline"
+                            className="bg-amber-50 text-amber-700 border-amber-200"
+                          >
                             Low Stock
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                          <Badge
+                            variant="outline"
+                            className="bg-green-50 text-green-700 border-green-200"
+                          >
                             In Stock
                           </Badge>
                         )}

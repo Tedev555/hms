@@ -2,14 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Filter,
-  Package,
-  X,
-  Check,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Filter, Package, X, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -90,8 +83,10 @@ export default function PrescriptionsPage() {
     const allDispensed = items.every((i) => i.isDispensed);
     const someDispensed = items.some((i) => i.isDispensed);
 
-    if (allDispensed) return { label: "Dispensed", style: "bg-green-50 text-green-700 border-green-200" };
-    if (someDispensed) return { label: "Partial", style: "bg-amber-50 text-amber-700 border-amber-200" };
+    if (allDispensed)
+      return { label: "Dispensed", style: "bg-green-50 text-green-700 border-green-200" };
+    if (someDispensed)
+      return { label: "Partial", style: "bg-amber-50 text-amber-700 border-amber-200" };
     return { label: "Pending", style: "bg-blue-50 text-blue-700 border-blue-200" };
   }
 

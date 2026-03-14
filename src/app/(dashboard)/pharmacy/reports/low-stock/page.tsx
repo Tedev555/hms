@@ -135,7 +135,13 @@ export default function LowStockReportPage() {
                         {drug.category || "—"}
                       </TableCell>
                       <TableCell className="text-right tabular-nums">
-                        <span className={drug.currentStock === 0 ? "text-red-600 font-medium" : "text-amber-600 font-medium"}>
+                        <span
+                          className={
+                            drug.currentStock === 0
+                              ? "text-red-600 font-medium"
+                              : "text-amber-600 font-medium"
+                          }
+                        >
                           {drug.currentStock}
                         </span>
                         <span className="text-muted-foreground text-xs ml-1">{drug.unit}</span>
@@ -148,11 +154,17 @@ export default function LowStockReportPage() {
                       </TableCell>
                       <TableCell>
                         {drug.currentStock === 0 ? (
-                          <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+                          <Badge
+                            variant="outline"
+                            className="bg-red-50 text-red-700 border-red-200"
+                          >
                             Out of Stock
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                          <Badge
+                            variant="outline"
+                            className="bg-amber-50 text-amber-700 border-amber-200"
+                          >
                             Low Stock
                           </Badge>
                         )}

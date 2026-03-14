@@ -162,7 +162,15 @@ export default function ExpiringReportPage() {
                         {batch.quantity} {batch.drug.unit}
                       </TableCell>
                       <TableCell>
-                        <span className={batch.isExpired ? "text-red-600" : daysLeft <= 30 ? "text-amber-600" : ""}>
+                        <span
+                          className={
+                            batch.isExpired
+                              ? "text-red-600"
+                              : daysLeft <= 30
+                                ? "text-amber-600"
+                                : ""
+                          }
+                        >
                           {new Date(batch.expiryDate).toLocaleDateString()}
                         </span>
                       </TableCell>
@@ -177,15 +185,24 @@ export default function ExpiringReportPage() {
                       </TableCell>
                       <TableCell>
                         {batch.isExpired ? (
-                          <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+                          <Badge
+                            variant="outline"
+                            className="bg-red-50 text-red-700 border-red-200"
+                          >
                             Expired
                           </Badge>
                         ) : daysLeft <= 30 ? (
-                          <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                          <Badge
+                            variant="outline"
+                            className="bg-amber-50 text-amber-700 border-amber-200"
+                          >
                             Expiring Soon
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
+                          <Badge
+                            variant="outline"
+                            className="bg-yellow-50 text-yellow-700 border-yellow-200"
+                          >
                             Approaching
                           </Badge>
                         )}

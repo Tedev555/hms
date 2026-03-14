@@ -32,12 +32,25 @@ import type { z } from "zod";
 type FormValues = z.input<typeof createDrugSchema>;
 
 const FORMULATIONS = [
-  "tablet", "capsule", "syrup", "injection", "cream", "inhaler", "drops", "other",
+  "tablet",
+  "capsule",
+  "syrup",
+  "injection",
+  "cream",
+  "inhaler",
+  "drops",
+  "other",
 ] as const;
 
 const CATEGORIES = [
-  "Analgesics", "Antibiotics", "Antihypertensives", "Antidiabetics",
-  "Gastrointestinal", "Respiratory", "Vitamins", "Other",
+  "Analgesics",
+  "Antibiotics",
+  "Antihypertensives",
+  "Antidiabetics",
+  "Gastrointestinal",
+  "Respiratory",
+  "Vitamins",
+  "Other",
 ];
 
 export default function NewDrugPage() {

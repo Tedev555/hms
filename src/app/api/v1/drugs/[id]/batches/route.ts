@@ -1,7 +1,12 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { withAuth } from "@/middleware/auth";
-import { successResponse, paginatedResponse, errorResponse, notFoundResponse } from "@/lib/api-response";
+import {
+  successResponse,
+  paginatedResponse,
+  errorResponse,
+  notFoundResponse,
+} from "@/lib/api-response";
 import { createBatchSchema } from "@/lib/validations";
 import { parsePagination } from "@/lib/utils";
 import { createAuditLog } from "@/lib/audit";
@@ -9,7 +14,11 @@ import type { JwtPayload } from "@/lib/auth";
 
 // GET /api/v1/drugs/:id/batches — List batches for a drug
 export const GET = withAuth(
-  async (request: NextRequest, _payload: JwtPayload, { params }: { params: Promise<{ id: string }> }) => {
+  async (
+    request: NextRequest,
+    _payload: JwtPayload,
+    { params }: { params: Promise<{ id: string }> },
+  ) => {
     try {
       const { id } = await params;
       const { page, limit, skip } = parsePagination(request.nextUrl.searchParams);
@@ -40,7 +49,11 @@ export const GET = withAuth(
 
 // POST /api/v1/drugs/:id/batches — Record new batch (stock receipt)
 export const POST = withAuth(
-  async (request: NextRequest, payload: JwtPayload, { params }: { params: Promise<{ id: string }> }) => {
+  async (
+    request: NextRequest,
+    payload: JwtPayload,
+    { params }: { params: Promise<{ id: string }> },
+  ) => {
     try {
       const { id } = await params;
       const body = await request.json();

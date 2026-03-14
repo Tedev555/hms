@@ -6,7 +6,11 @@ import type { JwtPayload } from "@/lib/auth";
 
 // GET /api/v1/prescriptions/:id — Get prescription detail
 export const GET = withAuth(
-  async (_request: NextRequest, _payload: JwtPayload, { params }: { params: Promise<{ id: string }> }) => {
+  async (
+    _request: NextRequest,
+    _payload: JwtPayload,
+    { params }: { params: Promise<{ id: string }> },
+  ) => {
     try {
       const { id } = await params;
       const prescription = await prisma.prescription.findUnique({

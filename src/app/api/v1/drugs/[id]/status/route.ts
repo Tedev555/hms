@@ -12,7 +12,11 @@ const updateDrugStatusSchema = z.object({
 
 // PATCH /api/v1/drugs/:id/status — Activate/deactivate drug
 export const PATCH = withAuth(
-  async (request: NextRequest, payload: JwtPayload, { params }: { params: Promise<{ id: string }> }) => {
+  async (
+    request: NextRequest,
+    payload: JwtPayload,
+    { params }: { params: Promise<{ id: string }> },
+  ) => {
     try {
       const { id } = await params;
       const body = await request.json();

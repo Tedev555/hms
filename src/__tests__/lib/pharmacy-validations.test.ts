@@ -69,7 +69,16 @@ describe("createDrugSchema", () => {
   });
 
   it("should accept all valid formulations", () => {
-    const formulations = ["tablet", "capsule", "syrup", "injection", "cream", "inhaler", "drops", "other"];
+    const formulations = [
+      "tablet",
+      "capsule",
+      "syrup",
+      "injection",
+      "cream",
+      "inhaler",
+      "drops",
+      "other",
+    ];
     for (const formulation of formulations) {
       const result = createDrugSchema.safeParse({ ...validDrug, formulation });
       expect(result.success).toBe(true);

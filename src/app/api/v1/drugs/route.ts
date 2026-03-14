@@ -39,9 +39,7 @@ export const GET = withAuth(async (request: NextRequest, _payload: JwtPayload) =
     if (stockStatus === "low") {
       where.currentStock = { gt: 0, lte: prisma.drug.fields.reorderLevel as unknown as number };
       // Use raw filter for column comparison
-      where.AND = [
-        { currentStock: { gt: 0 } },
-      ];
+      where.AND = [{ currentStock: { gt: 0 } }];
     } else if (stockStatus === "out") {
       where.currentStock = 0;
     }

@@ -7,7 +7,11 @@ import type { JwtPayload } from "@/lib/auth";
 
 // GET /api/v1/patients/:id/prescriptions — Patient prescription history
 export const GET = withAuth(
-  async (request: NextRequest, _payload: JwtPayload, { params }: { params: Promise<{ id: string }> }) => {
+  async (
+    request: NextRequest,
+    _payload: JwtPayload,
+    { params }: { params: Promise<{ id: string }> },
+  ) => {
     try {
       const { id } = await params;
       const { page, limit, skip } = parsePagination(request.nextUrl.searchParams);

@@ -3,17 +3,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  Plus,
-  AlertTriangle,
-  Shield,
-  FileText,
-} from "lucide-react";
+import { ArrowLeft, Plus, AlertTriangle, Shield, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -56,7 +50,10 @@ type Drug = {
 };
 
 function formatCurrency(amount: number) {
-  return new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount);
+  return new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
 }
 
 export default function DrugDetailPage() {
@@ -153,7 +150,9 @@ export default function DrugDetailPage() {
 
       <div className="flex flex-wrap gap-2">
         {!drug.isActive && (
-          <Badge variant="outline" className="bg-gray-50 text-gray-600 border-gray-200">Inactive</Badge>
+          <Badge variant="outline" className="bg-gray-50 text-gray-600 border-gray-200">
+            Inactive
+          </Badge>
         )}
         {drug.isControlled && (
           <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
@@ -166,13 +165,17 @@ export default function DrugDetailPage() {
           </Badge>
         )}
         {drug.currentStock === 0 ? (
-          <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">Out of Stock</Badge>
+          <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+            Out of Stock
+          </Badge>
         ) : isLowStock ? (
           <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
             <AlertTriangle className="h-3 w-3 mr-1" /> Low Stock
           </Badge>
         ) : (
-          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">In Stock</Badge>
+          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+            In Stock
+          </Badge>
         )}
       </div>
 
@@ -182,7 +185,8 @@ export default function DrugDetailPage() {
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground">Current Stock</p>
             <p className={`text-2xl font-bold ${isLowStock ? "text-amber-600" : ""}`}>
-              {drug.currentStock} <span className="text-sm font-normal text-muted-foreground">{drug.unit}</span>
+              {drug.currentStock}{" "}
+              <span className="text-sm font-normal text-muted-foreground">{drug.unit}</span>
             </p>
             <p className="text-xs text-muted-foreground mt-1">Reorder at: {drug.reorderLevel}</p>
           </CardContent>
@@ -249,7 +253,8 @@ export default function DrugDetailPage() {
                 drug.batches.map((batch) => {
                   const expiry = new Date(batch.expiryDate);
                   const isExpired = expiry < now;
-                  const isExpiringSoon = !isExpired && expiry.getTime() - now.getTime() < 90 * 24 * 60 * 60 * 1000;
+                  const isExpiringSoon =
+                    !isExpired && expiry.getTime() - now.getTime() < 90 * 24 * 60 * 60 * 1000;
                   return (
                     <TableRow key={batch.id}>
                       <TableCell className="font-mono text-sm">{batch.batchNo}</TableCell>
@@ -257,7 +262,11 @@ export default function DrugDetailPage() {
                         {batch.quantity} {drug.unit}
                       </TableCell>
                       <TableCell>
-                        <span className={isExpired ? "text-red-600" : isExpiringSoon ? "text-amber-600" : ""}>
+                        <span
+                          className={
+                            isExpired ? "text-red-600" : isExpiringSoon ? "text-amber-600" : ""
+                          }
+                        >
                           {expiry.toLocaleDateString()}
                         </span>
                       </TableCell>
@@ -272,19 +281,31 @@ export default function DrugDetailPage() {
                       </TableCell>
                       <TableCell>
                         {batch.quantity === 0 ? (
-                          <Badge variant="outline" className="bg-gray-50 text-gray-500 border-gray-200">
+                          <Badge
+                            variant="outline"
+                            className="bg-gray-50 text-gray-500 border-gray-200"
+                          >
                             Depleted
                           </Badge>
                         ) : isExpired ? (
-                          <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+                          <Badge
+                            variant="outline"
+                            className="bg-red-50 text-red-700 border-red-200"
+                          >
                             Expired
                           </Badge>
                         ) : isExpiringSoon ? (
-                          <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                          <Badge
+                            variant="outline"
+                            className="bg-amber-50 text-amber-700 border-amber-200"
+                          >
                             Expiring Soon
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                          <Badge
+                            variant="outline"
+                            className="bg-green-50 text-green-700 border-green-200"
+                          >
                             Active
                           </Badge>
                         )}

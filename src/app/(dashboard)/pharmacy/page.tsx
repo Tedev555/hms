@@ -2,13 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import {
-  Pill,
-  AlertTriangle,
-  Clock,
-  Package,
-  ArrowRight,
-} from "lucide-react";
+import { Pill, AlertTriangle, Clock, Package, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";

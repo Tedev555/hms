@@ -2,13 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import {
-  ArrowLeft,
-  AlertTriangle,
-  Check,
-  Shield,
-  Package,
-} from "lucide-react";
+import { ArrowLeft, AlertTriangle, Check, Shield, Package } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -95,13 +89,10 @@ export default function PrescriptionDetailPage() {
   async function handleDispense(itemId: string) {
     setDispensing(itemId);
     try {
-      const res = await authFetch(
-        `/api/v1/prescriptions/${id}/items/${itemId}/dispense`,
-        {
-          method: "PATCH",
-          body: JSON.stringify({ confirm: true }),
-        },
-      );
+      const res = await authFetch(`/api/v1/prescriptions/${id}/items/${itemId}/dispense`, {
+        method: "PATCH",
+        body: JSON.stringify({ confirm: true }),
+      });
 
       if (res.ok) {
         toast.success("Item dispensed successfully");
@@ -242,7 +233,10 @@ export default function PrescriptionDetailPage() {
                       </div>
                       <div className="flex gap-1 mt-1">
                         {item.drug.isControlled && (
-                          <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200">
+                          <Badge
+                            variant="outline"
+                            className="text-xs bg-red-50 text-red-700 border-red-200"
+                          >
                             <Shield className="h-2 w-2 mr-1" /> Controlled
                           </Badge>
                         )}
@@ -258,17 +252,27 @@ export default function PrescriptionDetailPage() {
                       {item.quantity} {item.drug.unit}
                     </TableCell>
                     <TableCell className="text-center tabular-nums hidden sm:table-cell">
-                      <span className={insufficientStock && !item.isDispensed ? "text-red-600 font-medium" : ""}>
+                      <span
+                        className={
+                          insufficientStock && !item.isDispensed ? "text-red-600 font-medium" : ""
+                        }
+                      >
                         {item.drug.currentStock}
                       </span>
                     </TableCell>
                     <TableCell>
                       {item.isDispensed ? (
-                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 gap-1">
+                        <Badge
+                          variant="outline"
+                          className="bg-green-50 text-green-700 border-green-200 gap-1"
+                        >
                           <Check className="h-3 w-3" /> Dispensed
                         </Badge>
                       ) : (
-                        <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                        <Badge
+                          variant="outline"
+                          className="bg-blue-50 text-blue-700 border-blue-200"
+                        >
                           Pending
                         </Badge>
                       )}
