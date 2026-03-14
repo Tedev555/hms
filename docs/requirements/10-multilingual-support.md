@@ -8,7 +8,7 @@
 
 ## 1. Overview
 
-The Multilingual Support module introduces internationalization (i18n) and localization (L10n) capabilities to the HMS. This module enables the entire user interface — including navigation, forms, error messages, notifications, and reports — to be displayed in multiple languages. The goal is to make HMS accessible to hospital staff who speak different languages, improve usability in multilingual healthcare environments, and prepare the system for deployment across different regions.
+The Multilingual Support module introduces internationalization (i18n) and localization (L10n) capabilities to the HMS. This module enables the entire user interface — including navigation, forms, error messages, notifications, and reports — to be displayed in multiple languages. The initial release will support **English (`en`)** and **Lao (`lo`)** as the two available languages. The goal is to make HMS accessible to hospital staff in Laos who may prefer using the system in Lao language, improve usability in the Lao healthcare environment, and prepare the system for additional languages in the future.
 
 ### Scope
 
@@ -39,7 +39,7 @@ The Multilingual Support module introduces internationalization (i18n) and local
 **Acceptance Criteria:**
 
 - A language selector is available in the top navigation bar / header area
-- The selector displays available languages with their native names (e.g., "English", "ไทย", "日本語")
+- The selector displays available languages with their native names (e.g., "English", "ລາວ")
 - Selecting a language immediately switches all UI text to the chosen language without a page reload
 - The selected language is visually indicated in the selector
 
@@ -82,17 +82,19 @@ The Multilingual Support module introduces internationalization (i18n) and local
 
 **Acceptance Criteria:**
 
-- Date formats adapt to the selected locale (e.g., `DD/MM/YYYY` vs `MM/DD/YYYY` vs `YYYY-MM-DD`)
-- Time formats adapt to locale conventions (12-hour vs 24-hour)
-- Number formatting uses locale-appropriate separators (e.g., `1,000.50` vs `1.000,50`)
-- Currency symbols and formatting follow locale conventions
-- Calendar components (date pickers) display locale-appropriate first day of week and month names
+- Date formats adapt to the selected locale (English: `MM/DD/YYYY`, Lao: `DD/MM/YYYY`)
+- Time formats adapt to locale conventions (English: 12-hour, Lao: 24-hour)
+- Number formatting uses locale-appropriate separators (e.g., `1,000.50`)
+- Currency formatting supports Lao Kip (₭ / LAK) alongside other currencies
+- Calendar components (date pickers) display locale-appropriate month names (Lao: ມັງກອນ, ກຸມພາ, etc.) and first day of week
 
-### US-10.5: RTL Layout Support
+### US-10.5: RTL Layout Support (Future — Not Required for Initial Release)
 
 **As a** staff member who uses a right-to-left language (e.g., Arabic, Hebrew),
 **I want** the entire application layout to mirror correctly for RTL reading direction,
 **So that** the interface feels natural and usable.
+
+> **Note:** Both English and Lao are left-to-right (LTR) languages. RTL support is not required for the initial release but is documented here for future language expansion.
 
 **Acceptance Criteria:**
 
@@ -149,10 +151,11 @@ The Multilingual Support module introduces internationalization (i18n) and local
 
 ### BR-10.1: Supported Languages
 
-- The system SHALL support English as the default and always-available language
-- The system SHALL support a minimum of 2 languages at initial release
-- The system SHALL be architected to support an unlimited number of additional languages
+- The system SHALL support **English (`en`)** as the default and always-available language
+- The system SHALL support **Lao (`lo`)** as the second language at initial release
+- The system SHALL be architected to support an unlimited number of additional languages in the future
 - Each supported language SHALL have a complete set of translations before being enabled in production
+- The Lao translation SHALL use standard Lao script (ອັກສອນລາວ) and follow official Lao terminology for medical and administrative terms
 
 ### BR-10.2: Translation Architecture
 
@@ -167,7 +170,7 @@ The Multilingual Support module introduces internationalization (i18n) and local
 - Language switching SHALL be instantaneous (client-side, no full page reload)
 - The application SHALL NOT lose page state or form data when the language is changed
 - The language selector SHALL be accessible from every page in the application
-- The URL structure SHALL remain the same regardless of the selected language (no `/en/`, `/th/` path prefixes)
+- The URL structure SHALL remain the same regardless of the selected language (no `/en/`, `/lo/` path prefixes)
 
 ### BR-10.4: Fallback Strategy
 
@@ -183,9 +186,9 @@ The Multilingual Support module introduces internationalization (i18n) and local
 
 ### BR-10.6: Accessibility
 
-- Language changes SHALL update the `<html lang>` attribute to reflect the active language
+- Language changes SHALL update the `<html lang>` attribute to reflect the active language (e.g., `en` or `lo`)
 - Screen readers SHALL announce content in the correct language after a switch
-- RTL layout changes SHALL not break keyboard navigation order
+- The application SHALL ensure Lao script is rendered with sufficient font size and line-height for readability
 
 ### BR-10.7: Performance
 
@@ -227,11 +230,21 @@ src/
       reports.json         # Reports module
       validation.json      # Form validation messages
       errors.json          # API and system error messages
-    th/
-      common.json
+    lo/
+      common.json          # Lao translations
       auth.json
-      ...
-    <locale>/
+      dashboard.json
+      patients.json
+      appointments.json
+      billing.json
+      users.json
+      pharmacy.json
+      laboratory.json
+      ward.json
+      reports.json
+      validation.json
+      errors.json
+    <locale>/              # Future languages follow the same structure
       ...
 ```
 
@@ -240,22 +253,21 @@ src/
 ```
 <namespace>.<section>.<element>
 
-Examples:
-  common.buttons.save          → "Save"
-  common.buttons.cancel        → "Cancel"
-  common.status.active         → "Active"
-  patients.form.firstName      → "First Name"
-  patients.form.lastName       → "Last Name"
-  patients.list.title          → "Patient List"
-  patients.list.empty          → "No patients found"
-  appointments.queue.title     → "Appointment Queue"
-  billing.invoice.totalAmount  → "Total Amount"
-  auth.login.title             → "Sign in to HMS"
-  auth.login.error             → "Invalid credentials"
-  validation.required          → "{field} is required"
-  validation.minLength         → "{field} must be at least {min} characters"
-  errors.notFound              → "Resource not found"
-  errors.serverError           → "An unexpected error occurred"
+Examples (English → Lao):
+  common.buttons.save          → "Save"              / "ບັນທຶກ"
+  common.buttons.cancel        → "Cancel"            / "ຍົກເລີກ"
+  common.status.active         → "Active"            / "ເປີດໃຊ້ງານ"
+  patients.form.firstName      → "First Name"        / "ຊື່"
+  patients.form.lastName       → "Last Name"         / "ນາມສະກຸນ"
+  patients.list.title          → "Patient List"      / "ລາຍຊື່ຄົນເຈັບ"
+  patients.list.empty          → "No patients found" / "ບໍ່ພົບຄົນເຈັບ"
+  appointments.queue.title     → "Appointment Queue"  / "ຄິວນັດໝາຍ"
+  billing.invoice.totalAmount  → "Total Amount"       / "ຈຳນວນເງິນທັງໝົດ"
+  auth.login.title             → "Sign in to HMS"     / "ເຂົ້າສູ່ລະບົບ HMS"
+  auth.login.error             → "Invalid credentials" / "ຂໍ້ມູນເຂົ້າສູ່ລະບົບບໍ່ຖືກຕ້ອງ"
+  validation.required          → "{field} is required" / "{field} ຈຳເປັນຕ້ອງລະບຸ"
+  errors.notFound              → "Resource not found"  / "ບໍ່ພົບຂໍ້ມູນ"
+  errors.serverError           → "An unexpected error occurred" / "ເກີດຂໍ້ຜິດພາດທີ່ບໍ່ຄາດຄິດ"
 ```
 
 ### 4.4 Interpolation and Pluralization
@@ -293,9 +305,9 @@ model User {
 // New model for managing available languages
 model SupportedLocale {
   id           String   @id @default(uuid()) @db.Uuid
-  code         String   @unique              // ISO 639-1 code (e.g., "en", "th")
-  name         String                        // English name (e.g., "Thai")
-  nativeName   String                        // Native name (e.g., "ไทย")
+  code         String   @unique              // ISO 639-1 code (e.g., "en", "lo")
+  name         String                        // English name (e.g., "Lao")
+  nativeName   String                        // Native name (e.g., "ລາວ")
   isActive     Boolean  @default(true)
   isDefault    Boolean  @default(false)
   completeness Float    @default(0)          // Translation completeness percentage
@@ -378,22 +390,24 @@ export function LanguageSelector() {
 3. Extract all English strings from existing components into `en/*.json` files
 4. Replace hardcoded strings with `useTranslations()` / `getTranslations()` calls
 5. Add `locale` field to the User model (Prisma migration)
-6. Create the `SupportedLocale` model and seed with English
+6. Create the `SupportedLocale` model and seed with English and Lao
 7. Implement the language selector component in the header
 8. Implement locale persistence (user profile + cookie fallback)
 
-### Phase 6b: Core Translations
+### Phase 6b: Lao Translations
 
-1. Translate `common.json` namespace to the second supported language
+1. Translate `common.json` namespace to Lao (`lo`)
 2. Translate module-specific namespaces one by one (auth → patients → appointments → billing → users)
-3. Implement locale-aware date/time/number formatting using `Intl` API
-4. Update form validation messages to use translation keys
-5. Update toast notifications to use translation keys
+3. Ensure Lao medical terminology is reviewed by domain experts for clinical accuracy
+4. Implement locale-aware date/time/number formatting using `Intl` API (Lao locale: `lo-LA`)
+5. Configure currency formatting for Lao Kip (LAK / ₭)
+6. Update form validation messages to use translation keys
+7. Update toast notifications to use translation keys
 
 ### Phase 6c: Advanced Features
 
-1. Implement RTL layout support using Tailwind CSS logical properties
-2. Add admin language management page
+1. Add admin language management page
+2. Implement RTL layout support using Tailwind CSS logical properties (when RTL languages are added)
 3. Implement translation completeness tracking
 4. Add API `messageKey` to all error responses
 5. Add development-mode missing translation warnings
@@ -413,8 +427,8 @@ export function LanguageSelector() {
 
 - Unit tests SHALL verify that all translation keys used in components exist in all supported language files
 - A CI check SHALL detect untranslated keys (completeness validation)
-- Visual regression tests SHOULD verify layouts are not broken by longer translated strings
-- RTL layout tests SHOULD cover at least the main dashboard, patient list, and appointment queue pages
+- Visual regression tests SHOULD verify layouts are not broken by Lao translated strings (which may differ in length from English)
+- Lao rendering tests SHOULD verify that Lao script displays correctly with proper diacritical marks and line-height across the main dashboard, patient list, and appointment queue pages
 
 ### Performance Considerations
 
@@ -422,12 +436,20 @@ export function LanguageSelector() {
 - Cache translation files aggressively (they change infrequently)
 - Measure and monitor bundle size impact of translation files
 
+### Lao Language Considerations
+
+- Lao script (ອັກສອນລາວ) requires proper Unicode font support — ensure the application fonts include Lao glyphs (e.g., Noto Sans Lao, Phetsarath OT)
+- Lao text does not use spaces between words (similar to Thai); CSS `word-break` and `overflow-wrap` properties must handle Lao line-breaking correctly
+- Lao numerals (໐໑໒໓໔໕໖໗໘໙) exist but Arabic numerals (0-9) are commonly used in Lao medical contexts — use Arabic numerals for consistency
+- Some medical terms in Lao may not have standard translations; in such cases, transliterated English terms are acceptable (e.g., "ອັລຕຣາຊາວ" for ultrasound)
+- Lao text may render slightly taller than English due to vowel marks above/below consonants — ensure line-height accommodates this
+
 ### Edge Cases
 
 - If a language is disabled while users have it selected, the system should gracefully switch them to the default language on their next request
-- Very long translations (e.g., German compound words) should be handled with CSS text overflow / wrapping rather than truncation
-- Medical terminology should be validated by domain experts in each language to ensure clinical accuracy
-- Numbers in medical context (dosages, vitals) should always use a consistent, unambiguous format
+- Lao translations may vary in length compared to English — test layouts with both languages to avoid overflow or truncation issues
+- Medical terminology should be validated by Lao healthcare professionals to ensure clinical accuracy
+- Numbers in medical context (dosages, vitals) should always use Arabic numerals for unambiguous reading
 
 ### Dependencies
 
