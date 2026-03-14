@@ -1,0 +1,70 @@
+{
+  "list": {
+    "title": "Staff Directory",
+    "searchPlaceholder": "Search by name, username, or email...",
+    "addStaff": "Add Staff",
+    "name": "Name",
+    "username": "Username",
+    "role": "Role",
+    "department": "Department",
+    "lastLogin": "Last Login",
+    "status": "Status",
+    "empty": "No staff members found",
+    "emptyAction": "Get started by adding a new staff member"
+  },
+  "new": {
+    "title": "Add Staff Member",
+    "accountInfo": "Account Information",
+    "firstNameRequired": "First Name *",
+    "lastNameRequired": "Last Name *",
+    "usernameRequired": "Username *",
+    "usernamePlaceholder": "Username for login",
+    "emailRequired": "Email *",
+    "passwordRequired": "Password *",
+    "passwordPlaceholder": "Initial password",
+    "passwordHint": "Minimum 10 characters with uppercase, lowercase, number, and special character",
+    "roleRequired": "Role *",
+    "selectRole": "Select role",
+    "selectDepartment": "Select department",
+    "createAccount": "Create Account"
+  },
+  "detail": {
+    "profileInfo": "Profile Information",
+    "accountCreated": "Account Created",
+    "createdBy": "Created by",
+    "accountActions": "Account Actions",
+    "resetPassword": "Reset Password",
+    "resetPasswordDesc": "Set a new password for {name}. They should change it on next login.",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "Enter new password",
+    "passwordHint": "Min 10 chars, uppercase, lowercase, number, and special character",
+    "unlockAccount": "Unlock Account",
+    "deactivateAccount": "Deactivate Account",
+    "reactivateAccount": "Reactivate Account",
+    "deactivateWarning": "Are you sure you want to deactivate {name}'s account? They will no longer be able to log in.",
+    "reactivateWarning": "Are you sure you want to reactivate {name}'s account? They will be able to log in again.",
+    "deactivate": "Deactivate",
+    "reactivate": "Reactivate",
+    "recentActivity": "Recent Activity"
+  },
+  "edit": {
+    "title": "Edit Staff Member",
+    "backToProfile": "Back to Profile",
+    "username": "Username:",
+    "created": "Created:",
+    "profileInfo": "Profile Information",
+    "directorOnly": "(Director only)",
+    "noDepartment": "No Department"
+  },
+  "activity": {
+    "accountCreated": "Account created",
+    "profileUpdated": "Profile updated",
+    "profileSelfUpdated": "Profile self-updated",
+    "accountDeactivated": "Account deactivated",
+    "accountReactivated": "Account reactivated",
+    "passwordReset": "Password reset",
+    "accountUnlocked": "Account unlocked",
+    "loggedIn": "Logged in",
+    "failedLogin": "Failed login attempt"
+  }
+}

@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function LogoutButton() {
   const router = useRouter();
+  const t = useTranslations("common");
   const [loading, setLoading] = useState(false);
 
   async function handleLogout() {
@@ -24,7 +26,7 @@ export function LogoutButton() {
   return (
     <Button variant="ghost" size="sm" onClick={handleLogout} disabled={loading} className="gap-2">
       <LogOut className="h-4 w-4" />
-      {loading ? "Signing out..." : "Sign out"}
+      {loading ? t("signingOut") : t("signOut")}
     </Button>
   );
 }

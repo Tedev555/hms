@@ -1,0 +1,113 @@
+{
+  "appName": "HMS",
+  "appFullName": "ລະບົບຄຸ້ມຄອງໂຮງໝໍ",
+  "appDescription": "ລະບົບຄຸ້ມຄອງໂຮງໝໍຄົບວົງຈອນ ສຳລັບການດູແລຄົນເຈັບ, ການເງິນ, ແລະ ການດຳເນີນງານ",
+  "buttons": {
+    "save": "ບັນທຶກ",
+    "cancel": "ຍົກເລີກ",
+    "edit": "ແກ້ໄຂ",
+    "delete": "ລຶບ",
+    "add": "ເພີ່ມ",
+    "back": "ກັບຄືນ",
+    "next": "ຕໍ່ໄປ",
+    "clear": "ລ້າງ",
+    "close": "ປິດ",
+    "confirm": "ຢືນຢັນ",
+    "submit": "ສົ່ງ",
+    "search": "ຄົ້ນຫາ",
+    "viewAll": "ເບິ່ງທັງໝົດ",
+    "saveChanges": "ບັນທຶກການປ່ຽນແປງ",
+    "saving": "ກຳລັງບັນທຶກ...",
+    "creating": "ກຳລັງສ້າງ...",
+    "loading": "ກຳລັງໂຫຼດ..."
+  },
+  "status": {
+    "active": "ເປີດໃຊ້ງານ",
+    "inactive": "ປິດໃຊ້ງານ",
+    "locked": "ຖືກລັອກ"
+  },
+  "filters": {
+    "label": "ຕົວກອງ:",
+    "clear": "ລ້າງ",
+    "clearFilters": "ລ້າງຕົວກອງ",
+    "allStatuses": "ທຸກສະຖານະ",
+    "allRoles": "ທຸກບົດບາດ",
+    "allStatus": "ທຸກສະຖານະ"
+  },
+  "pagination": {
+    "showing": "ສະແດງ {start}-{end} ຈາກ {total}",
+    "page": "ໜ້າ {page} ຈາກ {totalPages}"
+  },
+  "table": {
+    "noResults": "ບໍ່ພົບຜົນລັບ",
+    "tryAdjusting": "ລອງປ່ຽນຄຳຄົ້ນຫາ",
+    "tryAdjustingFilters": "ລອງປ່ຽນຕົວກອງ"
+  },
+  "nav": {
+    "dashboard": "ໜ້າຫຼັກ",
+    "patients": "ຄົນເຈັບ",
+    "appointments": "ນັດໝາຍ",
+    "billing": "ການເງິນ",
+    "pharmacy": "ຮ້ານຂາຍຢາ",
+    "laboratory": "ຫ້ອງທົດລອງ",
+    "wardManagement": "ຄຸ້ມຄອງຫ້ອງ",
+    "staff": "ພະນັກງານ",
+    "reports": "ລາຍງານ",
+    "clinical": "ຄລີນິກ",
+    "operations": "ການດຳເນີນງານ",
+    "administration": "ບໍລິຫານ",
+    "hospitalManagement": "ຄຸ້ມຄອງໂຮງໝໍ"
+  },
+  "roles": {
+    "receptionist": "ພະນັກງານຕ້ອນຮັບ",
+    "admin": "ຜູ້ບໍລິຫານ",
+    "doctor": "ທ່ານໝໍ",
+    "nurse": "ພະຍາບານ",
+    "director": "ຜູ້ອຳນວຍການ",
+    "lab_tech": "ນັກວິຊາການຫ້ອງທົດລອງ",
+    "pharmacist": "ເພສັດຊະກອນ",
+    "paramedic": "ແພດສຸກເສີນ"
+  },
+  "gender": {
+    "male": "ຊາຍ",
+    "female": "ຍິງ",
+    "other": "ອື່ນໆ"
+  },
+  "fields": {
+    "firstName": "ຊື່",
+    "lastName": "ນາມສະກຸນ",
+    "email": "ອີເມວ",
+    "phone": "ໂທລະສັບ",
+    "username": "ຊື່ຜູ້ໃຊ້",
+    "password": "ລະຫັດຜ່ານ",
+    "role": "ບົດບາດ",
+    "department": "ພະແນກ",
+    "status": "ສະຖານະ",
+    "date": "ວັນທີ",
+    "time": "ເວລາ",
+    "type": "ປະເພດ",
+    "notes": "ບັນທຶກ",
+    "address": "ທີ່ຢູ່",
+    "gender": "ເພດ",
+    "dateOfBirth": "ວັນເດືອນປີເກີດ"
+  },
+  "placeholders": {
+    "firstName": "ຊື່",
+    "lastName": "ນາມສະກຸນ",
+    "email": "ທີ່ຢູ່ອີເມວ",
+    "phone": "ເບີໂທລະສັບ",
+    "address": "ທີ່ຢູ່ເຕັມ",
+    "notes": "ບັນທຶກເພີ່ມເຕີມ..."
+  },
+  "notifications": "ການແຈ້ງເຕືອນ",
+  "toggleMenu": "ເປີດ/ປິດເມນູ",
+  "greeting": {
+    "morning": "ສະບາຍດີຕອນເຊົ້າ",
+    "afternoon": "ສະບາຍດີຕອນບ່າຍ",
+    "evening": "ສະບາຍດີຕອນແລງ"
+  },
+  "signOut": "ອອກຈາກລະບົບ",
+  "signingOut": "ກຳລັງອອກຈາກລະບົບ...",
+  "never": "ບໍ່ເຄີຍ",
+  "language": "ພາສາ"
+}

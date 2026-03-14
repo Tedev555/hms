@@ -1,0 +1,22 @@
+{
+  "title": "Pharmacy",
+  "subtitle": "Drug catalogue, prescriptions, and inventory management",
+  "stats": {
+    "totalDrugs": "Total Drugs",
+    "lowStockAlerts": "Low Stock Alerts",
+    "expiringBatches": "Expiring Batches",
+    "pendingPrescriptions": "Pending Prescriptions"
+  },
+  "sections": {
+    "drugCatalogue": "Drug Catalogue",
+    "drugCatalogueDesc": "View and manage the drug catalogue, add new drugs, and track stock levels.",
+    "viewDrugs": "View Drugs",
+    "prescriptions": "Prescriptions",
+    "prescriptionsDesc": "View pending and recent prescriptions, and dispense medications.",
+    "viewPrescriptions": "View Prescriptions",
+    "reports": "Reports",
+    "reportsDesc": "Low stock alerts, expiring batch reports, and inventory analysis.",
+    "lowStock": "Low Stock",
+    "expiring": "Expiring"
+  }
+}

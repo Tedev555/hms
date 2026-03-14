@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { CalendarDays, ChevronLeft, ChevronRight, Filter, X } from "lucide-react";
 
 import { useAuth } from "@/contexts/auth-context";
@@ -40,24 +41,8 @@ type AppointmentRow = {
   department: { id: string; name: string } | null;
 };
 
-const STATUS_OPTIONS = [
-  { value: "all", label: "All Statuses" },
-  { value: "scheduled", label: "Scheduled" },
-  { value: "confirmed", label: "Confirmed" },
-  { value: "checked_in", label: "Checked In" },
-  { value: "in_progress", label: "In Progress" },
-  { value: "completed", label: "Completed" },
-  { value: "cancelled", label: "Cancelled" },
-  { value: "no_show", label: "No Show" },
-];
-
-const TYPE_OPTIONS = [
-  { value: "all", label: "All Types" },
-  { value: "opd", label: "OPD" },
-  { value: "follow_up", label: "Follow Up" },
-  { value: "emergency", label: "Emergency" },
-  { value: "teleconsult", label: "Teleconsult" },
-];
+const STATUS_KEYS = ["all", "scheduled", "confirmed", "checked_in", "in_progress", "completed", "cancelled", "no_show"] as const;
+const TYPE_KEYS = ["all", "opd", "follow_up", "emergency", "teleconsult"] as const;
 
 const statusStyles: Record<string, string> = {
   scheduled:
@@ -76,27 +61,11 @@ const statusStyles: Record<string, string> = {
     "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800",
 };
 
-function getStatusBadge(status: string) {
-  const label = status.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  const style = statusStyles[status] || "";
-  return (
-    <Badge variant="outline" className={style}>
-      {label}
-    </Badge>
-  );
-}
-
-function getTypeBadge(type: string) {
-  const label = type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  if (type === "emergency") {
-    return <Badge variant="destructive">{label}</Badge>;
-  }
-  return <Badge variant="outline">{label}</Badge>;
-}
-
 export default function AppointmentsPage() {
   const { authFetch } = useAuth();
   const router = useRouter();
+  const t = useTranslations("appointments");
+  const tc = useTranslations("common");
 
   const [appointments, setAppointments] = useState<AppointmentRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -105,12 +74,29 @@ export default function AppointmentsPage() {
   const [total, setTotal] = useState(0);
   const limit = 20;
 
-  // Filters
   const [dateFilter, setDateFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
 
   const hasFilters = dateFilter || statusFilter !== "all" || typeFilter !== "all";
+
+  function getStatusBadge(status: string) {
+    const label = t(`status.${status}` as Parameters<typeof t>[0]);
+    const style = statusStyles[status] || "";
+    return (
+      <Badge variant="outline" className={style}>
+        {label}
+      </Badge>
+    );
+  }
+
+  function getTypeBadge(type: string) {
+    const label = t(`type.${type}` as Parameters<typeof t>[0]);
+    if (type === "emergency") {
+      return <Badge variant="destructive">{label}</Badge>;
+    }
+    return <Badge variant="outline">{label}</Badge>;
+  }
 
   const fetchAppointments = useCallback(async () => {
     setLoading(true);
@@ -155,15 +141,15 @@ export default function AppointmentsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Appointments</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("list.title")}</h1>
           <p className="text-muted-foreground mt-1">
-            {total} appointment{total !== 1 ? "s" : ""} total
+            {total} {t("list.title").toLowerCase()}
           </p>
         </div>
         <Button asChild className="gap-2">
           <Link href="/appointments/new">
             <CalendarDays className="h-4 w-4" />
-            Book Appointment
+            {t("list.bookAppointment")}
           </Link>
         </Button>
       </div>
@@ -172,7 +158,7 @@ export default function AppointmentsPage() {
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Filter className="h-4 w-4" />
-          <span className="hidden sm:inline">Filters:</span>
+          <span className="hidden sm:inline">{tc("filters.label")}</span>
         </div>
         <Input
           type="date"
@@ -182,24 +168,24 @@ export default function AppointmentsPage() {
         />
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-44">
-            <SelectValue placeholder="Status" />
+            <SelectValue placeholder={tc("fields.status")} />
           </SelectTrigger>
           <SelectContent>
-            {STATUS_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
+            {STATUS_KEYS.map((key) => (
+              <SelectItem key={key} value={key}>
+                {t(`status.${key}`)}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
         <Select value={typeFilter} onValueChange={setTypeFilter}>
           <SelectTrigger className="w-44">
-            <SelectValue placeholder="Type" />
+            <SelectValue placeholder={tc("fields.type")} />
           </SelectTrigger>
           <SelectContent>
-            {TYPE_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
+            {TYPE_KEYS.map((key) => (
+              <SelectItem key={key} value={key}>
+                {t(`type.${key}`)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -212,7 +198,7 @@ export default function AppointmentsPage() {
             className="gap-1 text-muted-foreground"
           >
             <X className="h-3 w-3" />
-            Clear
+            {tc("filters.clear")}
           </Button>
         )}
       </div>
@@ -230,12 +216,12 @@ export default function AppointmentsPage() {
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
-                  <TableHead>Code</TableHead>
-                  <TableHead>Patient</TableHead>
-                  <TableHead className="hidden md:table-cell">Doctor</TableHead>
-                  <TableHead>Date & Time</TableHead>
-                  <TableHead className="hidden sm:table-cell">Type</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>{t("list.code")}</TableHead>
+                  <TableHead>{t("list.patient")}</TableHead>
+                  <TableHead className="hidden md:table-cell">{t("list.doctor")}</TableHead>
+                  <TableHead>{t("list.dateTime")}</TableHead>
+                  <TableHead className="hidden sm:table-cell">{t("list.type")}</TableHead>
+                  <TableHead>{t("list.status")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -246,11 +232,11 @@ export default function AppointmentsPage() {
                         <div className="rounded-full bg-muted p-4 mb-4">
                           <CalendarDays className="h-8 w-8 text-muted-foreground/50" />
                         </div>
-                        <p className="font-medium text-muted-foreground">No appointments found</p>
+                        <p className="font-medium text-muted-foreground">{t("list.empty")}</p>
                         <p className="text-sm text-muted-foreground/70 mt-1">
                           {hasFilters
-                            ? "Try adjusting your filters"
-                            : "Book a new appointment to get started"}
+                            ? tc("table.tryAdjustingFilters")
+                            : t("list.emptyAction")}
                         </p>
                         {hasFilters && (
                           <Button
@@ -259,7 +245,7 @@ export default function AppointmentsPage() {
                             className="mt-4"
                             onClick={clearFilters}
                           >
-                            Clear Filters
+                            {tc("filters.clearFilters")}
                           </Button>
                         )}
                       </div>
@@ -313,7 +299,7 @@ export default function AppointmentsPage() {
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Page {page} of {totalPages}
+            {tc("pagination.page", { page, totalPages })}
           </p>
           <div className="flex items-center gap-1">
             <Button

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   LayoutDashboard,
   Users,
@@ -20,23 +21,30 @@ import { Separator } from "@/components/ui/separator";
 
 import type { UserRole } from "@prisma/client";
 
-const navItems = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard, section: "main" },
-  { href: "/patients", label: "Patients", icon: Users, section: "clinical" },
-  { href: "/appointments", label: "Appointments", icon: CalendarDays, section: "clinical" },
-  { href: "/billing", label: "Billing", icon: Receipt, section: "operations" },
-  { href: "/pharmacy", label: "Pharmacy", icon: Pill, section: "clinical" },
-  { href: "/laboratory", label: "Laboratory", icon: FlaskConical, section: "clinical" },
-  { href: "/ward", label: "Ward Management", icon: BedDouble, section: "clinical" },
-  { href: "/users", label: "Staff", icon: UserCog, section: "admin" },
-  { href: "/reports", label: "Reports", icon: BarChart3, section: "admin" },
+type NavItem = {
+  href: string;
+  labelKey: string;
+  icon: React.ElementType;
+  section: string;
+};
+
+const navItems: NavItem[] = [
+  { href: "/", labelKey: "nav.dashboard", icon: LayoutDashboard, section: "main" },
+  { href: "/patients", labelKey: "nav.patients", icon: Users, section: "clinical" },
+  { href: "/appointments", labelKey: "nav.appointments", icon: CalendarDays, section: "clinical" },
+  { href: "/billing", labelKey: "nav.billing", icon: Receipt, section: "operations" },
+  { href: "/pharmacy", labelKey: "nav.pharmacy", icon: Pill, section: "clinical" },
+  { href: "/laboratory", labelKey: "nav.laboratory", icon: FlaskConical, section: "clinical" },
+  { href: "/ward", labelKey: "nav.wardManagement", icon: BedDouble, section: "clinical" },
+  { href: "/users", labelKey: "nav.staff", icon: UserCog, section: "admin" },
+  { href: "/reports", labelKey: "nav.reports", icon: BarChart3, section: "admin" },
 ];
 
-const sectionLabels: Record<string, string> = {
+const sectionLabelKeys: Record<string, string> = {
   main: "",
-  clinical: "Clinical",
-  operations: "Operations",
-  admin: "Administration",
+  clinical: "nav.clinical",
+  operations: "nav.operations",
+  admin: "nav.administration",
 };
 
 const roleRoutes: Record<UserRole, string[]> = {
@@ -50,20 +58,10 @@ const roleRoutes: Record<UserRole, string[]> = {
   paramedic: ["/", "/patients", "/appointments", "/ward"],
 };
 
-const roleLabels: Record<string, string> = {
-  receptionist: "Receptionist",
-  admin: "Administrator",
-  doctor: "Doctor",
-  nurse: "Nurse",
-  director: "Director",
-  lab_tech: "Lab Technician",
-  pharmacist: "Pharmacist",
-  paramedic: "Paramedic",
-};
-
 export function SidebarNav({ className }: { className?: string }) {
   const pathname = usePathname();
   const { user } = useAuth();
+  const t = useTranslations("common");
 
   const allowedRoutes = user ? roleRoutes[user.role] : ["/"];
   const filteredItems = navItems.filter((item) => allowedRoutes.includes(item.href));
@@ -80,11 +78,11 @@ export function SidebarNav({ className }: { className?: string }) {
       <nav className="flex-1 space-y-1">
         {Object.entries(sections).map(([section, items], sectionIdx) => (
           <div key={section}>
-            {sectionIdx > 0 && sectionLabels[section] && (
+            {sectionIdx > 0 && sectionLabelKeys[section] && (
               <>
                 <Separator className="my-3" />
                 <p className="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
-                  {sectionLabels[section]}
+                  {t(sectionLabelKeys[section])}
                 </p>
               </>
             )}
@@ -108,7 +106,7 @@ export function SidebarNav({ className }: { className?: string }) {
                       isActive && "text-blue-600 dark:text-blue-400",
                     )}
                   />
-                  {item.label}
+                  {t(item.labelKey)}
                 </Link>
               );
             })}
@@ -135,7 +133,7 @@ export function SidebarNav({ className }: { className?: string }) {
             <div className="min-w-0">
               <p className="text-sm font-medium truncate">{user.firstName || user.username}</p>
               <p className="text-xs text-muted-foreground truncate">
-                {roleLabels[user.role] || user.role}
+                {t(`roles.${user.role}`)}
               </p>
             </div>
           </Link>
@@ -146,15 +144,17 @@ export function SidebarNav({ className }: { className?: string }) {
 }
 
 export function SidebarBrand() {
+  const t = useTranslations("common");
+
   return (
     <div className="flex items-center gap-3 px-6 py-4">
       <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white">
         <Activity className="h-5 w-5" />
       </div>
       <div>
-        <h2 className="text-base font-bold leading-none">HMS</h2>
+        <h2 className="text-base font-bold leading-none">{t("appName")}</h2>
         <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">
-          Hospital Management
+          {t("nav.hospitalManagement")}
         </p>
       </div>
     </div>

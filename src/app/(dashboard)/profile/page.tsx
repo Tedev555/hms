@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { User, Phone, Mail, Building2, Shield, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -40,19 +41,10 @@ type Profile = {
   updatedAt: string;
 };
 
-const roleLabels: Record<string, string> = {
-  doctor: "Doctor",
-  nurse: "Nurse",
-  paramedic: "Paramedic",
-  receptionist: "Receptionist",
-  admin: "Administrator",
-  lab_tech: "Lab Technician",
-  pharmacist: "Pharmacist",
-  director: "Director",
-};
-
 export default function ProfilePage() {
   const { authFetch } = useAuth();
+  const t = useTranslations("profile");
+  const tc = useTranslations("common");
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
@@ -107,16 +99,16 @@ export default function ProfilePage() {
             });
           });
         } else {
-          toast.error(body.message || "Failed to update profile");
+          toast.error(body.message || t("updateFailed"));
         }
         return;
       }
 
-      toast.success("Profile updated successfully");
+      toast.success(t("updateSuccess"));
       setEditing(false);
       fetchProfile();
     } catch {
-      toast.error("An unexpected error occurred");
+      toast.error(tc("errors.unexpected" as Parameters<typeof tc>[0]));
     }
   }
 
@@ -135,7 +127,7 @@ export default function ProfilePage() {
         <div className="rounded-full bg-muted p-4 mb-4">
           <User className="h-8 w-8 text-muted-foreground/50" />
         </div>
-        <p className="font-medium text-muted-foreground">Unable to load profile</p>
+        <p className="font-medium text-muted-foreground">{t("unableToLoad")}</p>
       </div>
     );
   }
@@ -143,10 +135,10 @@ export default function ProfilePage() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">My Profile</h1>
+        <h1 className="text-2xl font-semibold">{t("title")}</h1>
         {!editing && (
           <Button variant="outline" onClick={() => setEditing(true)}>
-            Edit Profile
+            {t("editProfile")}
           </Button>
         )}
       </div>
@@ -163,7 +155,7 @@ export default function ProfilePage() {
           </p>
           <div className="flex items-center gap-2 mt-0.5">
             <span className="text-sm text-muted-foreground font-mono">@{profile.username}</span>
-            <Badge variant="outline">{roleLabels[profile.role] || profile.role}</Badge>
+            <Badge variant="outline">{tc(`roles.${profile.role}` as Parameters<typeof tc>[0])}</Badge>
           </div>
         </div>
       </div>
@@ -171,7 +163,7 @@ export default function ProfilePage() {
       {editing ? (
         <Card>
           <CardHeader>
-            <CardTitle>Edit Profile</CardTitle>
+            <CardTitle>{t("editProfile")}</CardTitle>
           </CardHeader>
           <CardContent>
             <Form {...form}>
@@ -182,9 +174,9 @@ export default function ProfilePage() {
                     name="firstName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>First Name</FormLabel>
+                        <FormLabel>{tc("fields.firstName")}</FormLabel>
                         <FormControl>
-                          <Input placeholder="First name" {...field} />
+                          <Input placeholder={tc("placeholders.firstName")} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -195,9 +187,9 @@ export default function ProfilePage() {
                     name="lastName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Last Name</FormLabel>
+                        <FormLabel>{tc("fields.lastName")}</FormLabel>
                         <FormControl>
-                          <Input placeholder="Last name" {...field} />
+                          <Input placeholder={tc("placeholders.lastName")} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -210,9 +202,9 @@ export default function ProfilePage() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>{tc("fields.email")}</FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="Email address" {...field} />
+                        <Input type="email" placeholder={tc("placeholders.email")} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -224,9 +216,9 @@ export default function ProfilePage() {
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone</FormLabel>
+                      <FormLabel>{tc("fields.phone")}</FormLabel>
                       <FormControl>
-                        <Input placeholder="Phone number" {...field} value={field.value || ""} />
+                        <Input placeholder={tc("placeholders.phone")} {...field} value={field.value || ""} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -235,7 +227,7 @@ export default function ProfilePage() {
 
                 <div className="flex gap-4">
                   <Button type="submit" disabled={form.formState.isSubmitting}>
-                    {form.formState.isSubmitting ? "Saving..." : "Save Changes"}
+                    {form.formState.isSubmitting ? tc("buttons.saving") : tc("buttons.saveChanges")}
                   </Button>
                   <Button
                     type="button"
@@ -250,7 +242,7 @@ export default function ProfilePage() {
                       });
                     }}
                   >
-                    Cancel
+                    {tc("buttons.cancel")}
                   </Button>
                 </div>
               </form>
@@ -260,41 +252,41 @@ export default function ProfilePage() {
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle>Profile Information</CardTitle>
+            <CardTitle>{t("profileInfo")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid gap-6 sm:grid-cols-2">
-              <InfoItem icon={User} label="First Name" value={profile.firstName} />
-              <InfoItem icon={User} label="Last Name" value={profile.lastName} />
-              <InfoItem icon={Mail} label="Email" value={profile.email} />
-              <InfoItem icon={Phone} label="Phone" value={profile.phone || "—"} />
+              <InfoItem icon={User} label={tc("fields.firstName")} value={profile.firstName} />
+              <InfoItem icon={User} label={tc("fields.lastName")} value={profile.lastName} />
+              <InfoItem icon={Mail} label={tc("fields.email")} value={profile.email} />
+              <InfoItem icon={Phone} label={tc("fields.phone")} value={profile.phone || "—"} />
               <InfoItem
                 icon={Shield}
-                label="Role"
-                value={roleLabels[profile.role] || profile.role}
+                label={tc("fields.role")}
+                value={tc(`roles.${profile.role}` as Parameters<typeof tc>[0])}
               />
               <InfoItem
                 icon={Building2}
-                label="Department"
+                label={tc("fields.department")}
                 value={profile.department?.name || "—"}
               />
               <InfoItem
                 icon={Clock}
-                label="Last Login"
+                label={t("lastLogin")}
                 value={
-                  profile.lastLoginAt ? new Date(profile.lastLoginAt).toLocaleString() : "Never"
+                  profile.lastLoginAt ? new Date(profile.lastLoginAt).toLocaleString() : tc("never")
                 }
               />
               <InfoItem
                 icon={Clock}
-                label="Member Since"
+                label={t("memberSince")}
                 value={new Date(profile.createdAt).toLocaleDateString()}
               />
             </div>
 
             <div className="mt-6 pt-4 border-t">
               <p className="text-xs text-muted-foreground">
-                Username, role, and department can only be changed by an administrator.
+                {t("adminNote")}
               </p>
             </div>
           </CardContent>

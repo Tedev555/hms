@@ -2499,6 +2499,40 @@ async function main() {
   }
 
   // ========================================================================
+  // SUPPORTED LOCALES
+  // ========================================================================
+
+  console.warn("\n--- Supported Locales ---");
+
+  await prisma.supportedLocale.upsert({
+    where: { code: "en" },
+    update: {},
+    create: {
+      code: "en",
+      name: "English",
+      nativeName: "English",
+      isActive: true,
+      isDefault: true,
+      completeness: 100,
+    },
+  });
+
+  await prisma.supportedLocale.upsert({
+    where: { code: "lo" },
+    update: {},
+    create: {
+      code: "lo",
+      name: "Lao",
+      nativeName: "ລາວ",
+      isActive: true,
+      isDefault: false,
+      completeness: 100,
+    },
+  });
+
+  console.warn("  Created supported locales: en (English), lo (ລາວ)");
+
+  // ========================================================================
   // SUMMARY
   // ========================================================================
 

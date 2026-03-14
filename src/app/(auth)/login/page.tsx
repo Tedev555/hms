@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +23,7 @@ const roleLanding: Record<string, string> = {
 };
 
 export default function LoginPage() {
+  const t = useTranslations("auth");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -41,18 +43,16 @@ export default function LoginPage() {
 
       if (!res.ok) {
         const body = await res.json();
-        setError(body.message || "Login failed");
+        setError(body.message || t("login.failed"));
         return;
       }
 
       const body = await res.json();
       const user = body.data.user as AuthUser;
       const landing = roleLanding[user.role] || "/";
-      // Full page navigation ensures browser sends freshly-set cookies
-      // on the very first server request with no client router cache issues
       window.location.href = landing;
     } catch {
-      setError("An unexpected error occurred");
+      setError(t("login.error"));
     } finally {
       setLoading(false);
     }
@@ -71,27 +71,24 @@ export default function LoginPage() {
 
         <div className="space-y-6">
           <h1 className="text-4xl font-bold leading-tight">
-            Hospital Management
-            <br />
-            System
+            {t("branding.title")}
           </h1>
           <p className="text-lg text-blue-100 max-w-md">
-            Streamline patient care, appointments, billing, and hospital operations — all in one
-            place.
+            {t("branding.subtitle")}
           </p>
           <div className="grid grid-cols-2 gap-4 max-w-sm">
             <div className="rounded-lg bg-white/10 backdrop-blur-sm p-4">
-              <div className="text-2xl font-bold">24/7</div>
-              <div className="text-sm text-blue-200">System Availability</div>
+              <div className="text-2xl font-bold">{t("branding.availability")}</div>
+              <div className="text-sm text-blue-200">{t("branding.availabilityLabel")}</div>
             </div>
             <div className="rounded-lg bg-white/10 backdrop-blur-sm p-4">
-              <div className="text-2xl font-bold">Secure</div>
-              <div className="text-sm text-blue-200">Role-Based Access</div>
+              <div className="text-2xl font-bold">{t("branding.secure")}</div>
+              <div className="text-sm text-blue-200">{t("branding.secureLabel")}</div>
             </div>
           </div>
         </div>
 
-        <p className="text-sm text-blue-200">Hospital Management System v1.0</p>
+        <p className="text-sm text-blue-200">{t("branding.version")}</p>
       </div>
 
       {/* Right panel - login form */}
@@ -107,9 +104,9 @@ export default function LoginPage() {
 
           <Card className="border-0 shadow-lg lg:border lg:shadow-xl">
             <CardHeader className="space-y-1 pb-4">
-              <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
+              <CardTitle className="text-2xl font-bold">{t("login.title")}</CardTitle>
               <CardDescription className="text-base">
-                Sign in to your account to continue
+                {t("login.subtitle")}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -122,7 +119,7 @@ export default function LoginPage() {
 
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="username">Username</Label>
+                    <Label htmlFor="username">{t("login.username")}</Label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
@@ -131,14 +128,14 @@ export default function LoginPage() {
                         required
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        placeholder="Enter your username"
+                        placeholder={t("login.usernamePlaceholder")}
                         className="pl-10"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">{t("login.password")}</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
@@ -147,7 +144,7 @@ export default function LoginPage() {
                         required
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Enter your password"
+                        placeholder={t("login.passwordPlaceholder")}
                         className="pl-10"
                       />
                     </div>
@@ -159,7 +156,7 @@ export default function LoginPage() {
                   className="w-full h-11 text-base font-medium"
                   disabled={loading}
                 >
-                  {loading ? "Signing in..." : "Sign in"}
+                  {loading ? t("login.submitting") : t("login.submit")}
                 </Button>
               </form>
             </CardContent>

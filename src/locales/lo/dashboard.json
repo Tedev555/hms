@@ -1,0 +1,29 @@
+{
+  "title": "ໜ້າຫຼັກ",
+  "subtitle": "ພາບລວມການດຳເນີນງານໂຮງໝໍ",
+  "stats": {
+    "totalPatients": "ຄົນເຈັບທັງໝົດ",
+    "totalPatientsDesc": "ຄົນເຈັບທີ່ລົງທະບຽນ",
+    "appointmentsToday": "ນັດໝາຍມື້ນີ້",
+    "appointmentsTodayDesc": "ກຳນົດໄວ້ສຳລັບມື້ນີ້",
+    "bedOccupancy": "ອັດຕາຕຽງ",
+    "bedOccupancyDesc": "ອັດຕາການໃຊ້ຕຽງປັດຈຸບັນ",
+    "pendingInvoices": "ໃບແຈ້ງໜີ້ຄ້າງ",
+    "pendingInvoicesDesc": "ໃບແຈ້ງໜີ້ຮ່າງ & ອອກແລ້ວ"
+  },
+  "quickActions": {
+    "title": "ການດຳເນີນການດ່ວນ",
+    "registerPatient": "ລົງທະບຽນຄົນເຈັບ",
+    "registerPatientDesc": "ເພີ່ມບັນທຶກຄົນເຈັບໃໝ່",
+    "bookAppointment": "ຈອງນັດໝາຍ",
+    "bookAppointmentDesc": "ກຳນົດນັດໝາຍໃໝ່",
+    "viewQueue": "ເບິ່ງຄິວ",
+    "viewQueueDesc": "ກວດສອບຄິວນັດໝາຍມື້ນີ້",
+    "createInvoice": "ສ້າງໃບແຈ້ງໜີ້",
+    "createInvoiceDesc": "ສ້າງໃບແຈ້ງໜີ້ໃໝ່"
+  },
+  "recentPatients": "ຄົນເຈັບຫຼ້າສຸດ",
+  "recentPatientsEmpty": "ໄປທີ່ຄົນເຈັບເພື່ອເບິ່ງບັນທຶກ",
+  "todaysAppointments": "ນັດໝາຍມື້ນີ້",
+  "todaysAppointmentsEmpty": "ໄປທີ່ນັດໝາຍເພື່ອເບິ່ງຕາຕະລາງ"
+}

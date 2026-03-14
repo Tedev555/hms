@@ -1,0 +1,70 @@
+{
+  "list": {
+    "title": "ລາຍຊື່ພະນັກງານ",
+    "searchPlaceholder": "ຄົ້ນຫາດ້ວຍຊື່, ຊື່ຜູ້ໃຊ້, ຫຼື ອີເມວ...",
+    "addStaff": "ເພີ່ມພະນັກງານ",
+    "name": "ຊື່",
+    "username": "ຊື່ຜູ້ໃຊ້",
+    "role": "ບົດບາດ",
+    "department": "ພະແນກ",
+    "lastLogin": "ເຂົ້າລ່າສຸດ",
+    "status": "ສະຖານະ",
+    "empty": "ບໍ່ພົບພະນັກງານ",
+    "emptyAction": "ເລີ່ມຕົ້ນໂດຍການເພີ່ມພະນັກງານໃໝ່"
+  },
+  "new": {
+    "title": "ເພີ່ມພະນັກງານ",
+    "accountInfo": "ຂໍ້ມູນບັນຊີ",
+    "firstNameRequired": "ຊື່ *",
+    "lastNameRequired": "ນາມສະກຸນ *",
+    "usernameRequired": "ຊື່ຜູ້ໃຊ້ *",
+    "usernamePlaceholder": "ຊື່ຜູ້ໃຊ້ສຳລັບເຂົ້າລະບົບ",
+    "emailRequired": "ອີເມວ *",
+    "passwordRequired": "ລະຫັດຜ່ານ *",
+    "passwordPlaceholder": "ລະຫັດຜ່ານເບື້ອງຕົ້ນ",
+    "passwordHint": "ຢ່າງໜ້ອຍ 10 ຕົວອັກສອນ ມີຕົວພິມໃຫຍ່, ຕົວພິມນ້ອຍ, ຕົວເລກ, ແລະ ຕົວອັກສອນພິເສດ",
+    "roleRequired": "ບົດບາດ *",
+    "selectRole": "ເລືອກບົດບາດ",
+    "selectDepartment": "ເລືອກພະແນກ",
+    "createAccount": "ສ້າງບັນຊີ"
+  },
+  "detail": {
+    "profileInfo": "ຂໍ້ມູນໂປຣໄຟລ໌",
+    "accountCreated": "ສ້າງບັນຊີ",
+    "createdBy": "ສ້າງໂດຍ",
+    "accountActions": "ການດຳເນີນການບັນຊີ",
+    "resetPassword": "ຣີເຊັດລະຫັດຜ່ານ",
+    "resetPasswordDesc": "ຕັ້ງລະຫັດຜ່ານໃໝ່ສຳລັບ {name}. ພວກເຂົາຄວນປ່ຽນໃນການເຂົ້າລະບົບຄັ້ງຕໍ່ໄປ.",
+    "newPassword": "ລະຫັດຜ່ານໃໝ່",
+    "newPasswordPlaceholder": "ປ້ອນລະຫັດຜ່ານໃໝ່",
+    "passwordHint": "ຢ່າງໜ້ອຍ 10 ຕົວອັກສອນ, ຕົວພິມໃຫຍ່, ຕົວພິມນ້ອຍ, ຕົວເລກ, ແລະ ຕົວອັກສອນພິເສດ",
+    "unlockAccount": "ປົດລັອກບັນຊີ",
+    "deactivateAccount": "ປິດການໃຊ້ງານບັນຊີ",
+    "reactivateAccount": "ເປີດການໃຊ້ງານບັນຊີ",
+    "deactivateWarning": "ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການປິດການໃຊ້ງານບັນຊີຂອງ {name}? ພວກເຂົາຈະບໍ່ສາມາດເຂົ້າລະບົບໄດ້ອີກ.",
+    "reactivateWarning": "ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການເປີດການໃຊ້ງານບັນຊີຂອງ {name}? ພວກເຂົາຈະສາມາດເຂົ້າລະບົບໄດ້ອີກ.",
+    "deactivate": "ປິດການໃຊ້ງານ",
+    "reactivate": "ເປີດການໃຊ້ງານ",
+    "recentActivity": "ກິດຈະກຳຫຼ້າສຸດ"
+  },
+  "edit": {
+    "title": "ແກ້ໄຂພະນັກງານ",
+    "backToProfile": "ກັບຄືນໂປຣໄຟລ໌",
+    "username": "ຊື່ຜູ້ໃຊ້:",
+    "created": "ສ້າງ:",
+    "profileInfo": "ຂໍ້ມູນໂປຣໄຟລ໌",
+    "directorOnly": "(ຜູ້ອຳນວຍການເທົ່ານັ້ນ)",
+    "noDepartment": "ບໍ່ມີພະແນກ"
+  },
+  "activity": {
+    "accountCreated": "ສ້າງບັນຊີ",
+    "profileUpdated": "ອັບເດດໂປຣໄຟລ໌",
+    "profileSelfUpdated": "ອັບເດດໂປຣໄຟລ໌ດ້ວຍຕົນເອງ",
+    "accountDeactivated": "ປິດການໃຊ້ງານບັນຊີ",
+    "accountReactivated": "ເປີດການໃຊ້ງານບັນຊີ",
+    "passwordReset": "ຣີເຊັດລະຫັດຜ່ານ",
+    "accountUnlocked": "ປົດລັອກບັນຊີ",
+    "loggedIn": "ເຂົ້າສູ່ລະບົບ",
+    "failedLogin": "ເຂົ້າສູ່ລະບົບບໍ່ສຳເລັດ"
+  }
+}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,76 +25,77 @@ type DashboardStats = {
   pendingInvoices: number;
 };
 
-const statConfig = [
-  {
-    key: "totalPatients" as const,
-    title: "Total Patients",
-    description: "Registered patients",
-    icon: Users,
-    color: "text-blue-600",
-    bg: "bg-blue-50 dark:bg-blue-950",
-  },
-  {
-    key: "appointmentsToday" as const,
-    title: "Appointments Today",
-    description: "Scheduled for today",
-    icon: CalendarDays,
-    color: "text-emerald-600",
-    bg: "bg-emerald-50 dark:bg-emerald-950",
-  },
-  {
-    key: "bedOccupancy" as const,
-    title: "Bed Occupancy",
-    description: "Current occupancy rate",
-    icon: BedDouble,
-    color: "text-amber-600",
-    bg: "bg-amber-50 dark:bg-amber-950",
-  },
-  {
-    key: "pendingInvoices" as const,
-    title: "Pending Invoices",
-    description: "Draft & issued invoices",
-    icon: FlaskConical,
-    color: "text-purple-600",
-    bg: "bg-purple-50 dark:bg-purple-950",
-  },
-];
-
-const quickActions = [
-  {
-    label: "Register Patient",
-    href: "/patients/new",
-    icon: UserPlus,
-    description: "Add a new patient record",
-    roles: ["receptionist", "admin"],
-  },
-  {
-    label: "Book Appointment",
-    href: "/appointments/new",
-    icon: CalendarDays,
-    description: "Schedule a new appointment",
-    roles: ["receptionist", "admin", "doctor", "nurse"],
-  },
-  {
-    label: "View Queue",
-    href: "/appointments/queue",
-    icon: ClipboardList,
-    description: "Check today's appointment queue",
-    roles: ["receptionist", "admin", "doctor", "nurse", "paramedic"],
-  },
-  {
-    label: "Create Invoice",
-    href: "/billing/new",
-    icon: Receipt,
-    description: "Generate a new invoice",
-    roles: ["receptionist", "admin"],
-  },
-];
-
 export default function DashboardPage() {
   const { authFetch, user } = useAuth();
+  const t = useTranslations("dashboard");
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const statConfig = [
+    {
+      key: "totalPatients" as const,
+      title: t("stats.totalPatients"),
+      description: t("stats.totalPatientsDesc"),
+      icon: Users,
+      color: "text-blue-600",
+      bg: "bg-blue-50 dark:bg-blue-950",
+    },
+    {
+      key: "appointmentsToday" as const,
+      title: t("stats.appointmentsToday"),
+      description: t("stats.appointmentsTodayDesc"),
+      icon: CalendarDays,
+      color: "text-emerald-600",
+      bg: "bg-emerald-50 dark:bg-emerald-950",
+    },
+    {
+      key: "bedOccupancy" as const,
+      title: t("stats.bedOccupancy"),
+      description: t("stats.bedOccupancyDesc"),
+      icon: BedDouble,
+      color: "text-amber-600",
+      bg: "bg-amber-50 dark:bg-amber-950",
+    },
+    {
+      key: "pendingInvoices" as const,
+      title: t("stats.pendingInvoices"),
+      description: t("stats.pendingInvoicesDesc"),
+      icon: FlaskConical,
+      color: "text-purple-600",
+      bg: "bg-purple-50 dark:bg-purple-950",
+    },
+  ];
+
+  const quickActions = [
+    {
+      label: t("quickActions.registerPatient"),
+      href: "/patients/new",
+      icon: UserPlus,
+      description: t("quickActions.registerPatientDesc"),
+      roles: ["receptionist", "admin"],
+    },
+    {
+      label: t("quickActions.bookAppointment"),
+      href: "/appointments/new",
+      icon: CalendarDays,
+      description: t("quickActions.bookAppointmentDesc"),
+      roles: ["receptionist", "admin", "doctor", "nurse"],
+    },
+    {
+      label: t("quickActions.viewQueue"),
+      href: "/appointments/queue",
+      icon: ClipboardList,
+      description: t("quickActions.viewQueueDesc"),
+      roles: ["receptionist", "admin", "doctor", "nurse", "paramedic"],
+    },
+    {
+      label: t("quickActions.createInvoice"),
+      href: "/billing/new",
+      icon: Receipt,
+      description: t("quickActions.createInvoiceDesc"),
+      roles: ["receptionist", "admin"],
+    },
+  ];
 
   const fetchStats = useCallback(async () => {
     try {
@@ -133,7 +135,6 @@ export default function DashboardPage() {
         pendingInvoices: draftTotal + issuedTotal,
       });
     } catch {
-      // Use fallback values
       setStats({
         totalPatients: 0,
         appointmentsToday: 0,
@@ -149,13 +150,14 @@ export default function DashboardPage() {
     fetchStats();
   }, [fetchStats]);
 
+  const tc = useTranslations("common");
   const userActions = quickActions.filter((action) => !user || action.roles.includes(user.role));
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">Overview of your hospital operations</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
+        <p className="text-muted-foreground mt-1">{t("subtitle")}</p>
       </div>
 
       {/* Stats Grid */}
@@ -185,7 +187,7 @@ export default function DashboardPage() {
       {/* Quick Actions */}
       {userActions.length > 0 && (
         <div>
-          <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
+          <h2 className="text-lg font-semibold mb-4">{t("quickActions.title")}</h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {userActions.map((action) => (
               <Link key={action.href} href={action.href}>
@@ -213,26 +215,26 @@ export default function DashboardPage() {
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base font-semibold">Recent Patients</CardTitle>
+            <CardTitle className="text-base font-semibold">{t("recentPatients")}</CardTitle>
             <Button variant="ghost" size="sm" asChild>
               <Link href="/patients" className="gap-1">
-                View all <ArrowRight className="h-3 w-3" />
+                {tc("buttons.viewAll")} <ArrowRight className="h-3 w-3" />
               </Link>
             </Button>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <Users className="h-10 w-10 text-muted-foreground/30 mb-3" />
-              <p className="text-sm text-muted-foreground">Navigate to Patients to view records</p>
+              <p className="text-sm text-muted-foreground">{t("recentPatientsEmpty")}</p>
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base font-semibold">Today&apos;s Appointments</CardTitle>
+            <CardTitle className="text-base font-semibold">{t("todaysAppointments")}</CardTitle>
             <Button variant="ghost" size="sm" asChild>
               <Link href="/appointments" className="gap-1">
-                View all <ArrowRight className="h-3 w-3" />
+                {tc("buttons.viewAll")} <ArrowRight className="h-3 w-3" />
               </Link>
             </Button>
           </CardHeader>
@@ -240,7 +242,7 @@ export default function DashboardPage() {
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <CalendarDays className="h-10 w-10 text-muted-foreground/30 mb-3" />
               <p className="text-sm text-muted-foreground">
-                Navigate to Appointments to view schedule
+                {t("todaysAppointmentsEmpty")}
               </p>
             </div>
           </CardContent>

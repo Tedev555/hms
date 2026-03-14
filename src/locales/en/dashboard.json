@@ -1,0 +1,29 @@
+{
+  "title": "Dashboard",
+  "subtitle": "Overview of your hospital operations",
+  "stats": {
+    "totalPatients": "Total Patients",
+    "totalPatientsDesc": "Registered patients",
+    "appointmentsToday": "Appointments Today",
+    "appointmentsTodayDesc": "Scheduled for today",
+    "bedOccupancy": "Bed Occupancy",
+    "bedOccupancyDesc": "Current occupancy rate",
+    "pendingInvoices": "Pending Invoices",
+    "pendingInvoicesDesc": "Draft & issued invoices"
+  },
+  "quickActions": {
+    "title": "Quick Actions",
+    "registerPatient": "Register Patient",
+    "registerPatientDesc": "Add a new patient record",
+    "bookAppointment": "Book Appointment",
+    "bookAppointmentDesc": "Schedule a new appointment",
+    "viewQueue": "View Queue",
+    "viewQueueDesc": "Check today's appointment queue",
+    "createInvoice": "Create Invoice",
+    "createInvoiceDesc": "Generate a new invoice"
+  },
+  "recentPatients": "Recent Patients",
+  "recentPatientsEmpty": "Navigate to Patients to view records",
+  "todaysAppointments": "Today's Appointments",
+  "todaysAppointmentsEmpty": "Navigate to Appointments to view schedule"
+}

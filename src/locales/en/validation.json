@@ -1,0 +1,10 @@
+{
+  "required": "{field} is required",
+  "usernameRequired": "Username is required",
+  "passwordRequired": "Password is required",
+  "passwordMinLength": "Password must be at least 10 characters",
+  "passwordLowercase": "Must contain a lowercase letter",
+  "passwordUppercase": "Must contain an uppercase letter",
+  "passwordNumber": "Must contain a number",
+  "passwordSpecial": "Must contain a special character"
+}

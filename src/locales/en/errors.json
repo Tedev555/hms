@@ -1,0 +1,9 @@
+{
+  "unexpected": "An unexpected error occurred",
+  "notFound": "Resource not found",
+  "serverError": "Server error",
+  "unauthorized": "Unauthorized",
+  "forbidden": "Forbidden",
+  "invalidCredentials": "Invalid credentials",
+  "networkError": "Network error"
+}

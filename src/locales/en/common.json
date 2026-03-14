@@ -1,0 +1,113 @@
+{
+  "appName": "HMS",
+  "appFullName": "Hospital Management System",
+  "appDescription": "Comprehensive hospital management system for patient care, billing, and operations",
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add": "Add",
+    "back": "Back",
+    "next": "Next",
+    "clear": "Clear",
+    "close": "Close",
+    "confirm": "Confirm",
+    "submit": "Submit",
+    "search": "Search",
+    "viewAll": "View all",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "creating": "Creating...",
+    "loading": "Loading..."
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "locked": "Locked"
+  },
+  "filters": {
+    "label": "Filters:",
+    "clear": "Clear",
+    "clearFilters": "Clear Filters",
+    "allStatuses": "All Statuses",
+    "allRoles": "All Roles",
+    "allStatus": "All Status"
+  },
+  "pagination": {
+    "showing": "Showing {start}-{end} of {total}",
+    "page": "Page {page} of {totalPages}"
+  },
+  "table": {
+    "noResults": "No results found",
+    "tryAdjusting": "Try adjusting your search terms",
+    "tryAdjustingFilters": "Try adjusting your filters"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "patients": "Patients",
+    "appointments": "Appointments",
+    "billing": "Billing",
+    "pharmacy": "Pharmacy",
+    "laboratory": "Laboratory",
+    "wardManagement": "Ward Management",
+    "staff": "Staff",
+    "reports": "Reports",
+    "clinical": "Clinical",
+    "operations": "Operations",
+    "administration": "Administration",
+    "hospitalManagement": "Hospital Management"
+  },
+  "roles": {
+    "receptionist": "Receptionist",
+    "admin": "Administrator",
+    "doctor": "Doctor",
+    "nurse": "Nurse",
+    "director": "Director",
+    "lab_tech": "Lab Technician",
+    "pharmacist": "Pharmacist",
+    "paramedic": "Paramedic"
+  },
+  "gender": {
+    "male": "Male",
+    "female": "Female",
+    "other": "Other"
+  },
+  "fields": {
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone",
+    "username": "Username",
+    "password": "Password",
+    "role": "Role",
+    "department": "Department",
+    "status": "Status",
+    "date": "Date",
+    "time": "Time",
+    "type": "Type",
+    "notes": "Notes",
+    "address": "Address",
+    "gender": "Gender",
+    "dateOfBirth": "Date of Birth"
+  },
+  "placeholders": {
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email address",
+    "phone": "Phone number",
+    "address": "Full address",
+    "notes": "Additional notes..."
+  },
+  "notifications": "Notifications",
+  "toggleMenu": "Toggle menu",
+  "greeting": {
+    "morning": "Good morning",
+    "afternoon": "Good afternoon",
+    "evening": "Good evening"
+  },
+  "signOut": "Sign out",
+  "signingOut": "Signing out...",
+  "never": "Never",
+  "language": "Language"
+}

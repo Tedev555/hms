@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Plus, Search, Users, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +38,8 @@ type Meta = {
 export default function PatientsPage() {
   const router = useRouter();
   const { authFetch, user } = useAuth();
+  const t = useTranslations("patients.list");
+  const tc = useTranslations("common");
   const [patients, setPatients] = useState<Patient[]>([]);
   const [meta, setMeta] = useState<Meta>({ total: 0, page: 1, limit: 20, totalPages: 0 });
   const [loading, setLoading] = useState(true);
@@ -84,15 +87,15 @@ export default function PatientsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Patients</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
           <p className="text-muted-foreground mt-1">
-            {meta.total} patient{meta.total !== 1 ? "s" : ""} registered
+            {meta.total} {meta.total !== 1 ? tc("nav.patients").toLowerCase() : tc("nav.patients").toLowerCase()}
           </p>
         </div>
         {canCreate && (
           <Button onClick={() => router.push("/patients/new")} className="gap-2">
             <Plus className="h-4 w-4" />
-            Register Patient
+            {t("registerPatient")}
           </Button>
         )}
       </div>
@@ -100,7 +103,7 @@ export default function PatientsPage() {
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Search by name, code, phone, or national ID..."
+          placeholder={t("searchPlaceholder")}
           value={search}
           onChange={(e) => handleSearch(e.target.value)}
           className="pl-10"
@@ -112,11 +115,11 @@ export default function PatientsPage() {
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead>Code</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead className="hidden sm:table-cell">Gender</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead className="hidden md:table-cell">Date of Birth</TableHead>
+                <TableHead>{t("code")}</TableHead>
+                <TableHead>{t("name")}</TableHead>
+                <TableHead className="hidden sm:table-cell">{t("gender")}</TableHead>
+                <TableHead>{t("phone")}</TableHead>
+                <TableHead className="hidden md:table-cell">{t("dateOfBirth")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -142,11 +145,9 @@ export default function PatientsPage() {
                       <div className="rounded-full bg-muted p-4 mb-4">
                         <Users className="h-8 w-8 text-muted-foreground/50" />
                       </div>
-                      <p className="font-medium text-muted-foreground">No patients found</p>
+                      <p className="font-medium text-muted-foreground">{t("empty")}</p>
                       <p className="text-sm text-muted-foreground/70 mt-1">
-                        {search
-                          ? "Try adjusting your search terms"
-                          : "Get started by registering a new patient"}
+                        {search ? t("emptySearch") : t("emptyAction")}
                       </p>
                       {canCreate && !search && (
                         <Button
@@ -156,7 +157,7 @@ export default function PatientsPage() {
                           onClick={() => router.push("/patients/new")}
                         >
                           <Plus className="mr-2 h-4 w-4" />
-                          Register Patient
+                          {t("registerPatient")}
                         </Button>
                       )}
                     </div>
@@ -195,8 +196,11 @@ export default function PatientsPage() {
       {!loading && meta.totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Showing {(meta.page - 1) * meta.limit + 1}-
-            {Math.min(meta.page * meta.limit, meta.total)} of {meta.total}
+            {tc("pagination.showing", {
+              start: (meta.page - 1) * meta.limit + 1,
+              end: Math.min(meta.page * meta.limit, meta.total),
+              total: meta.total,
+            })}
           </p>
           <div className="flex items-center gap-1">
             <Button

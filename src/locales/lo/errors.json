@@ -1,0 +1,9 @@
+{
+  "unexpected": "ເກີດຂໍ້ຜິດພາດທີ່ບໍ່ຄາດຄິດ",
+  "notFound": "ບໍ່ພົບຂໍ້ມູນ",
+  "serverError": "ເຊີບເວີຜິດພາດ",
+  "unauthorized": "ບໍ່ໄດ້ຮັບອະນຸຍາດ",
+  "forbidden": "ຖືກຫ້າມ",
+  "invalidCredentials": "ຂໍ້ມູນເຂົ້າສູ່ລະບົບບໍ່ຖືກຕ້ອງ",
+  "networkError": "ເຄືອຂ່າຍຜິດພາດ"
+}

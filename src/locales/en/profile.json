@@ -1,0 +1,11 @@
+{
+  "title": "My Profile",
+  "editProfile": "Edit Profile",
+  "profileInfo": "Profile Information",
+  "lastLogin": "Last Login",
+  "memberSince": "Member Since",
+  "adminNote": "Username, role, and department can only be changed by an administrator.",
+  "unableToLoad": "Unable to load profile",
+  "updateSuccess": "Profile updated successfully",
+  "updateFailed": "Failed to update profile"
+}

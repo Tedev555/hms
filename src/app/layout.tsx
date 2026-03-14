@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -6,10 +8,17 @@ export const metadata: Metadata = {
   description: "Comprehensive hospital management system for patient care, billing, and operations",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="font-sans antialiased">{children}</body>
+    <html lang={locale} suppressHydrationWarning>
+      <body className="font-sans antialiased">
+        <NextIntlClientProvider messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
     </html>
   );
 }

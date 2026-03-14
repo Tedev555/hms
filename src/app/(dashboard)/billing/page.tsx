@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight, Filter, Receipt, X, Plus } from "lucide-react";
 
 import { useAuth } from "@/contexts/auth-context";
@@ -39,15 +40,7 @@ type InvoiceRow = {
   patient: { id: string; firstName: string; lastName: string; patientCode: string };
 };
 
-const STATUS_OPTIONS = [
-  { value: "all", label: "All Statuses" },
-  { value: "draft", label: "Draft" },
-  { value: "issued", label: "Issued" },
-  { value: "partially_paid", label: "Partially Paid" },
-  { value: "paid", label: "Paid" },
-  { value: "overdue", label: "Overdue" },
-  { value: "cancelled", label: "Cancelled" },
-];
+const STATUS_KEYS = ["all", "draft", "issued", "partially_paid", "paid", "overdue", "cancelled"] as const;
 
 const statusStyles: Record<string, string> = {
   draft:
@@ -63,16 +56,6 @@ const statusStyles: Record<string, string> = {
     "bg-gray-50 text-gray-500 border-gray-200 dark:bg-gray-900 dark:text-gray-400 dark:border-gray-700",
 };
 
-function getStatusBadge(status: string) {
-  const label = status.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  const style = statusStyles[status] || "";
-  return (
-    <Badge variant="outline" className={style}>
-      {label}
-    </Badge>
-  );
-}
-
 function formatCurrency(amount: number) {
   return new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 2,
@@ -83,6 +66,8 @@ function formatCurrency(amount: number) {
 export default function BillingPage() {
   const { authFetch } = useAuth();
   const router = useRouter();
+  const t = useTranslations("billing");
+  const tc = useTranslations("common");
 
   const [invoices, setInvoices] = useState<InvoiceRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -91,12 +76,21 @@ export default function BillingPage() {
   const [total, setTotal] = useState(0);
   const limit = 20;
 
-  // Filters
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
 
   const hasFilters = statusFilter !== "all" || dateFrom || dateTo;
+
+  function getStatusBadge(status: string) {
+    const label = t(`status.${status}` as Parameters<typeof t>[0]);
+    const style = statusStyles[status] || "";
+    return (
+      <Badge variant="outline" className={style}>
+        {label}
+      </Badge>
+    );
+  }
 
   const fetchInvoices = useCallback(async () => {
     setLoading(true);
@@ -141,15 +135,15 @@ export default function BillingPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Billing</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("list.title")}</h1>
           <p className="text-muted-foreground mt-1">
-            {total} invoice{total !== 1 ? "s" : ""} total
+            {total} {t("list.title").toLowerCase()}
           </p>
         </div>
         <Button asChild className="gap-2">
           <Link href="/billing/new">
             <Plus className="h-4 w-4" />
-            Create Invoice
+            {t("list.createInvoice")}
           </Link>
         </Button>
       </div>
@@ -158,16 +152,16 @@ export default function BillingPage() {
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Filter className="h-4 w-4" />
-          <span className="hidden sm:inline">Filters:</span>
+          <span className="hidden sm:inline">{tc("filters.label")}</span>
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-44">
-            <SelectValue placeholder="Status" />
+            <SelectValue placeholder={tc("fields.status")} />
           </SelectTrigger>
           <SelectContent>
-            {STATUS_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
+            {STATUS_KEYS.map((key) => (
+              <SelectItem key={key} value={key}>
+                {t(`status.${key}`)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -177,14 +171,12 @@ export default function BillingPage() {
           value={dateFrom}
           onChange={(e) => setDateFrom(e.target.value)}
           className="w-44"
-          placeholder="From date"
         />
         <Input
           type="date"
           value={dateTo}
           onChange={(e) => setDateTo(e.target.value)}
           className="w-44"
-          placeholder="To date"
         />
         {hasFilters && (
           <Button
@@ -194,7 +186,7 @@ export default function BillingPage() {
             className="gap-1 text-muted-foreground"
           >
             <X className="h-3 w-3" />
-            Clear
+            {tc("filters.clear")}
           </Button>
         )}
       </div>
@@ -212,13 +204,13 @@ export default function BillingPage() {
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
-                  <TableHead>Invoice #</TableHead>
-                  <TableHead>Patient</TableHead>
-                  <TableHead className="hidden md:table-cell">Issue Date</TableHead>
-                  <TableHead className="text-right">Total</TableHead>
-                  <TableHead className="text-right hidden sm:table-cell">Paid</TableHead>
-                  <TableHead className="text-right hidden lg:table-cell">Balance</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>{t("list.invoiceNumber")}</TableHead>
+                  <TableHead>{t("list.patient")}</TableHead>
+                  <TableHead className="hidden md:table-cell">{t("list.issueDate")}</TableHead>
+                  <TableHead className="text-right">{t("list.total")}</TableHead>
+                  <TableHead className="text-right hidden sm:table-cell">{t("list.paid")}</TableHead>
+                  <TableHead className="text-right hidden lg:table-cell">{t("list.balance")}</TableHead>
+                  <TableHead>{t("list.status")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -229,11 +221,11 @@ export default function BillingPage() {
                         <div className="rounded-full bg-muted p-4 mb-4">
                           <Receipt className="h-8 w-8 text-muted-foreground/50" />
                         </div>
-                        <p className="font-medium text-muted-foreground">No invoices found</p>
+                        <p className="font-medium text-muted-foreground">{t("list.empty")}</p>
                         <p className="text-sm text-muted-foreground/70 mt-1">
                           {hasFilters
-                            ? "Try adjusting your filters"
-                            : "Create a new invoice to get started"}
+                            ? tc("table.tryAdjustingFilters")
+                            : t("list.emptyAction")}
                         </p>
                         {hasFilters && (
                           <Button
@@ -242,7 +234,7 @@ export default function BillingPage() {
                             className="mt-4"
                             onClick={clearFilters}
                           >
-                            Clear Filters
+                            {tc("filters.clearFilters")}
                           </Button>
                         )}
                       </div>
@@ -298,7 +290,7 @@ export default function BillingPage() {
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Page {page} of {totalPages}
+            {tc("pagination.page", { page, totalPages })}
           </p>
           <div className="flex items-center gap-1">
             <Button

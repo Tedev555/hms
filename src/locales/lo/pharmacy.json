@@ -1,0 +1,22 @@
+{
+  "title": "ຮ້ານຂາຍຢາ",
+  "subtitle": "ລາຍການຢາ, ໃບສັ່ງຢາ, ແລະ ການຄຸ້ມຄອງສາງ",
+  "stats": {
+    "totalDrugs": "ຢາທັງໝົດ",
+    "lowStockAlerts": "ແຈ້ງເຕືອນສາງຕ່ຳ",
+    "expiringBatches": "ລ໋ອດໃກ້ໝົດອາຍຸ",
+    "pendingPrescriptions": "ໃບສັ່ງຢາຄ້າງ"
+  },
+  "sections": {
+    "drugCatalogue": "ລາຍການຢາ",
+    "drugCatalogueDesc": "ເບິ່ງ ແລະ ຄຸ້ມຄອງລາຍການຢາ, ເພີ່ມຢາໃໝ່, ແລະ ຕິດຕາಮ​ລະດັບສາງ.",
+    "viewDrugs": "ເບິ່ງຢາ",
+    "prescriptions": "ໃບສັ່ງຢາ",
+    "prescriptionsDesc": "ເບິ່ງໃບສັ່ງຢາທີ່ຄ້າງ ແລະ ຫຼ້າສຸດ, ແລະ ຈ່າຍຢາ.",
+    "viewPrescriptions": "ເບິ່ງໃບສັ່ງຢາ",
+    "reports": "ລາຍງານ",
+    "reportsDesc": "ແຈ້ງເຕືອນສາງຕ່ຳ, ລາຍງານລ໋ອດໃກ້ໝົດອາຍຸ, ແລະ ການວິເຄາະສາງ.",
+    "lowStock": "ສາງຕ່ຳ",
+    "expiring": "ໃກ້ໝົດອາຍຸ"
+  }
+}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Pill, AlertTriangle, Clock, Package, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ type DashboardStats = {
 
 export default function PharmacyDashboardPage() {
   const { authFetch } = useAuth();
+  const t = useTranslations("pharmacy");
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -55,7 +57,7 @@ export default function PharmacyDashboardPage() {
 
   const cards = [
     {
-      title: "Total Drugs",
+      title: t("stats.totalDrugs"),
       value: stats?.totalDrugs ?? 0,
       icon: Pill,
       href: "/pharmacy/drugs",
@@ -63,7 +65,7 @@ export default function PharmacyDashboardPage() {
       bgColor: "bg-blue-50 dark:bg-blue-950",
     },
     {
-      title: "Low Stock Alerts",
+      title: t("stats.lowStockAlerts"),
       value: stats?.lowStockCount ?? 0,
       icon: AlertTriangle,
       href: "/pharmacy/reports/low-stock",
@@ -71,7 +73,7 @@ export default function PharmacyDashboardPage() {
       bgColor: "bg-amber-50 dark:bg-amber-950",
     },
     {
-      title: "Expiring Batches",
+      title: t("stats.expiringBatches"),
       value: stats?.expiringCount ?? 0,
       icon: Clock,
       href: "/pharmacy/reports/expiring",
@@ -79,7 +81,7 @@ export default function PharmacyDashboardPage() {
       bgColor: "bg-red-50 dark:bg-red-950",
     },
     {
-      title: "Pending Prescriptions",
+      title: t("stats.pendingPrescriptions"),
       value: stats?.pendingPrescriptions ?? 0,
       icon: Package,
       href: "/pharmacy/prescriptions?status=pending",
@@ -91,9 +93,9 @@ export default function PharmacyDashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Pharmacy</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
         <p className="text-muted-foreground mt-1">
-          Drug catalogue, prescriptions, and inventory management
+          {t("subtitle")}
         </p>
       </div>
 
@@ -122,15 +124,15 @@ export default function PharmacyDashboardPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Drug Catalogue</CardTitle>
+            <CardTitle className="text-base">{t("sections.drugCatalogue")}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground mb-4">
-              View and manage the drug catalogue, add new drugs, and track stock levels.
+              {t("sections.drugCatalogueDesc")}
             </p>
             <Button asChild variant="outline" size="sm" className="gap-2">
               <Link href="/pharmacy/drugs">
-                View Drugs <ArrowRight className="h-3 w-3" />
+                {t("sections.viewDrugs")} <ArrowRight className="h-3 w-3" />
               </Link>
             </Button>
           </CardContent>
@@ -138,15 +140,15 @@ export default function PharmacyDashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Prescriptions</CardTitle>
+            <CardTitle className="text-base">{t("sections.prescriptions")}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground mb-4">
-              View pending and recent prescriptions, and dispense medications.
+              {t("sections.prescriptionsDesc")}
             </p>
             <Button asChild variant="outline" size="sm" className="gap-2">
               <Link href="/pharmacy/prescriptions">
-                View Prescriptions <ArrowRight className="h-3 w-3" />
+                {t("sections.viewPrescriptions")} <ArrowRight className="h-3 w-3" />
               </Link>
             </Button>
           </CardContent>
@@ -154,18 +156,18 @@ export default function PharmacyDashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Reports</CardTitle>
+            <CardTitle className="text-base">{t("sections.reports")}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground mb-4">
-              Low stock alerts, expiring batch reports, and inventory analysis.
+              {t("sections.reportsDesc")}
             </p>
             <div className="flex gap-2">
               <Button asChild variant="outline" size="sm">
-                <Link href="/pharmacy/reports/low-stock">Low Stock</Link>
+                <Link href="/pharmacy/reports/low-stock">{t("sections.lowStock")}</Link>
               </Button>
               <Button asChild variant="outline" size="sm">
-                <Link href="/pharmacy/reports/expiring">Expiring</Link>
+                <Link href="/pharmacy/reports/expiring">{t("sections.expiring")}</Link>
               </Button>
             </div>
           </CardContent>

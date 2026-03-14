@@ -1,9 +1,11 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Separator } from "@/components/ui/separator";
 import { SidebarNav, SidebarBrand } from "@/components/layout/sidebar-nav";
 import { MobileSidebar } from "@/components/layout/mobile-sidebar";
 import { LogoutButton } from "@/components/layout/logout-button";
+import { LanguageSelector } from "@/components/layout/language-selector";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider, useAuth } from "@/contexts/auth-context";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,6 +14,7 @@ import { Button } from "@/components/ui/button";
 
 function DashboardContent({ children }: { children: React.ReactNode }) {
   const { loading, user } = useAuth();
+  const t = useTranslations("common");
 
   if (loading) {
     return (
@@ -25,7 +28,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     );
   }
 
-  const greeting = getGreeting();
+  const greeting = getGreeting(t);
 
   return (
     <div className="flex min-h-screen bg-gray-50/50 dark:bg-background">
@@ -47,10 +50,11 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
             </p>
           </div>
           <div className="ml-auto flex items-center gap-2">
+            <LanguageSelector />
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-4 w-4" />
               <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-blue-600" />
-              <span className="sr-only">Notifications</span>
+              <span className="sr-only">{t("notifications")}</span>
             </Button>
             <Separator orientation="vertical" className="h-6" />
             <LogoutButton />
@@ -64,11 +68,11 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
   );
 }
 
-function getGreeting() {
+function getGreeting(t: (key: string) => string) {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
+  if (hour < 12) return t("greeting.morning");
+  if (hour < 17) return t("greeting.afternoon");
+  return t("greeting.evening");
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

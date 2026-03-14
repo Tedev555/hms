@@ -1,0 +1,10 @@
+{
+  "required": "{field} ຈຳເປັນຕ້ອງລະບຸ",
+  "usernameRequired": "ຊື່ຜູ້ໃຊ້ຈຳເປັນຕ້ອງລະບຸ",
+  "passwordRequired": "ລະຫັດຜ່ານຈຳເປັນຕ້ອງລະບຸ",
+  "passwordMinLength": "ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 10 ຕົວອັກສອນ",
+  "passwordLowercase": "ຕ້ອງມີຕົວອັກສອນພິມນ້ອຍ",
+  "passwordUppercase": "ຕ້ອງມີຕົວອັກສອນພິມໃຫຍ່",
+  "passwordNumber": "ຕ້ອງມີຕົວເລກ",
+  "passwordSpecial": "ຕ້ອງມີຕົວອັກສອນພິເສດ"
+}
